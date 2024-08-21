@@ -17,7 +17,7 @@ public class Aluno extends Usuario {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_aluno")
+    @Column(name = "matricula_aluno")
     private Long id;
     
     @Size(min = 11, max = 11, message = "{usuario.cpf.size}")

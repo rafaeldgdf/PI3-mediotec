@@ -16,6 +16,12 @@ public class Endereco {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "{usuario.endereco.cep.notnull}")
+    @Size(min = 8, max = 9, message = "{usuario.endereco.cep.size}")
+    @Column(name = "cep", nullable = false)
+    private String cep;
+
+    
     @NotNull(message = "{usuario.endereco.rua.notnull}")
     @Size(min = 3, max = 100, message = "{usuario.endereco.rua.size}")
     @Column(name = "rua", nullable = false)
@@ -25,6 +31,12 @@ public class Endereco {
     @Size(min = 1, max = 10, message = "{usuario.endereco.numero.size}")
     @Column(name = "numero", nullable = false)
     private String numero;
+    
+    @NotNull(message = "{usuario.endereco.bairro.notnull}")
+    @Size(min = 3, max = 50, message = "{usuario.endereco.bairro.size}")
+    @Column(name = "bairro", nullable = false)
+    private String bairro;
+    
 
     @NotNull(message = "{usuario.endereco.cidade.notnull}")
     @Size(min = 3, max = 50, message = "{usuario.endereco.cidade.size}")
@@ -36,10 +48,6 @@ public class Endereco {
     @Column(name = "estado", nullable = false)
     private String estado;
 
-    @NotNull(message = "{usuario.endereco.cep.notnull}")
-    @Size(min = 8, max = 9, message = "{usuario.endereco.cep.size}")
-    @Column(name = "cep", nullable = false)
-    private String cep;
 
     @ManyToOne
     @JoinColumn(name = "aluno_id")

@@ -24,11 +24,6 @@ public abstract class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @NotNull(message = "{usuario.cpf.notnull}")
-    @Size(min = 11, max = 11, message = "{usuario.cpf.size}")
-    @Column(nullable = false, unique = true)
-    private String cpf;
-
     @NotNull(message = "{usuario.nome.notnull}")
     @Size(min = 3, max = 50, message = "{usuario.nome.size}")
     @Column(nullable = false)

@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -14,11 +16,12 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "professor")
 public class Professor extends Usuario {
 	
-	   	@Id
-	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	   	@Column(name = "id_professor")
-	    private Long id;
-	   	
+   		@Id
+   		@NotNull(message = "{usuario.cpf.notnull}")
+   		@Size(min = 11, max = 11, message = "{usuario.cpf.size}")
+   		@Column(nullable = false, unique = true)
+   		private String cpf;
+   		
 	   	@OneToOne 
 	   	private Coordenacao coordenacao;
 
