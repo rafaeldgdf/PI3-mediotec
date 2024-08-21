@@ -40,7 +40,6 @@ public abstract class Usuario implements Serializable {
 
     @NotNull(message = "{usuario.email.notnull}")
     @Email(message = "{usuario.email.email}")
-    @Size(max = 100, message = "{usuario.email.size}")
     @Column(nullable = false)
     private String email;
 }

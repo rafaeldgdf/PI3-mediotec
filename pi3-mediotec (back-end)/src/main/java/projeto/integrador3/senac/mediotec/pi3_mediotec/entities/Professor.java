@@ -1,10 +1,12 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -15,15 +17,16 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Table(name = "professor")
 public class Professor extends Usuario {
-	
-   		@Id
-   		@NotNull(message = "{usuario.cpf.notnull}")
-   		@Size(min = 11, max = 11, message = "{usuario.cpf.size}")
-   		@Column(nullable = false, unique = true)
-   		private String cpf;
-   		
-	   	@OneToOne 
-	   	private Coordenacao coordenacao;
 
-	   	
+    @Id
+    @NotNull(message = "{usuario.cpf.notnull}")
+    @Size(min = 11, max = 11, message = "{usuario.cpf.size}")
+    @Column(nullable = false, unique = true)
+    private String cpf;
+
+    @ManyToOne
+    private Coordenacao coordenacao;
+
+    @OneToMany(mappedBy = "professor")
+    private Set<TurmaDisciplina> turmaDisciplinas;
 }

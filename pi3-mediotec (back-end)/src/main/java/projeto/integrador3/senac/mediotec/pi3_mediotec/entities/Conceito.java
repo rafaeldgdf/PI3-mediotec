@@ -1,18 +1,16 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -25,38 +23,33 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "comunicado")
-public class Comunicado implements Serializable {
+@Table(name = "conceito")
+public class Conceito implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_comunicado;
+    private Long id_conceito;
 
-    @NotNull(message = "{comunicado.conteudo.notnull}")
-    @Size(min = 10, max = 100, message = "{comunicado.conteudo.size}")
+    @NotNull(message = "{conceito.nota.notnull}")
     @Column(nullable = false)
-    private String conteudo;
+    private Float nota;
 
-    @NotNull(message = "{coordenacao.data.notnull}")
-    @Temporal(TemporalType.DATE)
-    @Column(nullable = false)
-    private Date data_envio;
+    @Column
+    private String conceito;
 
     @ManyToOne
-    @JoinColumn(name = "id_coordenacao") 
-    private Coordenacao coordenacao;
-
-    @ManyToOne
-    @JoinColumn(name = "id_professor") 
-    private Professor professor;
-
-    @ManyToOne
-    @JoinColumn(name = "id_aluno") 
-    private Aluno aluno;
+    @JoinColumn(name = "id_turma_disciplina", nullable = false)
+    private TurmaDisciplina turmaDisciplina;
     
     @ManyToOne
-    @JoinColumn(name = "id_turma") 
-    private Turma turma;
+    @JoinColumn(name = "id_aluno", nullable = false)
+    private Aluno aluno;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_coordenacao", nullable = true)
+    private Coordenacao coordenacao;
+
+
 }

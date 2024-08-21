@@ -14,7 +14,7 @@ public class Endereco {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_endereco;
 
     @NotNull(message = "{usuario.endereco.cep.notnull}")
     @Size(min = 8, max = 9, message = "{usuario.endereco.cep.size}")
