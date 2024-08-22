@@ -1,13 +1,16 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 
 import java.io.Serializable;
+import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -38,7 +41,12 @@ public class Coordenacao implements Serializable {
     @Column
     private String descricao;
     
-    @OneToOne
-    private Coordenador coordenador;
+    @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Endereco> enderecos;
 
+    @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Telefone> telefones;
+    
+    @OneToOne(mappedBy = "coordenacao") 
+    private Coordenador coordenador;
 }

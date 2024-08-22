@@ -9,10 +9,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,7 +40,10 @@ public class Conceito implements Serializable {
     private String conceito;
 
     @ManyToOne
-    @JoinColumn(name = "id_turma_disciplina", nullable = false)
+    @JoinColumns({
+        @JoinColumn(name = "id_turma", referencedColumnName = "id_turma"),
+        @JoinColumn(name = "id_disciplina", referencedColumnName = "id_disciplina")
+    })
     private TurmaDisciplina turmaDisciplina;
     
     @ManyToOne
@@ -50,6 +53,5 @@ public class Conceito implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_coordenacao", nullable = true)
     private Coordenacao coordenacao;
-
 
 }

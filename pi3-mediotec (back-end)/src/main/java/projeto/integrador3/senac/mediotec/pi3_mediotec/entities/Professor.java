@@ -2,6 +2,7 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -26,6 +27,12 @@ public class Professor extends Usuario {
 
     @ManyToOne
     private Coordenacao coordenacao;
+    
+    @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Endereco> enderecos;
+
+    @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Telefone> telefones;
 
     @OneToMany(mappedBy = "professor")
     private Set<TurmaDisciplina> turmaDisciplinas;
