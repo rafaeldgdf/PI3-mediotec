@@ -20,6 +20,8 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "aluno")
 public class Aluno extends Usuario {
 	
+	private static final long serialVersionUID = 1L;
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "matricula_aluno")
@@ -37,6 +39,10 @@ public class Aluno extends Usuario {
     
     @ManyToOne 
    	private Coordenacao coordenacao;
+    
+    @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Presenca> presencas;
+
 
 
 }

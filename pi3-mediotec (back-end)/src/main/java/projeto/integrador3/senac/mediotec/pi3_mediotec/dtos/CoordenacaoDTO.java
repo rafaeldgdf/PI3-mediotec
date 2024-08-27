@@ -1,8 +1,10 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.dtos;
 
+import lombok.Builder;
 import lombok.Data;
 import java.util.Set;
 
+@Builder
 @Data
 public class CoordenacaoDTO {
     private Long idCoordenacao;
