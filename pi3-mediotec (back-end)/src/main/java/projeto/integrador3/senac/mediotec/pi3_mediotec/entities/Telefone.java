@@ -1,5 +1,7 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -26,18 +28,22 @@ public class Telefone {
     @Column(name = "numero", nullable = false)
     private String numero;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "aluno_id")
     private Aluno aluno;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "professor_id")
     private Professor professor;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "coordenador_id")
     private Coordenador coordenador;
     
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "coordenacao_id")
     private Coordenacao coordenacao;

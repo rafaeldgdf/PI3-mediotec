@@ -10,13 +10,4 @@ import java.util.List;
 @Repository
 public interface PresencaRepository extends JpaRepository<Presenca, Long> {
 
-    List<Presenca> findByAlunoId(Long alunoId);
-
-    List<Presenca> findByAlunoIdAndTurmaDisciplinaIdTurmaIdAndTurmaDisciplinaIdDisciplinaId(Long alunoId, Long turmaId, Long disciplinaId);
-
-    List<Presenca> findByData(Date data);
-
-    List<Presenca> findByProfessorId(Long professorId);
- 
-    List<Presenca> findByCoordenacaoId(Long coordenacaoId);
 }

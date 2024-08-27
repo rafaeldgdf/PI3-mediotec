@@ -13,10 +13,14 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Entity
 @SuperBuilder
+@Getter
+@Setter
 @Table(name = "aluno")
 public class Aluno extends Usuario {
 	

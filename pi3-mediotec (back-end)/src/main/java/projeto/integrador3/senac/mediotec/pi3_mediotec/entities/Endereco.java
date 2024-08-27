@@ -1,5 +1,7 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -47,20 +49,23 @@ public class Endereco {
     @Size(min = 2, max = 20, message = "{usuario.endereco.estado.size}")
     @Column(name = "estado", nullable = false)
     private String estado;
-
-
+    
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "aluno_id")
     private Aluno aluno;
-
+    
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "professor_id")
     private Professor professor;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "coordenador_id")
     private Coordenador coordenador;
     
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "coordenacao_id")
     private Coordenacao coordenacao;

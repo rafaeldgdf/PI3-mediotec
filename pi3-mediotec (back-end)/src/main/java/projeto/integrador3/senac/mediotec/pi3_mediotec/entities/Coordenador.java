@@ -14,12 +14,18 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Entity
 @SuperBuilder
+@Getter
+@Setter
 @Table(name = "coordenador")
 public class Coordenador extends Usuario{
+	
+	private static final long serialVersionUID = 1L;
 	
    	@Id
     @NotNull(message = "{usuario.cpf.notnull}")
