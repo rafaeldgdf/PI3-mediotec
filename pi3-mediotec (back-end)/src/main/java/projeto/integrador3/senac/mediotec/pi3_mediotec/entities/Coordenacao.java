@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -42,11 +43,14 @@ public class Coordenacao implements Serializable {
     private String descricao;
     
     @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(nullable = false)
     private Set<Endereco> enderecos;
 
     @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(nullable = false)
     private Set<Telefone> telefones;
     
     @OneToOne(mappedBy = "coordenacao") 
+    @PrimaryKeyJoinColumn
     private Coordenador coordenador;
 }

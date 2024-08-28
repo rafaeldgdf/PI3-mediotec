@@ -34,9 +34,11 @@ public class Coordenador extends Usuario{
     private String cpf;
    	
     @OneToMany(mappedBy = "coordenador", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(nullable = false)
     private Set<Endereco> enderecos;
 
     @OneToMany(mappedBy = "coordenador", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(nullable = false)
     private Set<Telefone> telefones;
    	
     @OneToOne

@@ -2,6 +2,8 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,16 +32,20 @@ public class Professor extends Usuario {
     @Size(min = 11, max = 11, message = "{usuario.cpf.size}")
     @Column(nullable = false, unique = true)
     private String cpf;
-
+    
+    @JsonIgnore
     @ManyToOne
     private Coordenacao coordenacao;
     
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(nullable = false)
     private Set<Endereco> enderecos;
-
+    
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(nullable = false)
     private Set<Telefone> telefones;
-
+    
+    @JsonIgnore
     @OneToMany(mappedBy = "professor")
     private Set<TurmaDisciplina> turmaDisciplinas;
 }

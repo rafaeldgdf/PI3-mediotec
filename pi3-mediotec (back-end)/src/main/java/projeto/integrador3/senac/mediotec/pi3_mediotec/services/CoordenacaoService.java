@@ -59,7 +59,6 @@ public class CoordenacaoService {
     }
 
     // Converte Coordenacao para CoordenacaoDTO
-
     private CoordenacaoDTO convertToDto(Coordenacao coordenacao) {
         return CoordenacaoDTO.builder()
                 .idCoordenacao(coordenacao.getId_coordenacao())

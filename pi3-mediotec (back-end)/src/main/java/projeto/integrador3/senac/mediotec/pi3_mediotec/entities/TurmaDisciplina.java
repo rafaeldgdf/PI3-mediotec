@@ -2,6 +2,8 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -37,6 +39,7 @@ public class TurmaDisciplina implements Serializable {
     @JoinColumn(name = "id_disciplina")
     private Disciplina disciplina;
 
+  
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_professor", nullable = false)
     private Professor professor;
