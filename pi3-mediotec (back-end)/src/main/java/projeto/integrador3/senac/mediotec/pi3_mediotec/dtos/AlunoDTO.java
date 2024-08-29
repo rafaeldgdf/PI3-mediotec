@@ -19,7 +19,6 @@ public class AlunoDTO {
     private String email;
     private Set<EnderecoDTO> enderecos;
     private Set<TelefoneDTO> telefones;
-    private CoordenacaoDTO coordenacao;
     private Set<TurmaDTO> turmas;
     private Set<PresencaDTO> presencas;
 }

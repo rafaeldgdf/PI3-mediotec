@@ -70,7 +70,7 @@ public class Coordenacao implements Serializable {
     @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Professor> professores;
     
-    //funcoes para configurar as bilateridades 
+//funcoes para configurar as bilateridades 
     public void addEndereco(Endereco endereco) {
         endereco.setCoordenacao(this); 
         this.enderecos.add(endereco);

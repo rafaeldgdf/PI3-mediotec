@@ -52,13 +52,9 @@ public class Aluno extends Usuario {
     private Set<Telefone> telefones;
     
     @JsonIgnore
-    @ManyToOne 
-   	private Coordenacao coordenacao;
-    
-    @JsonIgnore
     @ManyToMany(mappedBy = "alunos", cascade = CascadeType.ALL)
+    @Column(nullable = true)
     private Set<Turma> turmas;
-
     
     @JsonIgnore
     @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)

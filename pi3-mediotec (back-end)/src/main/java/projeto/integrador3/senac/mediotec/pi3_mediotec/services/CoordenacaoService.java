@@ -41,6 +41,10 @@ public class CoordenacaoService {
 
     // Cria nova coordenacao
     public CoordenacaoDTO saveCoordenacao(Coordenacao coordenacao) {
+    	
+        coordenacao.getEnderecos().forEach(endereco -> coordenacao.addEndereco(endereco));
+        coordenacao.getTelefones().forEach(telefone -> coordenacao.addTelefone(telefone));
+    	
         Coordenacao savedCoordenacao = coordenacaoRepository.save(coordenacao);
         return convertToDto(savedCoordenacao);
     }

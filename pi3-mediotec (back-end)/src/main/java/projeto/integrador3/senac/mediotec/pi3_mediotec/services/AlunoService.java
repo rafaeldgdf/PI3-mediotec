@@ -41,15 +41,20 @@ public class AlunoService {
             throw new RuntimeException("Aluno com CPF " + aluno.getCpf() + " já existe");
         }
 
-        // Configura a associação do aluno com seus endereços, telefones e turmas
+        // Configura a associação do aluno com seus endereços e telefones
         aluno.getEnderecos().forEach(endereco -> endereco.setAluno(aluno));
         aluno.getTelefones().forEach(telefone -> telefone.setAluno(aluno));
-        aluno.getTurmas().forEach(turma -> turma.getAlunos().add(aluno));
 
-        // Salva o aluno junto com seus endereços, telefones e turmas
+        // Verifica se a coleção turmas não é nula antes de tentar iterar sobre ela
+        if (aluno.getTurmas() != null) {
+            aluno.getTurmas().forEach(turma -> turma.getAlunos().add(aluno));
+        }
+
+        // Salva o aluno junto com seus endereços, telefones e turmas (se existirem)
         Aluno savedAluno = alunoRepository.save(aluno);
         return convertToDto(savedAluno);
     }
+
 
     // Edita um aluno existente
     public AlunoDTO updateAluno(Long idAluno, Aluno alunoDetails) {
@@ -107,11 +112,6 @@ public class AlunoService {
                                 .numero(telefone.getNumero())
                                 .build())
                         .collect(Collectors.toSet()))
-                .coordenacao(CoordenacaoDTO.builder()
-                        .idCoordenacao(aluno.getCoordenacao().getId_coordenacao())
-                        .nome(aluno.getCoordenacao().getNome())
-                        .descricao(aluno.getCoordenacao().getDescricao())
-                        .build())
                 .build();
     }
 
