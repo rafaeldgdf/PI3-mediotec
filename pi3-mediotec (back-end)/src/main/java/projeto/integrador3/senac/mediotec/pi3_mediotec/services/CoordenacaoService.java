@@ -128,7 +128,7 @@ public class CoordenacaoService {
         return CoordenadorDTO.builder()
             .cpf(coordenador.getCpf())
             .nome(coordenador.getNome())
-            .email(coordenador.getEmail())
+            .ultimoNome(coordenador.getUltimoNome())
             .build();
     }
 
