@@ -3,6 +3,8 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 import java.io.Serializable;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,13 +18,21 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Data
-@NoArgsConstructor
 @Entity
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "coordenacao")
 public class Coordenacao implements Serializable {
 	
@@ -31,7 +41,6 @@ public class Coordenacao implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_coordenacao;
-    
     
     @NotNull(message = "{coordenacao.nome.notnull}")
     @Size(min = 3, max = 50, message = "{coordenacao.nome.size}")
@@ -50,7 +59,35 @@ public class Coordenacao implements Serializable {
     @Column(nullable = false)
     private Set<Telefone> telefones;
     
-    @OneToOne(mappedBy = "coordenacao") 
-    @PrimaryKeyJoinColumn
+    @OneToOne
     private Coordenador coordenador;
+    
+    @JsonIgnore
+    @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Turma> turmas;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Professor> professores;
+    
+    //funcoes para configurar as bilateridades 
+    public void addEndereco(Endereco endereco) {
+        endereco.setCoordenacao(this); 
+        this.enderecos.add(endereco);
+    }
+
+    public void addTelefone(Telefone telefone) {
+        telefone.setCoordenacao(this); 
+        this.telefones.add(telefone);
+    }
+    
+    public void addTurma(Turma turma) {
+        turma.setCoordenacao(this);
+        this.turmas.add(turma);
+    }
+
+    public void addProfessor(Professor professor) {
+        professor.setCoordenacao(this);
+        this.professores.add(professor);
+    }
 }

@@ -5,8 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import projeto.integrador3.senac.mediotec.pi3_mediotec.dtos.AlunoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.dtos.CoordenadorDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.entities.Coordenador;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.services.AlunoService;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.services.CoordenadorService;
 
 import java.util.List;
@@ -18,7 +20,8 @@ public class CoordenadorController {
 
     @Autowired
     private CoordenadorService coordenadorService;
-
+  
+//rotas crud 
     @GetMapping
     public ResponseEntity<List<CoordenadorDTO>> getAllCoordenadores() {
         List<CoordenadorDTO> coordenadores = coordenadorService.getAllCoordenadores();
@@ -57,4 +60,7 @@ public class CoordenadorController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    
+
 }
+

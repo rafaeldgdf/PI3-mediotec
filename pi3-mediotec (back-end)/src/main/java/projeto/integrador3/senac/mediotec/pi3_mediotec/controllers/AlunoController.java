@@ -35,7 +35,7 @@ public class AlunoController {
     }
 
     // Cria um novo aluno
-    @PostMapping
+    @PostMapping("/incluir")
     public ResponseEntity<AlunoDTO> createAluno(@RequestBody Aluno aluno) {
         AlunoDTO savedAluno = alunoService.saveAluno(aluno);
         return new ResponseEntity<>(savedAluno, HttpStatus.CREATED);

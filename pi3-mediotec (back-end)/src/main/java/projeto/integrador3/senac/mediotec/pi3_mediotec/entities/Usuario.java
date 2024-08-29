@@ -11,13 +11,17 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @SuperBuilder
 @MappedSuperclass // Indica que esta classe é uma superclasse mapeada para herança JPA
 public abstract class Usuario implements Serializable {
@@ -28,6 +32,12 @@ public abstract class Usuario implements Serializable {
     @Size(min = 3, max = 50, message = "{usuario.nome.size}")
     @Column(nullable = false)
     private String nome;
+    
+    
+    @NotNull(message = "{usuario.nome.notnull}")
+    @Size(min = 3, max = 50, message = "{usuario.nome.size}")
+    @Column(nullable = false)
+    private String ultimoNome;
 
     @NotNull(message = "{usuario.genero.notnull}")
     @Column(nullable = false)
@@ -42,4 +52,6 @@ public abstract class Usuario implements Serializable {
     @Email(message = "{usuario.email.email}")
     @Column(nullable = false)
     private String email;
+    
+    
 }

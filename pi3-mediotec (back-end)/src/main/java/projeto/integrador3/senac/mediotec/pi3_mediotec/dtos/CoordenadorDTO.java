@@ -11,10 +11,10 @@ import java.util.Set;
 public class CoordenadorDTO {
     private String cpf;
     private String nome;
+    private String ultimoNome;
     private String genero;
     private Date data_nascimento;
     private String email;
     private Set<EnderecoDTO> enderecos;
     private Set<TelefoneDTO> telefones;
-    private CoordenacaoDTO coordenacao;
 }

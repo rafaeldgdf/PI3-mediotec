@@ -4,12 +4,17 @@ import lombok.Builder;
 import lombok.Data;
 import java.util.Set;
 
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 
 @Builder
 @Data
 public class ProfessorDTO {
     private String cpf;
     private String nome;
+    private String ultimoNome;
     private String genero;
     private String email;
     private Set<EnderecoDTO> enderecos;

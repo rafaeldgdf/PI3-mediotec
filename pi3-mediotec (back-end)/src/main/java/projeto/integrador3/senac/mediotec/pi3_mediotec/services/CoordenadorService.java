@@ -38,9 +38,15 @@ public class CoordenadorService {
 
     // Cria
     public CoordenadorDTO saveCoordenador(Coordenador coordenador) {
-        if (coordenadorRepository.existsById(coordenador.getCpf())) {
+        
+        if (coordenadorRepository.existsByCpf(coordenador.getCpf())) {
             throw new RuntimeException("Coordenador com CPF " + coordenador.getCpf() + " já existe");
         }
+
+        // Configura a relação bidirecional entre coordenador e endereços/telefones
+        coordenador.getEnderecos().forEach(endereco -> endereco.setCoordenador(coordenador));
+        coordenador.getTelefones().forEach(telefone -> telefone.setCoordenador(coordenador));
+
         Coordenador savedCoordenador = coordenadorRepository.save(coordenador);
         return convertToDto(savedCoordenador);
     }
@@ -59,12 +65,13 @@ public class CoordenadorService {
         }
 
         coordenador.setNome(coordenadorDetails.getNome());
+        coordenador.setUltimoNome(coordenadorDetails.getUltimoNome());
         coordenador.setGenero(coordenadorDetails.getGenero());
         coordenador.setData_nascimento(coordenadorDetails.getData_nascimento());
         coordenador.setEmail(coordenadorDetails.getEmail());
         coordenador.setEnderecos(coordenadorDetails.getEnderecos());
         coordenador.setTelefones(coordenadorDetails.getTelefones());
-        coordenador.setCoordenacao(coordenadorDetails.getCoordenacao());
+   
 
         Coordenador updatedCoordenador = coordenadorRepository.save(coordenador);
         return convertToDto(updatedCoordenador);
@@ -84,6 +91,7 @@ public class CoordenadorService {
         return CoordenadorDTO.builder()
                 .cpf(coordenador.getCpf())
                 .nome(coordenador.getNome())
+                .ultimoNome(coordenador.getUltimoNome())
                 .genero(coordenador.getGenero())
                 .data_nascimento(coordenador.getData_nascimento())
                 .email(coordenador.getEmail())
@@ -103,10 +111,6 @@ public class CoordenadorService {
                                 .numero(telefone.getNumero())
                                 .build())
                         .collect(Collectors.toSet()))
-                .coordenacao(CoordenacaoDTO.builder()
-                        .nome(coordenador.getCoordenacao().getNome())
-                        .descricao(coordenador.getCoordenacao().getDescricao())
-                        .build())
-                .build();
+                .build(); 
     }
 }

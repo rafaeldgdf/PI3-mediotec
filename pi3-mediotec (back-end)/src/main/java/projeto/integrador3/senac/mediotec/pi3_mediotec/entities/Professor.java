@@ -14,7 +14,9 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
@@ -22,6 +24,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor 
 @Table(name = "professor")
 public class Professor extends Usuario {
 	
@@ -33,7 +37,7 @@ public class Professor extends Usuario {
     @Column(nullable = false, unique = true)
     private String cpf;
     
-    @JsonIgnore
+
     @ManyToOne
     private Coordenacao coordenacao;
     
@@ -48,4 +52,15 @@ public class Professor extends Usuario {
     @JsonIgnore
     @OneToMany(mappedBy = "professor")
     private Set<TurmaDisciplina> turmaDisciplinas;
+    
+    //funcoes para configurar as bilateridades 
+    public void addEndereco(Endereco endereco) {
+        endereco.setProfessor(this); 
+        this.enderecos.add(endereco);
+    }
+
+    public void addTelefone(Telefone telefone) {
+        telefone.setProfessor(this); 
+        this.telefones.add(telefone);
+    }
 }

@@ -35,12 +35,19 @@ public class ProfessorService {
 
     // Cria um novo professor
     public ProfessorDTO saveProfessor(Professor professor) {
-        if (professorRepository.existsById(professor.getCpf())) {
+        
+        if (professorRepository.existsByCpf(professor.getCpf())) {
             throw new RuntimeException("Professor com CPF " + professor.getCpf() + " já existe");
         }
+
+        // Configura a relação bidirecional entre professor e endereços/telefones
+        professor.getEnderecos().forEach(endereco -> endereco.setProfessor(professor));
+        professor.getTelefones().forEach(telefone -> telefone.setProfessor(professor));
+
         Professor savedProfessor = professorRepository.save(professor);
         return convertToDto(savedProfessor);
     }
+
 
     // Atualiza um professor existente
     public ProfessorDTO updateProfessor(String cpf, Professor professorDetails) {
@@ -48,6 +55,7 @@ public class ProfessorService {
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
 
         professor.setNome(professorDetails.getNome());
+        professor.setUltimoNome(professorDetails.getUltimoNome());
         professor.setGenero(professorDetails.getGenero());
         professor.setEmail(professorDetails.getEmail());
         professor.setEnderecos(professorDetails.getEnderecos());
@@ -70,6 +78,7 @@ public class ProfessorService {
         return ProfessorDTO.builder()
                 .cpf(professor.getCpf())
                 .nome(professor.getNome())
+                .ultimoNome(professor.getUltimoNome())
                 .genero(professor.getGenero())
                 .email(professor.getEmail())
                 .enderecos(professor.getEnderecos().stream()

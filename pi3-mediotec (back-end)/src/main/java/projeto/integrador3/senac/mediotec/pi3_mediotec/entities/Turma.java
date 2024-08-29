@@ -10,6 +10,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -19,10 +21,14 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
 @Builder
+@Getter
+@Setter 
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -44,6 +50,11 @@ public class Turma implements Serializable {
     @Column(nullable = false)
     private int ano;
     
+    @ManyToMany
+    @JoinTable(name = "aluno_turma", 
+               joinColumns = @JoinColumn(name = "turma_id"), 
+               inverseJoinColumns = @JoinColumn(name = "aluno_id"))
+    private Set<Aluno> alunos;
     
     @ManyToOne
     @JoinColumn(name = "id_coordenacao")

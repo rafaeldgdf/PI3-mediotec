@@ -14,7 +14,9 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
@@ -22,6 +24,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "coordenador")
 public class Coordenador extends Usuario{
 	
@@ -41,7 +45,15 @@ public class Coordenador extends Usuario{
     @Column(nullable = false)
     private Set<Telefone> telefones;
    	
-    @OneToOne
-    @JoinColumn(name = "id_coordenacao", referencedColumnName = "id_coordenacao") 
-    private Coordenacao coordenacao;
+    
+    //funcoes para configurar as bilateridades 
+    public void addEndereco(Endereco endereco) {
+        endereco.setCoordenador(this); 
+        this.enderecos.add(endereco);
+    }
+
+    public void addTelefone(Telefone telefone) {
+        telefone.setCoordenador(this); 
+        this.telefones.add(telefone);
+    }
 }
