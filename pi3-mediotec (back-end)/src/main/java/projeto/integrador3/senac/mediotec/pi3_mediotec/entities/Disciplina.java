@@ -3,6 +3,8 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 import java.io.Serializable;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,10 +48,11 @@ public class Disciplina implements Serializable {
     @Column(nullable = false)
     private int carga_horaria;
     
-    
+    @JsonIgnore 
     @OneToOne 
    	private Coordenacao coordenacao;
 
+    @JsonIgnore 
     @OneToMany(mappedBy = "disciplina")
     private Set<TurmaDisciplina> turmaDisciplinas;
 }
