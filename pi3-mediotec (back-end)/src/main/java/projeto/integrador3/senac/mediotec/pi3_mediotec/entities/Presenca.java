@@ -30,13 +30,13 @@ public class Presenca implements Serializable {
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
     private Date data;
+    
+    @Column(nullable = false)
+    private Boolean presente;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_aluno", nullable = false)
     private Aluno aluno;
-
-    @Column(nullable = false)
-    private Boolean presente;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({

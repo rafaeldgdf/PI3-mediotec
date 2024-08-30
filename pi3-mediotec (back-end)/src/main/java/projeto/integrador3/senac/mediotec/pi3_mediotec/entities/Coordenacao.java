@@ -1,6 +1,7 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -89,5 +90,18 @@ public class Coordenacao implements Serializable {
     public void addProfessor(Professor professor) {
         professor.setCoordenacao(this);
         this.professores.add(professor);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(id_coordenacao); // Baseado apenas no ID para evitar ciclos
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Coordenacao that = (Coordenacao) o;
+        return Objects.equals(id_coordenacao, that.id_coordenacao); // Comparando pelo ID
     }
 }

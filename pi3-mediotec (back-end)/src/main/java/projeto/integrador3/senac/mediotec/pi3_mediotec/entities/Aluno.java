@@ -1,6 +1,7 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,6 +19,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,7 +42,7 @@ public class Aluno extends Usuario {
     @Column(name = "matricula_aluno")
     private Long id_aluno;
     
-    @Size(min = 11, max = 11, message = "{usuario.cpf.size}")
+    @Size(min = 1, max = 100, message = "{usuario.cpf.size}")
     @Column(nullable = true, unique = true)
     private String cpf;
     
@@ -51,17 +54,16 @@ public class Aluno extends Usuario {
     @Column(nullable = false)
     private Set<Telefone> telefones;
     
-    @JsonIgnore
-    @ManyToMany(mappedBy = "alunos", cascade = CascadeType.ALL)
-    @Column(nullable = true)
-    private Set<Turma> turmas;
+
+    @Builder.Default
+    @ManyToMany(mappedBy = "alunos", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Turma> turmas = new HashSet<>();
     
     @JsonIgnore
     @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Presenca> presencas;
     
-    
-    //funcoes para configurar as bilateridades 
+    // Métodos extras para configurar as bilateralidades
     public void addEndereco(Endereco endereco) {
         endereco.setAluno(this); 
         this.enderecos.add(endereco);
@@ -74,8 +76,7 @@ public class Aluno extends Usuario {
     
     public void addTurma(Turma turma) {
         this.turmas.add(turma);
-        turma.getAlunos().add(this);
+        turma.getAlunos().add(this);  
     }
-
-
 }
+

@@ -1,5 +1,7 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
@@ -77,4 +79,17 @@ public class Endereco {
     @ManyToOne
     @JoinColumn(name = "coordenacao_id")
     private Coordenacao coordenacao;
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(id_endereco); // Baseado apenas no ID para evitar ciclos
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Endereco endereco = (Endereco) o;
+        return Objects.equals(id_endereco, endereco.id_endereco); // Comparando pelo ID
+    }
 }

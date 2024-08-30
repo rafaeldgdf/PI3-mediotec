@@ -14,6 +14,7 @@ public class TurmaDTO {
     private String nome;
     private int ano;
     private CoordenacaoDTO coordenacao;
-    private Set<Aluno> alunos;
+    private Set<Long> alunosIds; 
     private Set<TurmaDisciplina> turmaDisciplinas;
+    
 }

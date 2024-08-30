@@ -1,5 +1,7 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.entities;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
@@ -55,4 +57,17 @@ public class Telefone {
     @ManyToOne
     @JoinColumn(name = "coordenacao_id")
     private Coordenacao coordenacao;
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(id); // Baseado apenas no ID para evitar ciclos
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Telefone telefone = (Telefone) o;
+        return Objects.equals(id, telefone.id); // Comparando pelo ID
+    }
 }

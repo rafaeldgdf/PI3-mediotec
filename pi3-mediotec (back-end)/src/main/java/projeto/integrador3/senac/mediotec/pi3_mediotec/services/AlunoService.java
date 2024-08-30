@@ -7,11 +7,15 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.dtos.CoordenacaoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.dtos.EnderecoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.dtos.TelefoneDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.entities.Aluno;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.entities.Turma;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.repositories.AlunoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.repositories.CoordenacaoRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.repositories.TurmaRepository;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +23,10 @@ public class AlunoService {
 
     @Autowired
     private AlunoRepository alunoRepository;
+    
+    @Autowired
+    private TurmaRepository turmaRepository;
+   
     
 
     // Lista todos os alunos
@@ -36,24 +44,33 @@ public class AlunoService {
 
     // Cria um novo aluno
     public AlunoDTO saveAluno(Aluno aluno) {
-        // Verifica se o CPF já existe para evitar duplicações
         if (alunoRepository.existsByCpf(aluno.getCpf())) {
             throw new RuntimeException("Aluno com CPF " + aluno.getCpf() + " já existe");
         }
 
-        // Configura a associação do aluno com seus endereços e telefones
+        // Associa os endereços e telefones ao aluno
         aluno.getEnderecos().forEach(endereco -> endereco.setAluno(aluno));
         aluno.getTelefones().forEach(telefone -> telefone.setAluno(aluno));
 
-        // Verifica se a coleção turmas não é nula antes de tentar iterar sobre ela
+        // Certifique-se de que as turmas estão sendo recuperadas do banco de dados
         if (aluno.getTurmas() != null) {
-            aluno.getTurmas().forEach(turma -> turma.getAlunos().add(aluno));
+            Set<Turma> turmas = new HashSet<>();
+            for (Turma turma : aluno.getTurmas()) {
+                Turma existingTurma = turmaRepository.findById(turma.getId_turma())
+                        .orElseThrow(() -> new RuntimeException("Turma não encontrada: " + turma.getId_turma()));
+                turmas.add(existingTurma);
+                aluno.addTurma(existingTurma);
+            }
+            aluno.setTurmas(turmas);
         }
 
-        // Salva o aluno junto com seus endereços, telefones e turmas (se existirem)
+        // Salva o aluno com a associação das turmas
         Aluno savedAluno = alunoRepository.save(aluno);
+
+        // Aqui, o Hibernate deve persistir as relações na tabela intermediária automaticamente
         return convertToDto(savedAluno);
     }
+
 
 
     // Edita um aluno existente
@@ -78,6 +95,7 @@ public class AlunoService {
         return convertToDto(updatedAluno);
     }
 
+
     // Deleta um aluno
     public void deleteAluno(Long idAluno) {
         Aluno aluno = alunoRepository.findById(idAluno)
@@ -87,7 +105,7 @@ public class AlunoService {
 
     
 //metodos exatras 
-    // Converte Aluno para AlunoDTO
+    // Converte Aluno para AlunoDTO	
     private AlunoDTO convertToDto(Aluno aluno) {
         return AlunoDTO.builder()
                 .idAluno(aluno.getId_aluno())
@@ -114,6 +132,9 @@ public class AlunoService {
                         .collect(Collectors.toSet()))
                 .build();
     }
+    
+    
+    
 
     
 }
