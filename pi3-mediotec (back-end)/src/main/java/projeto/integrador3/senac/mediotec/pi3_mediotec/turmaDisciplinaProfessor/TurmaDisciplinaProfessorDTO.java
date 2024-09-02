@@ -9,7 +9,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaDTO;
 @Builder
 @Data
 public class TurmaDisciplinaProfessorDTO {
-    private TurmaDisciplinaProfessorIdDTO id;
+    private TurmaDisciplinaProfessorId id;
     private TurmaDTO turma;
     private DisciplinaDTO disciplina;
     private ProfessorDTO professor;

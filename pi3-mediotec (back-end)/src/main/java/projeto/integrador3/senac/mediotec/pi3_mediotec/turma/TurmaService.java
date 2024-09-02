@@ -14,6 +14,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.Professor;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorDTO; // Importando o novo DTO
+import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorId;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorIdDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessor; // Importando a nova entidade
 
@@ -173,19 +174,15 @@ public class TurmaService {
 
     
     private TurmaDisciplinaProfessorDTO convertToTurmaDisciplinaProfessorDTO(TurmaDisciplinaProfessor turmaDisciplinaProfessor) {
-        TurmaDisciplinaProfessorIdDTO idDTO = TurmaDisciplinaProfessorIdDTO.builder()
-                .turmaId(turmaDisciplinaProfessor.getId().getTurmaId())
-                .disciplinaId(turmaDisciplinaProfessor.getId().getDisciplinaId())
-                .professorId(turmaDisciplinaProfessor.getId().getProfessorId())
-                .build();
+        TurmaDisciplinaProfessorId id = turmaDisciplinaProfessor.getId();  // Pegando o ID diretamente
 
         return TurmaDisciplinaProfessorDTO.builder()
-                .id(idDTO)
+                .id(id)  // Usando o ID diretamente, que já está no tipo correto
                 .turma(TurmaDTO.builder()
                         .idTurma(turmaDisciplinaProfessor.getTurma().getId_turma())
                         .build())
-                .disciplina(convertToDisciplinaDTO(turmaDisciplinaProfessor.getDisciplina())) // Convertendo para DisciplinaDTO
-                .professor(convertToProfessorDTO(turmaDisciplinaProfessor.getProfessor())) // Convertendo para ProfessorDTO
+                .disciplina(convertToDisciplinaDTO(turmaDisciplinaProfessor.getDisciplina()))  // Convertendo para DisciplinaDTO
+                .professor(convertToProfessorDTO(turmaDisciplinaProfessor.getProfessor()))  // Convertendo para ProfessorDTO
                 .build();
     }
 
