@@ -2,6 +2,7 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.presenca;
 
 import lombok.Builder;
 import lombok.Data;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorId;
 
 import java.sql.Date;
 
@@ -12,6 +13,6 @@ public class PresencaDTO {
     private Date data;
     private Boolean presenca;
     private Long alunoId;
-    private Long professorId;
+    private TurmaDisciplinaProfessorId turmaDisciplinaProfessorId; 
     private Long coordenacaoId; 
 }

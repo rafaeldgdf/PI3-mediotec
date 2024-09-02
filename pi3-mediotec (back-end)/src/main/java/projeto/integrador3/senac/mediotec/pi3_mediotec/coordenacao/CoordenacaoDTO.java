@@ -10,6 +10,10 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaDTO;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
 @Data
 public class CoordenacaoDTO {

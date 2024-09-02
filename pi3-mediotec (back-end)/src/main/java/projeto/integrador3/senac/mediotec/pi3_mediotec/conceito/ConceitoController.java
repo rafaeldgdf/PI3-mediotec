@@ -14,18 +14,6 @@ public class ConceitoController {
     @Autowired
     private ConceitoService conceitoService;
 
-    @PostMapping
-    public ResponseEntity<ConceitoDTO> criarConceito(@RequestBody ConceitoDTO conceitoDTO) {
-        ConceitoDTO novoConceito = conceitoService.salvarConceito(conceitoDTO);
-        return ResponseEntity.ok(novoConceito);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ConceitoDTO> atualizarConceito(@PathVariable Long id, @RequestBody ConceitoDTO conceitoDTO) {
-        ConceitoDTO conceitoAtualizado = conceitoService.atualizarConceito(id, conceitoDTO);
-        return ResponseEntity.ok(conceitoAtualizado);
-    }
-
     @GetMapping
     public ResponseEntity<List<ConceitoDTO>> listarConceitos() {
         List<ConceitoDTO> conceitos = conceitoService.listarConceitos();
@@ -38,9 +26,27 @@ public class ConceitoController {
         return conceito.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PostMapping
+    public ResponseEntity<ConceitoDTO> criarConceito(@RequestBody ConceitoDTO conceitoDTO) {
+        ConceitoDTO novoConceito = conceitoService.salvarConceito(conceitoDTO);
+        return ResponseEntity.ok(novoConceito);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ConceitoDTO> atualizarConceito(@PathVariable Long id, @RequestBody ConceitoDTO conceitoDTO) {
+        ConceitoDTO conceitoAtualizado = conceitoService.atualizarConceito(id, conceitoDTO);
+        return ResponseEntity.ok(conceitoAtualizado);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarConceito(@PathVariable Long id) {
         conceitoService.deletarConceito(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/aluno/{alunoId}")
+    public ResponseEntity<List<ConceitoDTO>> buscarConceitosPorAluno(@PathVariable Long alunoId) {
+        List<ConceitoDTO> conceitos = conceitoService.buscarConceitosPorAluno(alunoId);
+        return ResponseEntity.ok(conceitos);
     }
 }

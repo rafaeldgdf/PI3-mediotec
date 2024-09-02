@@ -146,7 +146,7 @@ public class TurmaService {
                         .nome(turma.getCoordenacao().getNome())
                         .build())
                 .alunosIds(turma.getAlunos().stream()
-                        .map(Aluno::getId_aluno)
+                        .map(Aluno::getId)
                         .collect(Collectors.toSet()))
                 .turmaDisciplinaProfessores(turma.getTurmaDisciplinaProfessores().stream()
                         .map(this::convertToTurmaDisciplinaProfessorDTO) // Usa o método auxiliar aqui

@@ -106,7 +106,7 @@ public class AlunoService {
     // Converte Aluno para AlunoDTO	
     private AlunoDTO convertToDto(Aluno aluno) {
         return AlunoDTO.builder()
-                .idAluno(aluno.getId_aluno())
+                .id(aluno.getId())
                 .nome(aluno.getNome())
                 .ultimoNome(aluno.getUltimoNome())
                 .genero(aluno.getGenero())

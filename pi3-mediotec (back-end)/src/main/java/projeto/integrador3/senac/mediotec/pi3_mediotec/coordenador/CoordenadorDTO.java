@@ -8,6 +8,10 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneDTO;
 import java.util.Date;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder 
 @Data
 public class CoordenadorDTO {

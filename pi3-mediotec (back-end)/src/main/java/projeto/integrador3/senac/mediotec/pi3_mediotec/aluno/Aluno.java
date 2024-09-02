@@ -14,7 +14,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
@@ -41,11 +40,11 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.usuario.Usuario;
 public class Aluno extends Usuario {
 	
 	private static final long serialVersionUID = 1L;
-	
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "matricula_aluno")
-    private Long id_aluno;
+    private Long id;
     
     @Size(min = 1, max = 100, message = "{usuario.cpf.size}")
     @Column(nullable = true, unique = true)

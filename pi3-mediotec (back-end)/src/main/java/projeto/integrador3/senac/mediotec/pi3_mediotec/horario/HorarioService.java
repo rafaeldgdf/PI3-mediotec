@@ -3,7 +3,6 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.horario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessor;
@@ -64,7 +63,6 @@ public class HorarioService {
                 .collect(Collectors.toList());
     }
 
-
     public Optional<HorarioDTO> buscarHorarioPorId(Long id) {
         return horarioRepository.findById(id)
                 .map(this::convertToDTO);
@@ -89,13 +87,11 @@ public class HorarioService {
                 .horaInicio(horario.getHoraInicio())
                 .horaFim(horario.getHoraFim())
                 .coordenacaoId(horario.getCoordenacao() != null ? horario.getCoordenacao().getId_coordenacao() : null)
-                .turmaDisciplinaProfessorId(horario.getTurmaDisciplinaProfessor().getId()) // Aqui você passa o objeto completo de TurmaDisciplinaProfessorId
+                .turmaDisciplinaProfessorId(horario.getTurmaDisciplinaProfessor().getId())
                 .build();
     }
 
-
     private Horario convertToEntity(HorarioDTO horarioDTO) {
-        // Aqui você cria uma nova instância de TurmaDisciplinaProfessorId
         TurmaDisciplinaProfessorId turmaDisciplinaProfessorId = horarioDTO.getTurmaDisciplinaProfessorId();
 
         return Horario.builder()
@@ -108,11 +104,6 @@ public class HorarioService {
                 .build();
     }
 
-
-
-
-    // Implementação real dos métodos para buscar Coordenacao e TurmaDisciplinaProfessor
-
     private Coordenacao buscarCoordenacaoPorId(Long coordenacaoId) {
         return coordenacaoRepository.findById(coordenacaoId)
                 .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
@@ -122,5 +113,4 @@ public class HorarioService {
         return turmaDisciplinaProfessorRepository.findById(turmaDisciplinaProfessorId)
                 .orElseThrow(() -> new RuntimeException("TurmaDisciplinaProfessor não encontrado"));
     }
-
 }

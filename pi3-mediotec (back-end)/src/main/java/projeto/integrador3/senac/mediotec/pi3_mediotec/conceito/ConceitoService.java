@@ -1,16 +1,17 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.conceito;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.Aluno;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessor;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorId;
@@ -38,7 +39,6 @@ public class ConceitoService {
     @Transactional
     public ConceitoDTO salvarConceito(ConceitoDTO conceitoDTO) {
         Conceito conceito = convertToEntity(conceitoDTO);
-        conceito.setConceito(calcularConceito(conceito.getNota())); // Atribui o conceito automaticamente
         Conceito savedConceito = conceitoRepository.save(conceito);
         return convertToDTO(savedConceito);
     }
@@ -49,17 +49,10 @@ public class ConceitoService {
                 .orElseThrow(() -> new RuntimeException("Conceito não encontrado"));
 
         conceito.setNota(conceitoDTO.getNota());
-        conceito.setConceito(calcularConceito(conceitoDTO.getNota())); // Atribui o conceito automaticamente
-        conceito.setAluno(buscarAlunoPorId(conceitoDTO.getAluno().getIdAluno()));
+        conceito.setConceito(conceitoDTO.getConceito());
+        conceito.setAluno(buscarAlunoPorId(conceitoDTO.getAluno().getId()));
+        conceito.setTurmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(conceitoDTO.getTurmaDisciplinaProfessor().getId()));
         conceito.setCoordenacao(buscarCoordenacaoPorId(conceitoDTO.getCoordenacao().getIdCoordenacao()));
-        
-        TurmaDisciplinaProfessorId turmaDisciplinaProfessorId = new TurmaDisciplinaProfessorId(
-            conceitoDTO.getTurmaDisciplina().getTurma().getIdTurma(),
-            conceitoDTO.getTurmaDisciplina().getDisciplina().getIdDisciplina(),
-            conceitoDTO.getTurmaDisciplina().getProfessor().getCpf() 
-        );
-        
-        conceito.setTurmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(turmaDisciplinaProfessorId));
 
         Conceito updatedConceito = conceitoRepository.save(conceito);
         return convertToDTO(updatedConceito);
@@ -76,83 +69,75 @@ public class ConceitoService {
                 .map(this::convertToDTO);
     }
 
+    @Transactional
     public void deletarConceito(Long id) {
         Conceito conceito = conceitoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Conceito não encontrado"));
         conceitoRepository.delete(conceito);
     }
 
+    public List<ConceitoDTO> buscarConceitosPorAluno(Long id) {
+        List<Conceito> conceitos = conceitoRepository.findByAluno_Id(id);
+        return conceitos.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+
+
     private ConceitoDTO convertToDTO(Conceito conceito) {
         return ConceitoDTO.builder()
                 .idConceito(conceito.getId_conceito())
                 .nota(conceito.getNota())
                 .conceito(conceito.getConceito())
+                .unidade(conceito.getUnidade())  
                 .aluno(AlunoDTO.builder()
-                        .idAluno(conceito.getAluno().getId_aluno())
+                        .id(conceito.getAluno().getId())
                         .nome(conceito.getAluno().getNome())
                         .build())
+                .turmaDisciplinaProfessor(TurmaDisciplinaProfessorDTO.builder()
+                        .id(conceito.getTurmaDisciplinaProfessor().getId())
+                        .turma(TurmaDTO.builder()
+                                .nome(conceito.getTurmaDisciplinaProfessor().getTurma().getNome())
+                                .build())
+                        .disciplina(DisciplinaDTO.builder()
+                                .nome(conceito.getTurmaDisciplinaProfessor().getDisciplina().getNome())
+                                .build())
+                        .professor(ProfessorDTO.builder()
+                                .nome(conceito.getTurmaDisciplinaProfessor().getProfessor().getNome())
+                                .ultimoNome(conceito.getTurmaDisciplinaProfessor().getProfessor().getUltimoNome())
+                                .build())
+                        .build())
                 .coordenacao(CoordenacaoDTO.builder()
-                        .idCoordenacao(conceito.getCoordenacao().getId_coordenacao())
                         .nome(conceito.getCoordenacao().getNome())
                         .build())
-                .turmaDisciplina(TurmaDisciplinaProfessorDTO.builder()
-                	    .id(new TurmaDisciplinaProfessorId(
-                	        conceito.getTurmaDisciplinaProfessor().getTurma().getId_turma(),
-                	        conceito.getTurmaDisciplinaProfessor().getDisciplina().getId_disciplina(),
-                	        conceito.getTurmaDisciplinaProfessor().getProfessor().getCpf()
-                	    ))
-                	    .build())
-
                 .build();
     }
 
 
     private Conceito convertToEntity(ConceitoDTO conceitoDTO) {
-        // Cria uma instância de TurmaDisciplinaProfessorId a partir do DTO
-        TurmaDisciplinaProfessorId turmaDisciplinaProfessorId = new TurmaDisciplinaProfessorId(
-            conceitoDTO.getTurmaDisciplina().getTurma().getIdTurma(), 
-            conceitoDTO.getTurmaDisciplina().getDisciplina().getIdDisciplina(), 
-            conceitoDTO.getTurmaDisciplina().getProfessor().getCpf());
-
         return Conceito.builder()
-            .id_conceito(conceitoDTO.getIdConceito())
-            .nota(conceitoDTO.getNota())
-            .conceito(calcularConceito(conceitoDTO.getNota())) // Atribui o conceito automaticamente
-            .aluno(buscarAlunoPorId(conceitoDTO.getAluno().getIdAluno()))
-            .coordenacao(buscarCoordenacaoPorId(conceitoDTO.getCoordenacao().getIdCoordenacao()))
-            .turmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(turmaDisciplinaProfessorId))
-            .build();
+                .id_conceito(conceitoDTO.getIdConceito())
+                .nota(conceitoDTO.getNota())
+                .conceito(conceitoDTO.getConceito())
+                .aluno(buscarAlunoPorId(conceitoDTO.getAluno().getId()))
+                .turmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(conceitoDTO.getTurmaDisciplinaProfessor().getId()))
+                .coordenacao(buscarCoordenacaoPorId(conceitoDTO.getCoordenacao().getIdCoordenacao()))
+                .build();
     }
 
-    // Método para determinar o conceito com base na nota
-    private String calcularConceito(Float nota) {
-        if (nota >= 9.5 && nota <= 10.0) {
-            return "Excelente";
-        } else if (nota >= 9.0 && nota < 9.5) {
-            return "Ótimo";
-        } else if (nota >= 7.0 && nota < 9.0) {
-            return "Bom";
-        } else if (nota >= 6.0 && nota < 7.0) {
-            return "Suficiente";
-        } else if (nota >= 0.0 && nota < 6.0) {
-            return "Insuficiente";
-        } else {
-            throw new IllegalArgumentException("Nota fora do intervalo permitido: " + nota);
-        }
-    }
-
-    private Aluno buscarAlunoPorId(Long idAluno) {
-        return alunoRepository.findById(idAluno)
+    private Aluno buscarAlunoPorId(Long id) {
+        return alunoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-    }
-
-    private Coordenacao buscarCoordenacaoPorId(Long idCoordenacao) {
-        return coordenacaoRepository.findById(idCoordenacao)
-                .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
     }
 
     private TurmaDisciplinaProfessor buscarTurmaDisciplinaProfessorPorId(TurmaDisciplinaProfessorId id) {
         return turmaDisciplinaProfessorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("TurmaDisciplinaProfessor não encontrado"));
+    }
+
+    private Coordenacao buscarCoordenacaoPorId(Long idCoordenacao) {
+        return coordenacaoRepository.findById(idCoordenacao)
+                .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
     }
 }
