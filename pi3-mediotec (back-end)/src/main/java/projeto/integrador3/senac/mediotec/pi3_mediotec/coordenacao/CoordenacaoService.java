@@ -92,7 +92,7 @@ public class CoordenacaoService {
             .build();
 
         return CoordenacaoDTO.builder()
-            .idCoordenacao(coordenacao.getId_coordenacao())
+            .id(coordenacao.getId())
             .nome(coordenacao.getNome())
             .descricao(coordenacao.getDescricao())
             .enderecos(coordenacao.getEnderecos().stream()

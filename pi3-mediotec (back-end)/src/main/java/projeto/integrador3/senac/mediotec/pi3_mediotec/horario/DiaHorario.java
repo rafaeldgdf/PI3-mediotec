@@ -43,7 +43,4 @@ public class DiaHorario implements Serializable {
     @OneToMany(mappedBy = "diaHorario")
     private Set<Horario> horarios;
     
-
-    
-    
 }

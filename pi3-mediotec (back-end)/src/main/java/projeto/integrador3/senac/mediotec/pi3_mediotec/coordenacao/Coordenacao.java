@@ -46,7 +46,8 @@ public class Coordenacao implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_coordenacao;
+    @Column(name = "id_coordenacao")
+    private Long id;
     
     @NotNull(message = "{coordenacao.nome.notnull}")
     @Size(min = 3, max = 50, message = "{coordenacao.nome.size}")
@@ -99,7 +100,7 @@ public class Coordenacao implements Serializable {
     
     @Override
     public int hashCode() {
-        return Objects.hash(id_coordenacao); // Baseado apenas no ID para evitar ciclos
+        return Objects.hash(id); // Baseado apenas no ID para evitar ciclos
     }
 
     @Override
@@ -107,6 +108,6 @@ public class Coordenacao implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Coordenacao that = (Coordenacao) o;
-        return Objects.equals(id_coordenacao, that.id_coordenacao); // Comparando pelo ID
+        return Objects.equals(id, that.id); // Comparando pelo ID
     }
 }

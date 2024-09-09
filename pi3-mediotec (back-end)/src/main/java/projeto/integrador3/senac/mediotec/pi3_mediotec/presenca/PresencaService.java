@@ -32,20 +32,22 @@ public class PresencaService {
     private TurmaDisciplinaProfessorRepository turmaDisciplinaProfessorRepository;
 
     @Transactional
-    public PresencaDTO salvarPresenca(PresencaDTO presencaDTO) {
+    public PresencaDTO salvarPresenca(Long idAluno, PresencaDTO presencaDTO) {
+        Aluno aluno = buscarAlunoPorId(idAluno);
         Presenca presenca = convertToEntity(presencaDTO);
+        presenca.setAluno(aluno);
         Presenca savedPresenca = presencaRepository.save(presenca);
         return convertToDTO(savedPresenca);
     }
 
     @Transactional
-    public PresencaDTO atualizarPresenca(Long id, PresencaDTO presencaDTO) {
+    public PresencaDTO atualizarPresenca(Long idAluno, Long id, PresencaDTO presencaDTO) {
         Presenca presenca = presencaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Presença não encontrada"));
 
         presenca.setData(presencaDTO.getData());
         presenca.setPresenca(presencaDTO.getPresenca());
-        presenca.setAluno(buscarAlunoPorId(presencaDTO.getAlunoId()));
+        presenca.setAluno(buscarAlunoPorId(idAluno));
         presenca.setTurmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(presencaDTO.getTurmaDisciplinaProfessorId()));
         presenca.setCoordenacao(buscarCoordenacaoPorId(presencaDTO.getCoordenacaoId()));
 
@@ -53,18 +55,21 @@ public class PresencaService {
         return convertToDTO(updatedPresenca);
     }
 
-    public List<PresencaDTO> listarPresencas() {
-        return presencaRepository.findAll().stream()
+    public List<PresencaDTO> listarPresencasPorAluno(Long idAluno) {
+        Aluno aluno = buscarAlunoPorId(idAluno);
+        return presencaRepository.findByAluno(aluno).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public Optional<PresencaDTO> buscarPresencaPorId(Long id) {
+    public Optional<PresencaDTO> buscarPresencaPorId(Long idAluno, Long id) {
+        buscarAlunoPorId(idAluno); // Valida se o aluno existe
         return presencaRepository.findById(id)
                 .map(this::convertToDTO);
     }
 
-    public void deletarPresenca(Long id) {
+    public void deletarPresenca(Long idAluno, Long id) {
+        buscarAlunoPorId(idAluno); // Valida se o aluno existe
         Presenca presenca = presencaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Presença não encontrada"));
         presencaRepository.delete(presenca);
@@ -73,11 +78,11 @@ public class PresencaService {
     private PresencaDTO convertToDTO(Presenca presenca) {
         return PresencaDTO.builder()
                 .id_presenca(presenca.getId_presenca())
-                .data(new java.sql.Date(presenca.getData().getTime())) // Conversão de java.util.Date para java.sql.Date
+                .data(new java.sql.Date(presenca.getData().getTime()))
                 .presenca(presenca.getPresenca())
                 .alunoId(presenca.getAluno() != null ? presenca.getAluno().getId() : null)
-                .turmaDisciplinaProfessorId(presenca.getTurmaDisciplinaProfessor() != null ? presenca.getTurmaDisciplinaProfessor().getId() : null) // Passando o ID do TurmaDisciplinaProfessor
-                .coordenacaoId(presenca.getCoordenacao() != null ? presenca.getCoordenacao().getId_coordenacao() : null)
+                .turmaDisciplinaProfessorId(presenca.getTurmaDisciplinaProfessor() != null ? presenca.getTurmaDisciplinaProfessor().getId() : null)
+                .coordenacaoId(presenca.getCoordenacao() != null ? presenca.getCoordenacao().getId() : null)
                 .build();
     }
 
@@ -86,7 +91,6 @@ public class PresencaService {
                 .id_presenca(presencaDTO.getId_presenca())
                 .data(presencaDTO.getData())
                 .presenca(presencaDTO.getPresenca())
-                .aluno(buscarAlunoPorId(presencaDTO.getAlunoId()))
                 .turmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(presencaDTO.getTurmaDisciplinaProfessorId()))
                 .coordenacao(buscarCoordenacaoPorId(presencaDTO.getCoordenacaoId()))
                 .build();

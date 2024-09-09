@@ -52,7 +52,7 @@ public class ConceitoService {
         conceito.setConceito(conceitoDTO.getConceito());
         conceito.setAluno(buscarAlunoPorId(conceitoDTO.getAluno().getId()));
         conceito.setTurmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(conceitoDTO.getTurmaDisciplinaProfessor().getId()));
-        conceito.setCoordenacao(buscarCoordenacaoPorId(conceitoDTO.getCoordenacao().getIdCoordenacao()));
+        conceito.setCoordenacao(buscarCoordenacaoPorId(conceitoDTO.getCoordenacao().getId()));
 
         Conceito updatedConceito = conceitoRepository.save(conceito);
         return convertToDTO(updatedConceito);
@@ -122,7 +122,7 @@ public class ConceitoService {
                 .conceito(conceitoDTO.getConceito())
                 .aluno(buscarAlunoPorId(conceitoDTO.getAluno().getId()))
                 .turmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(conceitoDTO.getTurmaDisciplinaProfessor().getId()))
-                .coordenacao(buscarCoordenacaoPorId(conceitoDTO.getCoordenacao().getIdCoordenacao()))
+                .coordenacao(buscarCoordenacaoPorId(conceitoDTO.getCoordenacao().getId()))
                 .build();
     }
 
@@ -136,8 +136,8 @@ public class ConceitoService {
                 .orElseThrow(() -> new RuntimeException("TurmaDisciplinaProfessor não encontrado"));
     }
 
-    private Coordenacao buscarCoordenacaoPorId(Long idCoordenacao) {
-        return coordenacaoRepository.findById(idCoordenacao)
+    private Coordenacao buscarCoordenacaoPorId(Long id) {
+        return coordenacaoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
     }
 }

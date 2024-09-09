@@ -86,7 +86,7 @@ public class HorarioService {
                 .diaSemana(horario.getDiaSemana().name())
                 .horaInicio(horario.getHoraInicio())
                 .horaFim(horario.getHoraFim())
-                .coordenacaoId(horario.getCoordenacao() != null ? horario.getCoordenacao().getId_coordenacao() : null)
+                .coordenacaoId(horario.getCoordenacao() != null ? horario.getCoordenacao().getId() : null)
                 .turmaDisciplinaProfessorId(horario.getTurmaDisciplinaProfessor().getId())
                 .build();
     }

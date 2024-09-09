@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @Builder
 @Data
 public class CoordenacaoDTO {
-    private Long idCoordenacao;
+    private Long id;
     private String nome;
     private String descricao;
     private Set<EnderecoDTO> enderecos;

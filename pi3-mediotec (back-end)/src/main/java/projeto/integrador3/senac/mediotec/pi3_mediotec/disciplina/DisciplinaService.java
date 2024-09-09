@@ -62,7 +62,7 @@ public class DisciplinaService {
                 .cargaHoraria(disciplina.getCarga_horaria())
                 .coordenacao(disciplina.getCoordenacao() != null ? 
                     CoordenacaoDTO.builder()
-                        .idCoordenacao(disciplina.getCoordenacao().getId_coordenacao())
+                        .id(disciplina.getCoordenacao().getId())
                         .nome(disciplina.getCoordenacao().getNome())
                         .build() : null)
                 .build();

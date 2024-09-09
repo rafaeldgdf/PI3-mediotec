@@ -71,7 +71,7 @@ public class TurmaService {
         turma.setNome(turmaDTO.getNome());
         turma.setAno(turmaDTO.getAno());
 
-        Coordenacao coordenacao = coordenacaoRepository.findById(turmaDTO.getCoordenacao().getIdCoordenacao())
+        Coordenacao coordenacao = coordenacaoRepository.findById(turmaDTO.getCoordenacao().getId())
                 .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
         turma.setCoordenacao(coordenacao);
 
@@ -94,7 +94,7 @@ public class TurmaService {
         turma.setNome(turmaDTO.getNome());
         turma.setAno(turmaDTO.getAno());
 
-        Coordenacao coordenacao = coordenacaoRepository.findById(turmaDTO.getCoordenacao().getIdCoordenacao())
+        Coordenacao coordenacao = coordenacaoRepository.findById(turmaDTO.getCoordenacao().getId())
                 .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
         turma.setCoordenacao(coordenacao);
 
@@ -142,7 +142,7 @@ public class TurmaService {
                 .nome(turma.getNome())
                 .ano(turma.getAno())
                 .coordenacao(CoordenacaoDTO.builder()
-                        .idCoordenacao(turma.getCoordenacao().getId_coordenacao())
+                        .id(turma.getCoordenacao().getId())
                         .nome(turma.getCoordenacao().getNome())
                         .build())
                 .alunosIds(turma.getAlunos().stream()

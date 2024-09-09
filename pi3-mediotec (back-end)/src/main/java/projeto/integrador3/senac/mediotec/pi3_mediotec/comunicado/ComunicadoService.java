@@ -53,7 +53,7 @@ public class ComunicadoService {
 
         comunicado.setConteudo(comunicadoDTO.getConteudo());
         comunicado.setData_envio(comunicadoDTO.getData_envio());
-        comunicado.setCoordenacao(buscarCoordenacaoPorId(comunicadoDTO.getCoordenacao().getIdCoordenacao()));
+        comunicado.setCoordenacao(buscarCoordenacaoPorId(comunicadoDTO.getCoordenacao().getId()));
         comunicado.setProfessor(buscarProfessorPorId(comunicadoDTO.getProfessor().getCpf()));
         comunicado.setAluno(buscarAlunoPorId(comunicadoDTO.getAluno().getId()));
         comunicado.setTurma(buscarTurmaPorId(comunicadoDTO.getTurma().getIdTurma()));
@@ -85,7 +85,7 @@ public class ComunicadoService {
                 .conteudo(comunicado.getConteudo())
                 .data_envio(new java.sql.Date(comunicado.getData_envio().getTime()))
                 .coordenacao(comunicado.getCoordenacao() != null ? CoordenacaoDTO.builder()
-                        .idCoordenacao(comunicado.getCoordenacao().getId_coordenacao())
+                        .id(comunicado.getCoordenacao().getId())
                         .nome(comunicado.getCoordenacao().getNome())
                         .build() : null)
                 .professor(comunicado.getProfessor() != null ? ProfessorDTO.builder()
@@ -109,7 +109,7 @@ public class ComunicadoService {
                 .id_comunicado(comunicadoDTO.getId_comunicado())
                 .conteudo(comunicadoDTO.getConteudo())
                 .data_envio(comunicadoDTO.getData_envio())
-                .coordenacao(buscarCoordenacaoPorId(comunicadoDTO.getCoordenacao().getIdCoordenacao()))
+                .coordenacao(buscarCoordenacaoPorId(comunicadoDTO.getCoordenacao().getId()))
                 .professor(buscarProfessorPorId(comunicadoDTO.getProfessor().getCpf()))
                 .aluno(buscarAlunoPorId(comunicadoDTO.getAluno().getId()))
                 .turma(buscarTurmaPorId(comunicadoDTO.getTurma().getIdTurma()))
