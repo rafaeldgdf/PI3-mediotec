@@ -54,8 +54,8 @@ public class AlunoService {
         if (aluno.getTurmas() != null) {
             Set<Turma> turmas = new HashSet<>();
             for (Turma turma : aluno.getTurmas()) {
-                Turma existingTurma = turmaRepository.findById(turma.getId_turma())
-                        .orElseThrow(() -> new RuntimeException("Turma não encontrada: " + turma.getId_turma()));
+                Turma existingTurma = turmaRepository.findById(turma.getId())
+                        .orElseThrow(() -> new RuntimeException("Turma não encontrada: " + turma.getId()));
                 turmas.add(existingTurma);
                 aluno.addTurma(existingTurma);
             }

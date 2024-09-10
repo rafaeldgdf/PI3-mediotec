@@ -45,7 +45,8 @@ public class Turma implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_turma;
+    @Column(name = "id_turma")
+    private Long id;
 
     @NotNull(message = "{turma.nome.notnull}")
     @Size(min = 3, max = 100, message = "{turma.nome.size}")
@@ -70,11 +71,8 @@ public class Turma implements Serializable {
     @JoinColumn(name = "id_coordenacao")
     private Coordenacao coordenacao;
 
-    @JsonIgnore
-    @Builder.Default
-    @OneToMany(mappedBy = "turma", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TurmaDisciplinaProfessor> turmaDisciplinaProfessores = new HashSet<>(); // Atualizado para refletir a nova entidade
     
+  
     // Método extra para configurar a bilateralidade
     public void addAluno(Aluno aluno) {
         this.alunos.add(aluno);

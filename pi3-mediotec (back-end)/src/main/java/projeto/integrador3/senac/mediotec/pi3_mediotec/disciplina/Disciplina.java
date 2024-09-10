@@ -51,11 +51,7 @@ public class Disciplina implements Serializable {
     @NotNull(message = "{disciplina.ch.notnull}")
     @Column(nullable = false)
     private int carga_horaria;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_coordenacao", nullable = true)
-    private Coordenacao coordenacao;
-    
+   
     
     @JsonIgnore
     @OneToMany(mappedBy = "disciplina")

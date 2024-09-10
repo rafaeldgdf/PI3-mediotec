@@ -14,5 +14,4 @@ public class PresencaDTO {
     private Boolean presenca;
     private Long alunoId;
     private TurmaDisciplinaProfessorId turmaDisciplinaProfessorId; 
-    private Long coordenacaoId; 
 }

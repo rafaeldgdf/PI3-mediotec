@@ -13,6 +13,5 @@ public class HorarioDTO {
     private String diaSemana;
     private LocalTime horaInicio;
     private LocalTime horaFim;
-    private Long coordenacaoId;
     private TurmaDisciplinaProfessorId turmaDisciplinaProfessorId;
 }

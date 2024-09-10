@@ -7,16 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.Aluno;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoDTO;
+
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoRepository;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.Disciplina;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.Professor;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorDTO; // Importando o novo DTO
-import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorId;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorIdDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessor; // Importando a nova entidade
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,46 +27,18 @@ public class TurmaService {
     @Autowired
     private AlunoRepository alunoRepository;
 
-    // Lista todas as turmas
-    public List<TurmaDTO> getAllTurmas() {
-        return turmaRepository.findAll().stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-    }
-
-    // Busca turma pelo id
-    public Optional<TurmaDTO> getTurmaById(Long id) {
-        return turmaRepository.findById(id)
-                .map(this::convertToDto);
-    }
-
-    @Transactional
-    public Turma saveTurma(Turma turma, List<Long> alunosIds) {
-        List<Aluno> alunos = new ArrayList<>();
-        for (Long alunoId : alunosIds) {
-            Aluno aluno = alunoRepository.findById(alunoId)
-                    .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-            alunos.add(aluno);
-        }
-
-        // Adiciona os alunos à turma
-        for (Aluno aluno : alunos) {
-            turma.addAluno(aluno);
-        }
-
-        return turmaRepository.save(turma);
-    }
-
-
+    // Criação de uma nova turma com DTO
     public TurmaDTO saveTurma(TurmaDTO turmaDTO) {
         Turma turma = new Turma();
         turma.setNome(turmaDTO.getNome());
         turma.setAno(turmaDTO.getAno());
 
-        Coordenacao coordenacao = coordenacaoRepository.findById(turmaDTO.getCoordenacao().getId())
+        // Busca a coordenação pelo ID
+        Coordenacao coordenacao = coordenacaoRepository.findById(turmaDTO.getCoordenacaoId())
                 .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
         turma.setCoordenacao(coordenacao);
 
+        // Adiciona os alunos à turma
         List<Long> alunosIds = new ArrayList<>(turmaDTO.getAlunosIds());
         for (Long alunoId : alunosIds) {
             Aluno aluno = alunoRepository.findById(alunoId)
@@ -86,6 +50,7 @@ public class TurmaService {
         return convertToDto(savedTurma);
     }
 
+    // Atualização de uma turma existente com DTO
     @Transactional
     public TurmaDTO updateTurma(Long id, TurmaDTO turmaDTO) {
         Turma turma = turmaRepository.findById(id)
@@ -94,10 +59,13 @@ public class TurmaService {
         turma.setNome(turmaDTO.getNome());
         turma.setAno(turmaDTO.getAno());
 
-        Coordenacao coordenacao = coordenacaoRepository.findById(turmaDTO.getCoordenacao().getId())
+        // Busca a coordenação pelo ID
+        Coordenacao coordenacao = coordenacaoRepository.findById(turmaDTO.getCoordenacaoId())
                 .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
         turma.setCoordenacao(coordenacao);
 
+        // Atualiza os alunos da turma
+        turma.getAlunos().clear(); // Limpa os alunos atuais
         List<Long> alunosIds = new ArrayList<>(turmaDTO.getAlunosIds());
         for (Long alunoId : alunosIds) {
             Aluno aluno = alunoRepository.findById(alunoId)
@@ -108,84 +76,37 @@ public class TurmaService {
         Turma updatedTurma = turmaRepository.save(turma);
         return convertToDto(updatedTurma);
     }
-
-
-    // Edita turma
-    @Transactional
-    public TurmaDTO updateTurma(Long id, Turma turmaDetails) {
-        Turma turma = turmaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
-
-        turma.setNome(turmaDetails.getNome());
-        turma.setAno(turmaDetails.getAno());
-        turma.setAlunos(turmaDetails.getAlunos());
-        turma.setCoordenacao(turmaDetails.getCoordenacao());
-        turma.setTurmaDisciplinaProfessores(turmaDetails.getTurmaDisciplinaProfessores()); // Atualizado para refletir a nova entidade
-
-        Turma updatedTurma = turmaRepository.save(turma);
-        return convertToDto(updatedTurma);
+    
+    
+    public List<TurmaDTO> getAllTurmas() {
+        return turmaRepository.findAll().stream()
+                .map(this::convertToDto) // Converte cada entidade Turma para TurmaDTO
+                .collect(Collectors.toList());
     }
-
-    // Deleta turma
+    
+    public Optional<TurmaDTO> getTurmaById(Long id) {
+        return turmaRepository.findById(id)
+                .map(this::convertToDto); // Converte para DTO se encontrado
+    }
+    
     @Transactional
     public void deleteTurma(Long id) {
         Turma turma = turmaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
-        turmaRepository.delete(turma);
+        turmaRepository.delete(turma); // Deleta a entidade
     }
-
-// Converte Turma para TurmaDTO
     
+
+    // Converte a entidade Turma para o DTO correspondente
     private TurmaDTO convertToDto(Turma turma) {
         return TurmaDTO.builder()
-                .idTurma(turma.getId_turma())
+                .id(turma.getId())
                 .nome(turma.getNome())
                 .ano(turma.getAno())
-                .coordenacao(CoordenacaoDTO.builder()
-                        .id(turma.getCoordenacao().getId())
-                        .nome(turma.getCoordenacao().getNome())
-                        .build())
+                .coordenacaoId(turma.getCoordenacao().getId()) // Agora retorna apenas o ID da coordenação
                 .alunosIds(turma.getAlunos().stream()
                         .map(Aluno::getId)
                         .collect(Collectors.toSet()))
-                .turmaDisciplinaProfessores(turma.getTurmaDisciplinaProfessores().stream()
-                        .map(this::convertToTurmaDisciplinaProfessorDTO) // Usa o método auxiliar aqui
-                        .collect(Collectors.toSet()))
                 .build();
     }
-
-    
-    private ProfessorDTO convertToProfessorDTO(Professor professor) {
-        return ProfessorDTO.builder()
-                .cpf(professor.getCpf())
-                .nome(professor.getNome())
-                .build();
-    }
-
-    
-    
-    private DisciplinaDTO convertToDisciplinaDTO(Disciplina disciplina) {
-        return DisciplinaDTO.builder()
-                .idDisciplina(disciplina.getId_disciplina())
-                .nome(disciplina.getNome())
-                .cargaHoraria(disciplina.getCarga_horaria())
-                .build();
-    }
-
-    
-    private TurmaDisciplinaProfessorDTO convertToTurmaDisciplinaProfessorDTO(TurmaDisciplinaProfessor turmaDisciplinaProfessor) {
-        TurmaDisciplinaProfessorId id = turmaDisciplinaProfessor.getId();  // Pegando o ID diretamente
-
-        return TurmaDisciplinaProfessorDTO.builder()
-                .id(id)  // Usando o ID diretamente, que já está no tipo correto
-                .turma(TurmaDTO.builder()
-                        .idTurma(turmaDisciplinaProfessor.getTurma().getId_turma())
-                        .build())
-                .disciplina(convertToDisciplinaDTO(turmaDisciplinaProfessor.getDisciplina()))  // Convertendo para DisciplinaDTO
-                .professor(convertToProfessorDTO(turmaDisciplinaProfessor.getProfessor()))  // Convertendo para ProfessorDTO
-                .build();
-    }
-
-
-
 }

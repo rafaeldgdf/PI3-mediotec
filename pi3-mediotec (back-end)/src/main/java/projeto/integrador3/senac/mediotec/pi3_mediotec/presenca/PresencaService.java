@@ -25,8 +25,6 @@ public class PresencaService {
     @Autowired
     private AlunoRepository alunoRepository;
 
-    @Autowired
-    private CoordenacaoRepository coordenacaoRepository;
 
     @Autowired
     private TurmaDisciplinaProfessorRepository turmaDisciplinaProfessorRepository;
@@ -49,7 +47,6 @@ public class PresencaService {
         presenca.setPresenca(presencaDTO.getPresenca());
         presenca.setAluno(buscarAlunoPorId(idAluno));
         presenca.setTurmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(presencaDTO.getTurmaDisciplinaProfessorId()));
-        presenca.setCoordenacao(buscarCoordenacaoPorId(presencaDTO.getCoordenacaoId()));
 
         Presenca updatedPresenca = presencaRepository.save(presenca);
         return convertToDTO(updatedPresenca);
@@ -82,7 +79,6 @@ public class PresencaService {
                 .presenca(presenca.getPresenca())
                 .alunoId(presenca.getAluno() != null ? presenca.getAluno().getId() : null)
                 .turmaDisciplinaProfessorId(presenca.getTurmaDisciplinaProfessor() != null ? presenca.getTurmaDisciplinaProfessor().getId() : null)
-                .coordenacaoId(presenca.getCoordenacao() != null ? presenca.getCoordenacao().getId() : null)
                 .build();
     }
 
@@ -92,7 +88,6 @@ public class PresencaService {
                 .data(presencaDTO.getData())
                 .presenca(presencaDTO.getPresenca())
                 .turmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(presencaDTO.getTurmaDisciplinaProfessorId()))
-                .coordenacao(buscarCoordenacaoPorId(presencaDTO.getCoordenacaoId()))
                 .build();
     }
 
@@ -101,10 +96,6 @@ public class PresencaService {
                 .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
     }
 
-    private Coordenacao buscarCoordenacaoPorId(Long idCoordenacao) {
-        return coordenacaoRepository.findById(idCoordenacao)
-                .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
-    }
 
     private TurmaDisciplinaProfessor buscarTurmaDisciplinaProfessorPorId(TurmaDisciplinaProfessorId turmaDisciplinaProfessorId) {
         return turmaDisciplinaProfessorRepository.findById(turmaDisciplinaProfessorId)

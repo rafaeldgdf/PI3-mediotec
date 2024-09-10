@@ -41,7 +41,7 @@ public class DisciplinaService {
 
         disciplina.setNome(disciplinaDetails.getNome());
         disciplina.setCarga_horaria(disciplinaDetails.getCarga_horaria());
-        disciplina.setCoordenacao(disciplinaDetails.getCoordenacao());
+
 
         Disciplina updatedDisciplina = disciplinaRepository.save(disciplina);
         return convertToDto(updatedDisciplina);
@@ -60,11 +60,6 @@ public class DisciplinaService {
                 .idDisciplina(disciplina.getId_disciplina())
                 .nome(disciplina.getNome())
                 .cargaHoraria(disciplina.getCarga_horaria())
-                .coordenacao(disciplina.getCoordenacao() != null ? 
-                    CoordenacaoDTO.builder()
-                        .id(disciplina.getCoordenacao().getId())
-                        .nome(disciplina.getCoordenacao().getNome())
-                        .build() : null)
                 .build();
     }
 }

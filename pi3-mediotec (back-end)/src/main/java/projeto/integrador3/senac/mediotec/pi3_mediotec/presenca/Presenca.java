@@ -49,8 +49,6 @@ public class Presenca implements Serializable {
     })
     private TurmaDisciplinaProfessor turmaDisciplinaProfessor; // Atualizado para refletir a nova entidade
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_coordenacao", nullable = true)
-    private Coordenacao coordenacao;
+
 }
 

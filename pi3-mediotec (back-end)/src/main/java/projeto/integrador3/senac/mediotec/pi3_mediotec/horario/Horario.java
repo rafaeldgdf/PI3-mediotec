@@ -50,10 +50,6 @@ public class Horario implements Serializable {
     @NotNull
     private LocalTime horaFim;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_coordenacao", nullable = true)
-    private Coordenacao coordenacao;
-
     @ManyToOne
     @JoinColumns({
         @JoinColumn(name = "id_turma", referencedColumnName = "id_turma"),

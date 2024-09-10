@@ -18,6 +18,5 @@ public class ConceitoDTO {
     private String conceito;
     private String unidade;
     private TurmaDisciplinaProfessorDTO turmaDisciplinaProfessor;
-    private AlunoDTO aluno; // Use o DTO ao invés de Aluno
-    private CoordenacaoDTO coordenacao;
+    private AlunoDTO aluno; 
 }

@@ -45,7 +45,7 @@ public class TurmaDisciplinaProfessorService {
 
      // Criação da chave composta
      TurmaDisciplinaProfessorId id = new TurmaDisciplinaProfessorId(
-             turmaDisciplinaProfessor.getTurma().getId_turma(),
+             turmaDisciplinaProfessor.getTurma().getId(),
              turmaDisciplinaProfessor.getDisciplina().getId_disciplina(),
              turmaDisciplinaProfessor.getProfessor().getCpf()
      );
@@ -74,7 +74,7 @@ public class TurmaDisciplinaProfessorService {
 
  // Método para validar se Turma, Disciplina e Professor existem
  private void validateTurmaDisciplinaProfessor(TurmaDisciplinaProfessor turmaDisciplinaProfessor) {
-     turmaRepository.findById(turmaDisciplinaProfessor.getTurma().getId_turma())
+     turmaRepository.findById(turmaDisciplinaProfessor.getTurma().getId())
              .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
 
      disciplinaRepository.findById(turmaDisciplinaProfessor.getDisciplina().getId_disciplina())

@@ -13,11 +13,10 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.
 @Builder 
 @Data
 public class TurmaDTO {
-    private Long idTurma;
+    private Long id;
     private String nome;
     private int ano;
-    private CoordenacaoDTO coordenacao;
+    private Long coordenacaoId;
     private Set<Long> alunosIds; 
-    private Set<TurmaDisciplinaProfessorDTO> turmaDisciplinaProfessores;
     
 }

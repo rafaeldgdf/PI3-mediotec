@@ -58,8 +58,5 @@ public class Conceito implements Serializable {
     private Aluno aluno;
 
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_coordenacao", nullable = true)
-    private Coordenacao coordenacao;
 
 }

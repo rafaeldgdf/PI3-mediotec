@@ -2,23 +2,13 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.comunicado;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.Aluno;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoRepository;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoRepository;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.Professor;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorRepository;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.Turma;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.emitente.Emitente;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.emitente.EmitenteRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.receptor.Receptor;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.receptor.ReceptorRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,111 +18,44 @@ public class ComunicadoService {
     private ComunicadoRepository comunicadoRepository;
 
     @Autowired
-    private AlunoRepository alunoRepository;
+    private EmitenteRepository emitenteRepository;
 
     @Autowired
-    private CoordenacaoRepository coordenacaoRepository;
+    private ReceptorRepository receptorRepository;
 
-    @Autowired
-    private ProfessorRepository professorRepository;
+    public ComunicadoDTO criarComunicado(ComunicadoDTO comunicadoDTO) {
+        Emitente emitente = emitenteRepository.findById(comunicadoDTO.getEmitenteId()).orElseThrow();
+        Receptor receptor = receptorRepository.findById(comunicadoDTO.getReceptorId()).orElseThrow();
 
-    @Autowired
-    private TurmaRepository turmaRepository;
+        Comunicado comunicado = Comunicado.builder()
+                .conteudo(comunicadoDTO.getConteudo())
+                .dataEnvio(comunicadoDTO.getDataEnvio())
+                .emitente(emitente)
+                .receptor(receptor)
+                .build();
 
-    @Transactional
-    public ComunicadoDTO salvarComunicado(ComunicadoDTO comunicadoDTO) {
-        Comunicado comunicado = convertToEntity(comunicadoDTO);
-        Comunicado savedComunicado = comunicadoRepository.save(comunicado);
-        return convertToDTO(savedComunicado);
+        Comunicado salvo = comunicadoRepository.save(comunicado);
+        comunicadoDTO.setIdComunicado(salvo.getId_comunicado());
+        return comunicadoDTO;
     }
 
-    @Transactional
-    public ComunicadoDTO atualizarComunicado(Long id, ComunicadoDTO comunicadoDTO) {
-        Comunicado comunicado = comunicadoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comunicado não encontrado"));
-
-        comunicado.setConteudo(comunicadoDTO.getConteudo());
-        comunicado.setData_envio(comunicadoDTO.getData_envio());
-        comunicado.setCoordenacao(buscarCoordenacaoPorId(comunicadoDTO.getCoordenacao().getId()));
-        comunicado.setProfessor(buscarProfessorPorId(comunicadoDTO.getProfessor().getCpf()));
-        comunicado.setAluno(buscarAlunoPorId(comunicadoDTO.getAluno().getId()));
-        comunicado.setTurma(buscarTurmaPorId(comunicadoDTO.getTurma().getIdTurma()));
-
-        Comunicado updatedComunicado = comunicadoRepository.save(comunicado);
-        return convertToDTO(updatedComunicado);
+    public List<ComunicadoDTO> listarComunicadosPorProfessor(String cpf) {
+        List<Comunicado> comunicados = comunicadoRepository.findByEmitente_Professor_Cpf(cpf);
+        return comunicados.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    public List<ComunicadoDTO> listarComunicados() {
-        return comunicadoRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    public Optional<ComunicadoDTO> buscarComunicadoPorId(Long id) {
-        return comunicadoRepository.findById(id)
-                .map(this::convertToDTO);
-    }
-
-    public void deletarComunicado(Long id) {
-        Comunicado comunicado = comunicadoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comunicado não encontrado"));
-        comunicadoRepository.delete(comunicado);
+    public List<ComunicadoDTO> listarComunicadosPorAluno(Long alunoId) {
+        List<Comunicado> comunicados = comunicadoRepository.findByReceptor_Aluno_Id(alunoId);
+        return comunicados.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     private ComunicadoDTO convertToDTO(Comunicado comunicado) {
         return ComunicadoDTO.builder()
-                .id_comunicado(comunicado.getId_comunicado())
+                .idComunicado(comunicado.getId_comunicado())
                 .conteudo(comunicado.getConteudo())
-                .data_envio(new java.sql.Date(comunicado.getData_envio().getTime()))
-                .coordenacao(comunicado.getCoordenacao() != null ? CoordenacaoDTO.builder()
-                        .id(comunicado.getCoordenacao().getId())
-                        .nome(comunicado.getCoordenacao().getNome())
-                        .build() : null)
-                .professor(comunicado.getProfessor() != null ? ProfessorDTO.builder()
-                        .cpf(comunicado.getProfessor().getCpf())
-                        .nome(comunicado.getProfessor().getNome())
-                        .build() : null)
-                .aluno(comunicado.getAluno() != null ? AlunoDTO.builder()
-                        .id(comunicado.getAluno().getId())
-                        .nome(comunicado.getAluno().getNome())
-                        .build() : null)
-                .turma(comunicado.getTurma() != null ? TurmaDTO.builder()
-                        .idTurma(comunicado.getTurma().getId_turma())
-                        .nome(comunicado.getTurma().getNome())
-                        .ano(comunicado.getTurma().getAno())
-                        .build() : null)
+                .dataEnvio(comunicado.getDataEnvio())
+                .emitenteId(comunicado.getEmitente().getId_emitente())
+                .receptorId(comunicado.getReceptor().getId_receptor())
                 .build();
-    }
-
-    private Comunicado convertToEntity(ComunicadoDTO comunicadoDTO) {
-        return Comunicado.builder()
-                .id_comunicado(comunicadoDTO.getId_comunicado())
-                .conteudo(comunicadoDTO.getConteudo())
-                .data_envio(comunicadoDTO.getData_envio())
-                .coordenacao(buscarCoordenacaoPorId(comunicadoDTO.getCoordenacao().getId()))
-                .professor(buscarProfessorPorId(comunicadoDTO.getProfessor().getCpf()))
-                .aluno(buscarAlunoPorId(comunicadoDTO.getAluno().getId()))
-                .turma(buscarTurmaPorId(comunicadoDTO.getTurma().getIdTurma()))
-                .build();
-    }
-
-    private Coordenacao buscarCoordenacaoPorId(Long idCoordenacao) {
-        return coordenacaoRepository.findById(idCoordenacao)
-                .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
-    }
-
-    private Professor buscarProfessorPorId(String cpfProfessor) {
-        return professorRepository.findById(cpfProfessor)
-                .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
-    }
-
-    private Aluno buscarAlunoPorId(Long idAluno) {
-        return alunoRepository.findById(idAluno)
-                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-    }
-
-    private Turma buscarTurmaPorId(Long idTurma) {
-        return turmaRepository.findById(idTurma)
-                .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
     }
 }

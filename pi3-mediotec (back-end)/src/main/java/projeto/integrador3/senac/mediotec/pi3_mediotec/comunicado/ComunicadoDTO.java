@@ -1,22 +1,21 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.comunicado;
 
-import java.sql.Date;
-
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaDTO;
+import lombok.NoArgsConstructor;
 
-@Builder
+import java.util.Date;
+
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ComunicadoDTO {
-    private Long id_comunicado;
+
+    private Long idComunicado;
     private String conteudo;
-    private Date data_envio;
-    private CoordenacaoDTO coordenacao;  
-    private ProfessorDTO professor;
-    private AlunoDTO aluno;
-    private TurmaDTO turma;
+    private Date dataEnvio;
+    private Long emitenteId;
+    private Long receptorId;
 }

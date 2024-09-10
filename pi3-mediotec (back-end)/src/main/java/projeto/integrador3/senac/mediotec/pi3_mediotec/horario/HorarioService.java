@@ -47,7 +47,6 @@ public class HorarioService {
         horario.setDiaSemana(DiaSemana.valueOf(horarioDTO.getDiaSemana()));
         horario.setHoraInicio(horarioDTO.getHoraInicio());
         horario.setHoraFim(horarioDTO.getHoraFim());
-        horario.setCoordenacao(buscarCoordenacaoPorId(horarioDTO.getCoordenacaoId()));
         horario.setTurmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(horarioDTO.getTurmaDisciplinaProfessorId()));
 
         validarHorario(horario);
@@ -58,7 +57,7 @@ public class HorarioService {
 
     public List<HorarioDTO> listarHorariosPorTurma(Long turmaId) {
         return horarioRepository.findAll().stream()
-                .filter(horario -> horario.getTurmaDisciplinaProfessor().getTurma().getId_turma().equals(turmaId))
+                .filter(horario -> horario.getTurmaDisciplinaProfessor().getTurma().getId().equals(turmaId))
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
@@ -86,7 +85,6 @@ public class HorarioService {
                 .diaSemana(horario.getDiaSemana().name())
                 .horaInicio(horario.getHoraInicio())
                 .horaFim(horario.getHoraFim())
-                .coordenacaoId(horario.getCoordenacao() != null ? horario.getCoordenacao().getId() : null)
                 .turmaDisciplinaProfessorId(horario.getTurmaDisciplinaProfessor().getId())
                 .build();
     }
@@ -99,15 +97,10 @@ public class HorarioService {
                 .diaSemana(DiaSemana.valueOf(horarioDTO.getDiaSemana()))
                 .horaInicio(horarioDTO.getHoraInicio())
                 .horaFim(horarioDTO.getHoraFim())
-                .coordenacao(buscarCoordenacaoPorId(horarioDTO.getCoordenacaoId()))
                 .turmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(turmaDisciplinaProfessorId))
                 .build();
     }
 
-    private Coordenacao buscarCoordenacaoPorId(Long coordenacaoId) {
-        return coordenacaoRepository.findById(coordenacaoId)
-                .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
-    }
 
     private TurmaDisciplinaProfessor buscarTurmaDisciplinaProfessorPorId(TurmaDisciplinaProfessorId turmaDisciplinaProfessorId) {
         return turmaDisciplinaProfessorRepository.findById(turmaDisciplinaProfessorId)

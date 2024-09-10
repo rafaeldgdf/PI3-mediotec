@@ -38,7 +38,6 @@ public class TurmaController {
         return ResponseEntity.ok(updatedTurma); // Retorna o status 200 OK
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTurma(@PathVariable Long id) {
         turmaService.deleteTurma(id);
