@@ -47,11 +47,11 @@ public class Professor extends Usuario {
     private Coordenacao coordenacao;
     
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Set<Endereco> enderecos;
     
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Set<Telefone> telefones;
     
     @JsonIgnore
@@ -67,6 +67,11 @@ public class Professor extends Usuario {
     public void addTelefone(Telefone telefone) {
         telefone.setProfessor(this); 
         this.telefones.add(telefone);
+    }
+    
+    public void addTurmaDisciplinaProfessor(TurmaDisciplinaProfessor tdp) {
+        tdp.setProfessor(this); 
+        this.turmaDisciplinaProfessores.add(tdp);
     }
 }
 

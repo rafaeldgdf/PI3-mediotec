@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+/*
 @RestController
 @RequestMapping("/telefones")
 public class TelefoneController {
@@ -67,3 +67,4 @@ public class TelefoneController {
         return ResponseEntity.noContent().build();
     }
 }
+*/

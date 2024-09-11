@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+/*
 @RestController
 @RequestMapping("/turmaDisciplinasProfessores")
 public class TurmaDisciplinaProfessorController {
@@ -14,47 +14,64 @@ public class TurmaDisciplinaProfessorController {
     @Autowired
     private TurmaDisciplinaProfessorService turmaDisciplinaProfessorService;
 
+    // Listar todas as associações de Turma, Disciplina e Professor
     @GetMapping
-    public List<TurmaDisciplinaProfessor> getAllTurmaDisciplinaProfessores() {
-        return turmaDisciplinaProfessorService.getAllTurmaDisciplinaProfessores();
+    public ResponseEntity<List<TurmaDisciplinaProfessorDTO>> getAllTurmaDisciplinaProfessores() {
+        List<TurmaDisciplinaProfessorDTO> turmaDisciplinaProfessores = turmaDisciplinaProfessorService.getAllTurmaDisciplinaProfessores();
+        return ResponseEntity.ok(turmaDisciplinaProfessores); // Retorna 200 OK com a lista
     }
 
+    // Obter uma associação específica de Turma, Disciplina e Professor
     @GetMapping("/{turmaId}/{disciplinaId}/{professorId}")
-    public ResponseEntity<TurmaDisciplinaProfessor> getTurmaDisciplinaProfessorById(
+    public ResponseEntity<TurmaDisciplinaProfessorDTO> getTurmaDisciplinaProfessorById(
             @PathVariable Long turmaId, 
             @PathVariable Long disciplinaId,
             @PathVariable String professorId) {
 
-        TurmaDisciplinaProfessorId id = new TurmaDisciplinaProfessorId(turmaId, disciplinaId, professorId);
-        Optional<TurmaDisciplinaProfessor> turmaDisciplinaProfessor = turmaDisciplinaProfessorService.getTurmaDisciplinaProfessorById(id);
-        return turmaDisciplinaProfessor.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return turmaDisciplinaProfessorService.getTurmaDisciplinaProfessorById(turmaId, disciplinaId, professorId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build()); // Verifica se a entidade foi encontrada
     }
 
+    // Criar uma nova associação entre Turma, Disciplina e Professor
     @PostMapping
-    public TurmaDisciplinaProfessor createTurmaDisciplinaProfessor(@RequestBody TurmaDisciplinaProfessor turmaDisciplinaProfessor) {
-        return turmaDisciplinaProfessorService.saveTurmaDisciplinaProfessor(turmaDisciplinaProfessor);
+    public ResponseEntity<TurmaDisciplinaProfessorDTO> createTurmaDisciplinaProfessor(
+            @RequestParam Long turmaId, 
+            @RequestParam Long disciplinaId,
+            @RequestParam String professorId) {
+        
+        TurmaDisciplinaProfessorDTO createdTurmaDisciplinaProfessor = turmaDisciplinaProfessorService.saveTurmaDisciplinaProfessor(turmaId, disciplinaId, professorId);
+        
+        // Retorna 201 Created e a entidade criada
+        return ResponseEntity.status(201).body(createdTurmaDisciplinaProfessor);
     }
 
+    // Atualizar uma associação existente entre Turma, Disciplina e Professor
     @PutMapping("/{turmaId}/{disciplinaId}/{professorId}")
-    public ResponseEntity<TurmaDisciplinaProfessor> updateTurmaDisciplinaProfessor(
+    public ResponseEntity<TurmaDisciplinaProfessorDTO> updateTurmaDisciplinaProfessor(
             @PathVariable Long turmaId, 
             @PathVariable Long disciplinaId,
             @PathVariable String professorId,
-            @RequestBody TurmaDisciplinaProfessor turmaDisciplinaProfessorDetails) {
+            @RequestBody TurmaDisciplinaProfessorDTO turmaDisciplinaProfessorDetails) {
 
-        TurmaDisciplinaProfessorId id = new TurmaDisciplinaProfessorId(turmaId, disciplinaId, professorId);
-        return ResponseEntity.ok(turmaDisciplinaProfessorService.updateTurmaDisciplinaProfessor(id, turmaDisciplinaProfessorDetails));
+        TurmaDisciplinaProfessorDTO updatedTurmaDisciplinaProfessor = turmaDisciplinaProfessorService.updateTurmaDisciplinaProfessor(turmaId, disciplinaId, professorId, turmaDisciplinaProfessorDetails);
+
+        // Retorna 200 OK e a entidade atualizada
+        return ResponseEntity.ok(updatedTurmaDisciplinaProfessor);
     }
 
+    // Deletar uma associação específica entre Turma, Disciplina e Professor
     @DeleteMapping("/{turmaId}/{disciplinaId}/{professorId}")
     public ResponseEntity<Void> deleteTurmaDisciplinaProfessor(
             @PathVariable Long turmaId, 
             @PathVariable Long disciplinaId,
             @PathVariable String professorId) {
 
-        TurmaDisciplinaProfessorId id = new TurmaDisciplinaProfessorId(turmaId, disciplinaId, professorId);
-        turmaDisciplinaProfessorService.deleteTurmaDisciplinaProfessor(id);
+        turmaDisciplinaProfessorService.deleteTurmaDisciplinaProfessor(turmaId, disciplinaId, professorId);
+
+        // Retorna 204 No Content se a exclusão for bem-sucedida
         return ResponseEntity.noContent().build();
     }
 }
+
+*/

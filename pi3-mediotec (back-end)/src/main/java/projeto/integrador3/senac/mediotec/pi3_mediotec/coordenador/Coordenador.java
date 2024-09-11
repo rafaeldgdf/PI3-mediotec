@@ -36,16 +36,16 @@ public class Coordenador extends Usuario{
 	
    	@Id
     @NotNull(message = "{usuario.cpf.notnull}")
-    @Size(min = 11, max = 11, message = "{usuario.cpf.size}")
+    @Size(min = 1, max = 50, message = "{usuario.cpf.size}")
     @Column(nullable = false, unique = true)
     private String cpf;
    	
     @OneToMany(mappedBy = "coordenador", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Set<Endereco> enderecos;
 
     @OneToMany(mappedBy = "coordenador", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Set<Telefone> telefones;
    	
     

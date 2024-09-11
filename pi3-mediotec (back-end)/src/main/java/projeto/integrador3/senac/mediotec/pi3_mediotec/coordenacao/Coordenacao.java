@@ -59,11 +59,11 @@ public class Coordenacao implements Serializable {
     private String descricao;
     
     @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Set<Endereco> enderecos;
 
     @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Set<Telefone> telefones;
     
     @OneToOne

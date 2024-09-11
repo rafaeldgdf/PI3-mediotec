@@ -26,14 +26,16 @@ public class DisciplinaController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // Endpoint para criar nova disciplina com turma e professores
     @PostMapping
-    public DisciplinaDTO createDisciplina(@RequestBody Disciplina disciplina) {
-        return disciplinaService.saveDisciplina(disciplina);
+    public DisciplinaDTO createDisciplina(@RequestBody DisciplinaDTO disciplinaDTO) {
+        return disciplinaService.saveDisciplina(disciplinaDTO);
     }
 
+    // Endpoint para atualizar disciplina existente
     @PutMapping("/{id}")
-    public ResponseEntity<DisciplinaDTO> updateDisciplina(@PathVariable Long id, @RequestBody Disciplina disciplina) {
-        return ResponseEntity.ok(disciplinaService.updateDisciplina(id, disciplina));
+    public ResponseEntity<DisciplinaDTO> updateDisciplina(@PathVariable Long id, @RequestBody DisciplinaDTO disciplinaDTO) {
+        return ResponseEntity.ok(disciplinaService.updateDisciplina(id, disciplinaDTO));
     }
 
     @DeleteMapping("/{id}")

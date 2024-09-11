@@ -71,18 +71,31 @@ public class Turma implements Serializable {
     @JoinColumn(name = "id_coordenacao")
     private Coordenacao coordenacao;
 
-    
-  
+    // Relacionamento com TurmaDisciplinaProfessor
+    @OneToMany(mappedBy = "turma", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<TurmaDisciplinaProfessor> turmaDisciplinaProfessores = new HashSet<>();
+
+    // Método extra para adicionar uma relação entre a turma e TurmaDisciplinaProfessor
+    public void addTurmaDisciplinaProfessor(TurmaDisciplinaProfessor turmaDisciplinaProfessor) {
+        turmaDisciplinaProfessores.add(turmaDisciplinaProfessor);
+        turmaDisciplinaProfessor.setTurma(this);
+    }
+
+    // Método extra para remover uma relação entre a turma e TurmaDisciplinaProfessor
+    public void removeTurmaDisciplinaProfessor(TurmaDisciplinaProfessor turmaDisciplinaProfessor) {
+        turmaDisciplinaProfessores.remove(turmaDisciplinaProfessor);
+        turmaDisciplinaProfessor.setTurma(null);
+    }
+
     // Método extra para configurar a bilateralidade
     public void addAluno(Aluno aluno) {
         this.alunos.add(aluno);
-        aluno.getTurmas().add(this);  
+        aluno.getTurmas().add(this);
     }
 
-    // Método extra para remover a associação bilateralmente
     public void removeAluno(Aluno aluno) {
         this.alunos.remove(aluno);
         aluno.getTurmas().remove(this);
     }
 }
-

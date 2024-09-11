@@ -48,11 +48,19 @@ public class ConceitoService {
         conceito.setNota(conceitoDTO.getNota());
         conceito.setConceito(conceitoDTO.getConceito());
         conceito.setAluno(buscarAlunoPorId(conceitoDTO.getAluno().getId()));
-        conceito.setTurmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(conceitoDTO.getTurmaDisciplinaProfessor().getId()));
+        
+        // Corrigindo para usar os métodos corretos de TurmaDisciplinaProfessorDTO
+        conceito.setTurmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(
+                new TurmaDisciplinaProfessorId(
+                        conceitoDTO.getTurmaDisciplinaProfessor().getTurmaId(),   
+                        conceitoDTO.getTurmaDisciplinaProfessor().getDisciplinaId(),  
+                        conceitoDTO.getTurmaDisciplinaProfessor().getProfessorId()   
+                )));
 
         Conceito updatedConceito = conceitoRepository.save(conceito);
         return convertToDTO(updatedConceito);
     }
+
 
     public List<ConceitoDTO> listarConceitos() {
         return conceitoRepository.findAll().stream()
@@ -86,26 +94,19 @@ public class ConceitoService {
                 .idConceito(conceito.getId_conceito())
                 .nota(conceito.getNota())
                 .conceito(conceito.getConceito())
-                .unidade(conceito.getUnidade())  
+                .unidade(conceito.getUnidade())
                 .aluno(AlunoDTO.builder()
                         .id(conceito.getAluno().getId())
                         .nome(conceito.getAluno().getNome())
                         .build())
                 .turmaDisciplinaProfessor(TurmaDisciplinaProfessorDTO.builder()
-                        .id(conceito.getTurmaDisciplinaProfessor().getId())
-                        .turma(TurmaDTO.builder()
-                                .nome(conceito.getTurmaDisciplinaProfessor().getTurma().getNome())
-                                .build())
-                        .disciplina(DisciplinaDTO.builder()
-                                .nome(conceito.getTurmaDisciplinaProfessor().getDisciplina().getNome())
-                                .build())
-                        .professor(ProfessorDTO.builder()
-                                .nome(conceito.getTurmaDisciplinaProfessor().getProfessor().getNome())
-                                .ultimoNome(conceito.getTurmaDisciplinaProfessor().getProfessor().getUltimoNome())
-                                .build())
+                        .turmaId(conceito.getTurmaDisciplinaProfessor().getId().getTurmaId())
+                        .disciplinaId(conceito.getTurmaDisciplinaProfessor().getId().getDisciplinaId())
+                        .professorId(conceito.getTurmaDisciplinaProfessor().getId().getProfessorId())
                         .build())
                 .build();
     }
+
 
 
     private Conceito convertToEntity(ConceitoDTO conceitoDTO) {
@@ -114,19 +115,26 @@ public class ConceitoService {
                 .nota(conceitoDTO.getNota())
                 .conceito(conceitoDTO.getConceito())
                 .aluno(buscarAlunoPorId(conceitoDTO.getAluno().getId()))
-                .turmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(conceitoDTO.getTurmaDisciplinaProfessor().getId()))
+                .turmaDisciplinaProfessor(buscarTurmaDisciplinaProfessorPorId(
+                        new TurmaDisciplinaProfessorId(
+                                conceitoDTO.getTurmaDisciplinaProfessor().getTurmaId(),
+                                conceitoDTO.getTurmaDisciplinaProfessor().getDisciplinaId(),
+                                conceitoDTO.getTurmaDisciplinaProfessor().getProfessorId()
+                        )))
                 .build();
     }
 
+
     private Aluno buscarAlunoPorId(Long id) {
         return alunoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Aluno com ID " + id + " não encontrado"));
     }
 
     private TurmaDisciplinaProfessor buscarTurmaDisciplinaProfessorPorId(TurmaDisciplinaProfessorId id) {
         return turmaDisciplinaProfessorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("TurmaDisciplinaProfessor não encontrado"));
+                .orElseThrow(() -> new RuntimeException("TurmaDisciplinaProfessor com ID " + id + " não encontrado"));
     }
+
 
 
 }

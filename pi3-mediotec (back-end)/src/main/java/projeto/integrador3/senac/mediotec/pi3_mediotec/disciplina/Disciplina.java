@@ -41,7 +41,8 @@ public class Disciplina implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_disciplina;
+    @Column(name = "id_disciplina")
+    private Long id;
 
     @NotNull(message = "{disciplina.nome.notnull}")
     @Size(min = 3, max = 100, message = "{disciplina.nome.size}")
