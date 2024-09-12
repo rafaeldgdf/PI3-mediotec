@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.Aluno;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoReduzidoDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoResumidoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoResumidaDTO;
@@ -215,14 +215,14 @@ public class TurmaService {
                 .coordenacao(CoordenacaoResumidaDTO.builder()
                         .id(turma.getCoordenacao().getId())
                         .nome(turma.getCoordenacao().getNome())
-                        .descricao(turma.getCoordenacao().getDescricao())
                         .build())
 
                 // Adicionando nome, último nome e ID dos alunos
                 .alunos(turma.getAlunos().stream()
-                        .map(aluno -> AlunoReduzidoDTO.builder()
+                        .map(aluno -> AlunoResumidoDTO.builder()
                                 .id(aluno.getId())
                                 .nomeAluno(aluno.getNome() + " " + aluno.getUltimoNome())  // Concatenando corretamente o nome e o último nome
+                                .email(aluno.getEmail())
                                 .build())
                         .collect(Collectors.toSet()))  // Converte a lista de alunos para DTO de aluno
 
@@ -248,7 +248,7 @@ public class TurmaService {
                             return DisciplinaProfessorDTO.builder()
                                     .professorId(professor.getCpf())
                                     .nomeProfessor(professor.getNome() + " " + professor.getUltimoNome())  // Nome completo do professor
-                                    .disciplinasIds(disciplinasIds)  // IDs das disciplinas
+                                    .email(professor.getEmail())
                                     .nomesDisciplinas(nomesDisciplinas)  // Nomes das disciplinas
                                     .build();
                         })

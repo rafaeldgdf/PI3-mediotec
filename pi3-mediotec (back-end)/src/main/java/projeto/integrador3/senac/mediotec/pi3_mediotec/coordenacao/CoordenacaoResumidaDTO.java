@@ -9,6 +9,5 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.CoordenadorRe
 public class CoordenacaoResumidaDTO {
     private Long id;
     private String nome;
-    private String descricao;
     private CoordenadorResumidoDTO coordenador; 
 }

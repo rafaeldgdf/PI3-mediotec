@@ -257,8 +257,7 @@ public class ProfessorService {
         if (professor.getCoordenacao() != null && professor.getCoordenacao().getCoordenador() != null) {
             coordenadorDTO = CoordenadorResumidoDTO.builder()
                 .cpf(professor.getCoordenacao().getCoordenador().getCpf())
-                .nome(professor.getCoordenacao().getCoordenador().getNome())
-                .ultimoNome(professor.getCoordenacao().getCoordenador().getUltimoNome())
+                .nomeCoordenador(professor.getCoordenacao().getCoordenador().getNome() + " " + professor.getCoordenacao().getCoordenador().getUltimoNome())
                 .build();
         }
 

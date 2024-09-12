@@ -9,6 +9,6 @@ import lombok.Data;
 public class DisciplinaProfessorDTO {
     private String professorId;  // ID do professor (CPF)
     private String nomeProfessor;
-    private Set<Long> disciplinasIds;  // IDs das disciplinas lecionadas por esse professor
+    private String email; 
     private Set<String> nomesDisciplinas;
 }

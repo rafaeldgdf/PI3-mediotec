@@ -30,13 +30,16 @@ public class AlunoController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // Cria um novo aluno
+ // Cria um novo aluno
     @PostMapping("/incluir")
-    public ResponseEntity<AlunoDTO> createAluno(@RequestBody AlunoDTO alunoDTO) {
-        AlunoDTO savedAluno = alunoService.saveAluno(alunoDTO); // Passa AlunoDTO
-        return new ResponseEntity<>(savedAluno, HttpStatus.CREATED);
+    public ResponseEntity<AlunoDTO> createAluno(@RequestBody AlunoResumidoDTO2 alunoResumidoDTO) { // Altere para AlunoResumidoDTO2
+        try {
+            AlunoDTO savedAluno = alunoService.saveAluno(alunoResumidoDTO); // Chama saveAluno com AlunoResumidoDTO2
+            return new ResponseEntity<>(savedAluno, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
-
 
     // Atualiza um aluno existente
     @PutMapping("/{id}")
@@ -48,6 +51,7 @@ public class AlunoController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     // Deleta um aluno
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAluno(@PathVariable Long id) {

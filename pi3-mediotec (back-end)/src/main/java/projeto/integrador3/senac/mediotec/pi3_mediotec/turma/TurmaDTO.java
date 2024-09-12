@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Builder;
 import lombok.Data;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoReduzidoDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoResumidoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoResumidaDTO;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -21,5 +21,5 @@ public class TurmaDTO {
     private int ano;
     private CoordenacaoResumidaDTO coordenacao;
     private Set<DisciplinaProfessorDTO> disciplinasProfessores;
-    private Set<AlunoReduzidoDTO> alunos;
+    private Set<AlunoResumidoDTO> alunos;
 }
