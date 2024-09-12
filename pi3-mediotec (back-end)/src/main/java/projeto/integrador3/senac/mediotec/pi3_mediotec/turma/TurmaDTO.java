@@ -1,4 +1,4 @@
-package projeto.integrador3.senac.mediotec.pi3_mediotec.turma;
+	package projeto.integrador3.senac.mediotec.pi3_mediotec.turma;
 
 
 
@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Builder;
 import lombok.Data;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoReduzidoDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoResumidaDTO;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
@@ -17,7 +19,7 @@ public class TurmaDTO {
     private Long id;
     private String nome;
     private int ano;
-    private Long coordenacaoId;
-    private Set<Long> alunosIds;
+    private CoordenacaoResumidaDTO coordenacao;
     private Set<DisciplinaProfessorDTO> disciplinasProfessores;
+    private Set<AlunoReduzidoDTO> alunos;
 }

@@ -4,16 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.CoordenadorResumidoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.Disciplina;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaResumida2DTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.Endereco;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.EnderecoDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.EnderecoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.Telefone;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.Turma;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaResumidaDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessor;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorRepository;
 
@@ -22,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 
 @Service
 public class ProfessorService {
@@ -33,21 +33,17 @@ public class ProfessorService {
     @Autowired
     private CoordenacaoRepository coordenacaoRepository;
 
-
     @Autowired
     private TurmaDisciplinaProfessorRepository turmaDisciplinaProfessorRepository;
     
     @Autowired
     private TurmaRepository turmaRepository;
-    
 
     @Autowired
     private DisciplinaRepository disciplinaRepository;
     
-    
     // Cria um novo professor
- // Cria um novo professor
-    public ProfessorDTO saveProfessor(ProfessorDTO professorDTO) {
+    public ProfessorResumidoDTO saveProfessor(ProfessorDTO professorDTO) {
         // Verifica se o professor já existe pelo CPF
         if (professorRepository.existsByCpf(professorDTO.getCpf())) {
             throw new RuntimeException("Professor com CPF " + professorDTO.getCpf() + " já existe");
@@ -93,28 +89,28 @@ public class ProfessorService {
                 .enderecos(enderecos)
                 .telefones(telefones)
                 .build();
-
-        // Verifica e associa turmas e disciplinas, se fornecidos
+        
+     // Verifica e associa turmas e disciplinas, se fornecidos
         if (professorDTO.getTurmasDisciplinas() != null) {
+            professor.getTurmaDisciplinaProfessores().clear();
+
+            // Use TurmaDisciplinaDTO aqui, e não TurmaDisciplinaResumidaDTO
             for (TurmaDisciplinaDTO tdDTO : professorDTO.getTurmasDisciplinas()) {
-                // Verifica se a turma existe
                 Turma turma = turmaRepository.findById(tdDTO.getTurmaId())
                         .orElseThrow(() -> new RuntimeException("Turma com ID " + tdDTO.getTurmaId() + " não encontrada"));
 
-                // Verifica se a disciplina existe
                 Disciplina disciplina = disciplinaRepository.findById(tdDTO.getDisciplinaId())
                         .orElseThrow(() -> new RuntimeException("Disciplina com ID " + tdDTO.getDisciplinaId() + " não encontrada"));
 
-                // Cria a associação Turma-Disciplina-Professor
                 TurmaDisciplinaProfessor turmaDisciplinaProfessor = new TurmaDisciplinaProfessor();
                 turmaDisciplinaProfessor.setProfessor(professor);
                 turmaDisciplinaProfessor.setTurma(turma);
                 turmaDisciplinaProfessor.setDisciplina(disciplina);
 
-                // Adiciona a associação ao professor
                 professor.addTurmaDisciplinaProfessor(turmaDisciplinaProfessor);
             }
         }
+
 
         // Configura a relação bidirecional entre professor e endereços/telefones
         professor.getEnderecos().forEach(endereco -> endereco.setProfessor(professor));
@@ -125,8 +121,8 @@ public class ProfessorService {
         return convertToDto(savedProfessor);
     }
 
-
-    public ProfessorDTO updateProfessor(String cpf, ProfessorDTO professorDTO) {
+    // Atualiza um professor existente
+    public ProfessorResumidoDTO updateProfessor(String cpf, ProfessorDTO professorDTO) {
         // Verifica se o professor existe
         Professor professor = professorRepository.findById(cpf)
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
@@ -149,7 +145,6 @@ public class ProfessorService {
         if (professorDTO.getEnderecos() != null) {
             for (EnderecoDTO enderecoDTO : professorDTO.getEnderecos()) {
                 if (enderecoDTO.getIdEndereco() == null) {
-                    // Cria um novo endereço
                     Endereco novoEndereco = Endereco.builder()
                             .cep(enderecoDTO.getCep())
                             .rua(enderecoDTO.getRua())
@@ -157,11 +152,10 @@ public class ProfessorService {
                             .bairro(enderecoDTO.getBairro())
                             .cidade(enderecoDTO.getCidade())
                             .estado(enderecoDTO.getEstado())
-                            .professor(professor) // Relaciona com o professor
+                            .professor(professor)
                             .build();
                     professor.addEndereco(novoEndereco);
                 } else {
-                    // Atualiza um endereço existente
                     Endereco enderecoExistente = professor.getEnderecos().stream()
                             .filter(e -> e.getId_endereco().equals(enderecoDTO.getIdEndereco()))
                             .findFirst()
@@ -181,15 +175,13 @@ public class ProfessorService {
         if (professorDTO.getTelefones() != null) {
             for (TelefoneDTO telefoneDTO : professorDTO.getTelefones()) {
                 if (telefoneDTO.getId() == null) {
-                    // Cria um novo telefone
                     Telefone novoTelefone = Telefone.builder()
                             .ddd(telefoneDTO.getDdd())
                             .numero(telefoneDTO.getNumero())
-                            .professor(professor) // Relaciona com o professor
+                            .professor(professor)
                             .build();
                     professor.addTelefone(novoTelefone);
                 } else {
-                    // Atualiza um telefone existente
                     Telefone telefoneExistente = professor.getTelefones().stream()
                             .filter(t -> t.getId().equals(telefoneDTO.getId()))
                             .findFirst()
@@ -202,8 +194,8 @@ public class ProfessorService {
         }
 
         // Verifica e associa turmas e disciplinas, se fornecidos
+     // Verifica e associa turmas e disciplinas, se fornecidos
         if (professorDTO.getTurmasDisciplinas() != null) {
-            // Remove todas as associações antigas
             professor.getTurmaDisciplinaProfessores().clear();
 
             for (TurmaDisciplinaDTO tdDTO : professorDTO.getTurmasDisciplinas()) {
@@ -226,75 +218,70 @@ public class ProfessorService {
             }
         }
 
-        // Salva o professor atualizado no banco de dados
+
         Professor updatedProfessor = professorRepository.save(professor);
 
-        // Retorna o DTO atualizado
         return convertToDto(updatedProfessor);
     }
 
-
-    
-    public List<ProfessorDTO> getAllProfessores() {
+    public List<ProfessorResumidoDTO> getAllProfessores() {
         return professorRepository.findAll().stream()
-                .map(this::convertToDto)  // Converte cada professor para ProfessorDTO
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
     
-    public Optional<ProfessorDTO> getProfessorById(String cpf) {
+    public Optional<ProfessorResumidoDTO> getProfessorById(String cpf) {
         return professorRepository.findById(cpf)
-                .map(this::convertToDto);  // Converte o professor para ProfessorDTO se encontrado
+                .map(this::convertToDto);
     }
-
 
     public List<Disciplina> getDisciplinasByProfessor(String professorId) {
         return turmaDisciplinaProfessorRepository.findById_ProfessorId(professorId)
                 .stream()
-                .map(turmaDisciplinaProfessor -> turmaDisciplinaProfessor.getDisciplina()) // Mapeia para obter as disciplinas
-                .distinct()  // Remove disciplinas duplicadas
+                .map(turmaDisciplinaProfessor -> turmaDisciplinaProfessor.getDisciplina())
+                .distinct()
                 .collect(Collectors.toList());
     }
 
-    
     public void deleteProfessor(String cpf) {
-        // Verifica se o professor existe no banco de dados
         Professor professor = professorRepository.findById(cpf)
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
         
-        // Deleta o professor encontrado
         professorRepository.delete(professor);
     }
 
+    // Método para converter Professor para ProfessorResumidoDTO
+    private ProfessorResumidoDTO convertToDto(Professor professor) {
+        CoordenadorResumidoDTO coordenadorDTO = null;
 
- // Método para converter Professor para ProfessorDTO
-    private ProfessorDTO convertToDto(Professor professor) {
-        return ProfessorDTO.builder()
+        if (professor.getCoordenacao() != null && professor.getCoordenacao().getCoordenador() != null) {
+            coordenadorDTO = CoordenadorResumidoDTO.builder()
+                .cpf(professor.getCoordenacao().getCoordenador().getCpf())
+                .nome(professor.getCoordenacao().getCoordenador().getNome())
+                .ultimoNome(professor.getCoordenacao().getCoordenador().getUltimoNome())
+                .build();
+        }
+
+        Set<TurmaDisciplinaResumidaDTO> turmasDisciplinas = professor.getTurmaDisciplinaProfessores().stream()
+            .map(tdp -> TurmaDisciplinaResumidaDTO.builder()
+                .turma(TurmaResumidaDTO.builder()
+                    .id(tdp.getTurma().getId())
+                    .nome(tdp.getTurma().getNome())
+                    .ano(tdp.getTurma().getAno())
+                    .build())
+                .disciplina(DisciplinaResumida2DTO.builder()
+                    .id(tdp.getDisciplina().getId())
+                    .nome(tdp.getDisciplina().getNome())
+                    .build())
+                .build())
+            .collect(Collectors.toSet());
+
+        return ProfessorResumidoDTO.builder()
             .cpf(professor.getCpf())
             .nome(professor.getNome())
             .ultimoNome(professor.getUltimoNome())
-            .genero(professor.getGenero())
-            .data_nascimento(new java.sql.Date(professor.getData_nascimento().getTime()))  // Converte para java.sql.Date
-            .email(professor.getEmail())
-            .coordenacaoId(professor.getCoordenacao().getId())  // Somente o ID da coordenação
-            .enderecos(professor.getEnderecos().stream()
-                .map(endereco -> EnderecoDTO.builder()
-                    .cep(endereco.getCep())
-                    .rua(endereco.getRua())
-                    .numero(endereco.getNumero())
-                    .bairro(endereco.getBairro())
-                    .cidade(endereco.getCidade())
-                    .estado(endereco.getEstado())
-                    .build())
-                .collect(Collectors.toSet()))  // Certifique-se que o tipo de retorno é Set<EnderecoDTO>
-            .telefones(professor.getTelefones().stream()
-                .map(telefone -> TelefoneDTO.builder()
-                    .ddd(telefone.getDdd())
-                    .numero(telefone.getNumero())
-                    .build())
-                .collect(Collectors.toSet()))  // Certifique-se que o tipo de retorno é Set<TelefoneDTO>
+            .coordenador(coordenadorDTO)
+            .turmasDisciplinas(turmasDisciplinas)
             .build();
     }
-
-
-
 }

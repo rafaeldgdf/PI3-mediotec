@@ -14,30 +14,33 @@ public class DisciplinaController {
     @Autowired
     private DisciplinaService disciplinaService;
 
+    // GET all disciplines (more detailed with full objects)
     @GetMapping
-    public List<DisciplinaDTO> getAllDisciplinas() {
+    public List<DisciplinaResumidaDTO> getAllDisciplinas() {
         return disciplinaService.getAllDisciplinas();
     }
 
+    // GET discipline by ID (more detailed with full objects)
     @GetMapping("/{id}")
-    public ResponseEntity<DisciplinaDTO> getDisciplinaById(@PathVariable Long id) {
-        Optional<DisciplinaDTO> disciplina = disciplinaService.getDisciplinaById(id);
+    public ResponseEntity<DisciplinaResumidaDTO> getDisciplinaById(@PathVariable Long id) {
+        Optional<DisciplinaResumidaDTO> disciplina = disciplinaService.getDisciplinaById(id);
         return disciplina.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Endpoint para criar nova disciplina com turma e professores
+    // POST for creating a new discipline with turma and professors
     @PostMapping
-    public DisciplinaDTO createDisciplina(@RequestBody DisciplinaDTO disciplinaDTO) {
+    public DisciplinaResumidaDTO createDisciplina(@RequestBody DisciplinaDTO disciplinaDTO) {
         return disciplinaService.saveDisciplina(disciplinaDTO);
     }
 
-    // Endpoint para atualizar disciplina existente
+    // PUT for updating an existing discipline
     @PutMapping("/{id}")
-    public ResponseEntity<DisciplinaDTO> updateDisciplina(@PathVariable Long id, @RequestBody DisciplinaDTO disciplinaDTO) {
+    public ResponseEntity<DisciplinaResumidaDTO> updateDisciplina(@PathVariable Long id, @RequestBody DisciplinaDTO disciplinaDTO) {
         return ResponseEntity.ok(disciplinaService.updateDisciplina(id, disciplinaDTO));
     }
 
+    // DELETE a discipline
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDisciplina(@PathVariable Long id) {
         disciplinaService.deleteDisciplina(id);

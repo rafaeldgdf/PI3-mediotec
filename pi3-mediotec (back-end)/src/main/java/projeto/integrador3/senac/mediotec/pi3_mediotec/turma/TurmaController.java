@@ -39,24 +39,22 @@ public class TurmaController {
 
     // Endpoint para criar uma nova turma
     @PostMapping
-    public ResponseEntity<TurmaDTO> createTurma(@RequestBody TurmaDTO turmaDTO) {
+    public ResponseEntity<TurmaDTO> createTurma(@RequestBody TurmaInputDTO turmaDTO) {
         try {
             TurmaDTO savedTurma = turmaService.saveTurma(turmaDTO);
-            return ResponseEntity.status(201).body(savedTurma); // Retorna o status 201 Created
+            return ResponseEntity.status(201).body(savedTurma); // Retorna a turma detalhada com nomes de professores e disciplinas
         } catch (RuntimeException e) {
-            // Retorna um erro 400 Bad Request em caso de erro (exemplo: Coordenação não encontrada)
             return ResponseEntity.badRequest().body(null);
         }
     }
 
     // Endpoint para atualizar uma turma existente
     @PutMapping("/{id}")
-    public ResponseEntity<TurmaDTO> updateTurma(@PathVariable Long id, @RequestBody TurmaDTO turmaDTO) {
+    public ResponseEntity<TurmaDTO> updateTurma(@PathVariable Long id, @RequestBody TurmaInputDTO turmaDTO) {
         try {
             TurmaDTO updatedTurma = turmaService.updateTurma(id, turmaDTO);
-            return ResponseEntity.ok(updatedTurma); // Retorna o status 200 OK
+            return ResponseEntity.ok(updatedTurma); // Retorna a turma detalhada com nomes de professores e disciplinas
         } catch (RuntimeException e) {
-            // Retorna um erro 400 Bad Request em caso de erro (exemplo: Turma não encontrada)
             return ResponseEntity.badRequest().body(null);
         }
     }

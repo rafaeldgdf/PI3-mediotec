@@ -3,19 +3,20 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.Professor;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorResumidoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.Turma;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaResumidaDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessor;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorId;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorRepository;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,21 +34,21 @@ public class DisciplinaService {
     @Autowired
     private TurmaDisciplinaProfessorRepository turmaDisciplinaProfessorRepository;
 
-    // Lista todas as disciplinas
-    public List<DisciplinaDTO> getAllDisciplinas() {
+    // Lista todas as disciplinas (GET - mais detalhado)
+    public List<DisciplinaResumidaDTO> getAllDisciplinas() {
         return disciplinaRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(this::convertToResumidaDto)  // Convertendo para o DTO mais completo
                 .collect(Collectors.toList());
     }
 
-    // Busca disciplina pelo id
-    public Optional<DisciplinaDTO> getDisciplinaById(Long id) {
+    // Busca disciplina pelo id (GET - mais detalhado)
+    public Optional<DisciplinaResumidaDTO> getDisciplinaById(Long id) {
         return disciplinaRepository.findById(id)
-                .map(this::convertToDto);
+                .map(this::convertToResumidaDto);  // Convertendo para o DTO mais completo
     }
 
- // Cria nova disciplina e associa a turma e (opcionalmente) professor
-    public DisciplinaDTO saveDisciplina(DisciplinaDTO disciplinaDTO) {
+    // Cria nova disciplina e associa a turma e (opcionalmente) professor (POST)
+    public DisciplinaResumidaDTO saveDisciplina(DisciplinaDTO disciplinaDTO) {
         // Verifica se a turma existe
         Turma turma = turmaRepository.findById(disciplinaDTO.getTurmaId())
                 .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
@@ -69,13 +70,12 @@ public class DisciplinaService {
             associarTurmaProfessorSemProfessor(savedDisciplina, turma);
         }
 
-        return convertToDto(savedDisciplina);
+        // Retorna o DTO mais completo (DisciplinaResumidaDTO)
+        return convertToResumidaDto(savedDisciplina);
     }
 
-
-
- // Atualiza disciplina e suas associações
-    public DisciplinaDTO updateDisciplina(Long id, DisciplinaDTO disciplinaDTO) {
+    // Atualiza disciplina e suas associações (PUT)
+    public DisciplinaResumidaDTO updateDisciplina(Long id, DisciplinaDTO disciplinaDTO) {
         Disciplina disciplina = disciplinaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
 
@@ -101,9 +101,9 @@ public class DisciplinaService {
             associarTurmaProfessorSemProfessor(updatedDisciplina, turma);
         }
 
-        return convertToDto(updatedDisciplina);
+        // Retorna o DTO mais completo (DisciplinaResumidaDTO)
+        return convertToResumidaDto(updatedDisciplina);
     }
-
 
     // Método para associar a disciplina a uma turma e professor
     private void associarTurmaProfessor(Disciplina disciplina, Turma turma, Professor professor) {
@@ -115,35 +115,59 @@ public class DisciplinaService {
         turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
     }
 
-    // Deleta disciplina
+    // Método para associar a disciplina a uma turma sem um professor
+    private void associarTurmaProfessorSemProfessor(Disciplina disciplina, Turma turma) {
+        TurmaDisciplinaProfessor turmaDisciplinaProfessor = new TurmaDisciplinaProfessor();
+        turmaDisciplinaProfessor.setId(new TurmaDisciplinaProfessorId(turma.getId(), disciplina.getId(), null));
+        turmaDisciplinaProfessor.setTurma(turma);
+        turmaDisciplinaProfessor.setDisciplina(disciplina);
+        turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
+    }
+
+    // Deleta disciplina (DELETE)
     public void deleteDisciplina(Long id) {
         Disciplina disciplina = disciplinaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
         disciplinaRepository.delete(disciplina);
     }
-    
- // Método para associar a disciplina a uma turma sem um professor
-    private void associarTurmaProfessorSemProfessor(Disciplina disciplina, Turma turma) {
-        TurmaDisciplinaProfessor turmaDisciplinaProfessor = new TurmaDisciplinaProfessor();
-        
-        // Criamos uma nova chave composta para a entidade de associação TurmaDisciplinaProfessor
-        turmaDisciplinaProfessor.setId(new TurmaDisciplinaProfessorId(turma.getId(), disciplina.getId(), null));
 
-        // Associamos a turma e a disciplina
-        turmaDisciplinaProfessor.setTurma(turma);
-        turmaDisciplinaProfessor.setDisciplina(disciplina);
+    // Converte Disciplina para DisciplinaResumidaDTO (GET mais completo)
+    private DisciplinaResumidaDTO convertToResumidaDto(Disciplina disciplina) {
+        // Busca as associações com turma e professor
+        List<TurmaDisciplinaProfessor> turmaDisciplinaProfessores = turmaDisciplinaProfessorRepository
+            .findByDisciplinaId(disciplina.getId());
 
-        // O professor é opcional, então não associamos um professor aqui
-        turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
-    }
+        if (turmaDisciplinaProfessores.isEmpty()) {
+            throw new RuntimeException("Associação de Disciplina com Turma e Professor não encontrada");
+        }
 
+        TurmaDisciplinaProfessor turmaDisciplinaProfessor = turmaDisciplinaProfessores.get(0);  // Pega a primeira associação
 
-    // Converte Disciplina para DisciplinaDTO
-    private DisciplinaDTO convertToDto(Disciplina disciplina) {
-        return DisciplinaDTO.builder()
+        // Detalhes simples da turma
+        TurmaResumidaDTO turmaDTO = TurmaResumidaDTO.builder()
+            .id(turmaDisciplinaProfessor.getTurma().getId())
+            .nome(turmaDisciplinaProfessor.getTurma().getNome())
+            .ano(turmaDisciplinaProfessor.getTurma().getAno())
+            .build();
+
+        // Detalhes simples do professor (caso exista)
+        ProfessorResumidoDTO professorDTO = null;
+        if (turmaDisciplinaProfessor.getProfessor() != null) {
+            professorDTO = ProfessorResumidoDTO.builder()
+                .cpf(turmaDisciplinaProfessor.getProfessor().getCpf())
+                .nome(turmaDisciplinaProfessor.getProfessor().getNome())
+                .ultimoNome(turmaDisciplinaProfessor.getProfessor().getUltimoNome())
+                .build();
+        }
+
+        // Retorna o DTO simplificado
+        return DisciplinaResumidaDTO.builder()
                 .id(disciplina.getId())
                 .nome(disciplina.getNome())
                 .cargaHoraria(disciplina.getCarga_horaria())
+                .turma(turmaDTO)  // Adiciona detalhes simples da turma
+                .professor(professorDTO)  // Adiciona detalhes simples do professor
                 .build();
     }
+
 }
