@@ -108,35 +108,40 @@ public class TurmaService {
                 .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
         turma.setCoordenacao(coordenacao);
 
-        // Limpa os alunos atuais e associa os novos alunos
-        turma.getAlunos().clear();
-        for (Long alunoId : turmaDTO.getAlunosIds()) {
-            Aluno aluno = alunoRepository.findById(alunoId)
-                    .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-            turma.addAluno(aluno);
+        // Atualiza alunos apenas se fornecidos
+        if (turmaDTO.getAlunosIds() != null) {
+            // Limpa os alunos atuais e associa os novos alunos
+            turma.getAlunos().clear();
+            for (Long alunoId : turmaDTO.getAlunosIds()) {
+                Aluno aluno = alunoRepository.findById(alunoId)
+                        .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+                turma.addAluno(aluno);
+            }
         }
 
-        // Limpa as associações de Turma-Disciplina-Professor e adiciona as novas
-        turmaDisciplinaProfessorRepository.deleteByTurmaId(turma.getId());
+        // Limpa as associações de Turma-Disciplina-Professor e adiciona as novas, se fornecidas
+        if (turmaDTO.getDisciplinasProfessores() != null) {
+            turmaDisciplinaProfessorRepository.deleteByTurmaId(turma.getId());
 
-        // Associa as novas disciplinas e professores
-        for (DisciplinaProfessorDTO dpDTO : turmaDTO.getDisciplinasProfessores()) {
-            Professor professor = professorRepository.findById(dpDTO.getProfessorId())
-                    .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+            // Associa as novas disciplinas e professores
+            for (DisciplinaProfessorDTO dpDTO : turmaDTO.getDisciplinasProfessores()) {
+                Professor professor = professorRepository.findById(dpDTO.getProfessorId())
+                        .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
 
-            for (Long disciplinaId : dpDTO.getDisciplinasIds()) {
-                Disciplina disciplina = disciplinaRepository.findById(disciplinaId)
-                        .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
+                for (Long disciplinaId : dpDTO.getDisciplinasIds()) {
+                    Disciplina disciplina = disciplinaRepository.findById(disciplinaId)
+                            .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
 
-                // Cria a nova relação entre Turma, Disciplina e Professor
-                TurmaDisciplinaProfessor turmaDisciplinaProfessor = new TurmaDisciplinaProfessor();
-                turmaDisciplinaProfessor.setId(new TurmaDisciplinaProfessorId(turma.getId(), disciplina.getId(), professor.getCpf()));
-                turmaDisciplinaProfessor.setTurma(turma);
-                turmaDisciplinaProfessor.setDisciplina(disciplina);
-                turmaDisciplinaProfessor.setProfessor(professor);
+                    // Cria a nova relação entre Turma, Disciplina e Professor
+                    TurmaDisciplinaProfessor turmaDisciplinaProfessor = new TurmaDisciplinaProfessor();
+                    turmaDisciplinaProfessor.setId(new TurmaDisciplinaProfessorId(turma.getId(), disciplina.getId(), professor.getCpf()));
+                    turmaDisciplinaProfessor.setTurma(turma);
+                    turmaDisciplinaProfessor.setDisciplina(disciplina);
+                    turmaDisciplinaProfessor.setProfessor(professor);
 
-                // Salva a nova relação no repositório
-                turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
+                    // Salva a nova relação no repositório
+                    turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
+                }
             }
         }
 
@@ -144,6 +149,7 @@ public class TurmaService {
         Turma updatedTurma = turmaRepository.save(turma);
         return convertToDto(updatedTurma);
     }
+
 
  // Método para listar todas as turmas
     public List<TurmaDTO> getAllTurmas() {

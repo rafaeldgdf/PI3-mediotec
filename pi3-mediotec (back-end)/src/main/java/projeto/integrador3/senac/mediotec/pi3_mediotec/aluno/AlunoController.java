@@ -32,22 +32,22 @@ public class AlunoController {
 
     // Cria um novo aluno
     @PostMapping("/incluir")
-    public ResponseEntity<AlunoDTO> createAluno(@RequestBody Aluno aluno) {
-        AlunoDTO savedAluno = alunoService.saveAluno(aluno);
+    public ResponseEntity<AlunoDTO> createAluno(@RequestBody AlunoDTO alunoDTO) {
+        AlunoDTO savedAluno = alunoService.saveAluno(alunoDTO); // Passa AlunoDTO
         return new ResponseEntity<>(savedAluno, HttpStatus.CREATED);
     }
 
+
     // Atualiza um aluno existente
     @PutMapping("/{id}")
-    public ResponseEntity<AlunoDTO> updateAluno(@PathVariable Long id, @RequestBody Aluno alunoDetails) {
+    public ResponseEntity<AlunoDTO> updateAluno(@PathVariable Long id, @RequestBody AlunoDTO alunoDetails) {
         try {
-            AlunoDTO updatedAluno = alunoService.updateAluno(id, alunoDetails);
+            AlunoDTO updatedAluno = alunoService.updateAluno(id, alunoDetails); // Passa AlunoDTO
             return new ResponseEntity<>(updatedAluno, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
     // Deleta um aluno
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAluno(@PathVariable Long id) {

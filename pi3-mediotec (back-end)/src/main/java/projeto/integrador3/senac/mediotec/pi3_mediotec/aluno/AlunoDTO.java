@@ -23,8 +23,8 @@ public class AlunoDTO {
     private Date data_nascimento;
     private String cpf;
     private String email;
-    private Set<EnderecoDTO> enderecos;
+    private Long coordenacaoId; 
+    private Set<Long> turmasIds; 
+    private Set<EnderecoDTO> enderecos; 
     private Set<TelefoneDTO> telefones;
-    private Set<TurmaDTO> turmas;
-    private Set<PresencaDTO> presencas;
 }

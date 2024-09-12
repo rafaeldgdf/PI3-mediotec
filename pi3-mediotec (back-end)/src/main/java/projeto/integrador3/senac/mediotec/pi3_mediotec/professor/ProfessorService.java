@@ -131,76 +131,108 @@ public class ProfessorService {
         Professor professor = professorRepository.findById(cpf)
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
 
-        // Busca a coordenação pelo ID, se for atualizada
-        Coordenacao coordenacao = coordenacaoRepository.findById(professorDTO.getCoordenacaoId())
-                .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
-
         // Atualiza os dados principais do professor
         professor.setNome(professorDTO.getNome());
         professor.setUltimoNome(professorDTO.getUltimoNome());
         professor.setGenero(professorDTO.getGenero());
         professor.setEmail(professorDTO.getEmail());
         professor.setData_nascimento(professorDTO.getData_nascimento());
-        professor.setCoordenacao(coordenacao);
+
+        // Atualiza a coordenação, se fornecida
+        if (professorDTO.getCoordenacaoId() != null) {
+            Coordenacao coordenacao = coordenacaoRepository.findById(professorDTO.getCoordenacaoId())
+                    .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
+            professor.setCoordenacao(coordenacao);
+        }
 
         // Atualiza os endereços (cria novos ou atualiza os existentes)
-        for (EnderecoDTO enderecoDTO : professorDTO.getEnderecos()) {
-            if (enderecoDTO.getIdEndereco() == null) {
-                // Cria um novo endereço
-                Endereco novoEndereco = Endereco.builder()
-                        .cep(enderecoDTO.getCep())
-                        .rua(enderecoDTO.getRua())
-                        .numero(enderecoDTO.getNumero())
-                        .bairro(enderecoDTO.getBairro())
-                        .cidade(enderecoDTO.getCidade())
-                        .estado(enderecoDTO.getEstado())
-                        .professor(professor) // Relaciona com o professor
-                        .build();
-                professor.addEndereco(novoEndereco);
-            } else {
-                // Atualiza um endereço existente
-                Endereco enderecoExistente = professor.getEnderecos().stream()
-                        .filter(e -> e.getId_endereco().equals(enderecoDTO.getIdEndereco()))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Endereço não encontrado"));
+        if (professorDTO.getEnderecos() != null) {
+            for (EnderecoDTO enderecoDTO : professorDTO.getEnderecos()) {
+                if (enderecoDTO.getIdEndereco() == null) {
+                    // Cria um novo endereço
+                    Endereco novoEndereco = Endereco.builder()
+                            .cep(enderecoDTO.getCep())
+                            .rua(enderecoDTO.getRua())
+                            .numero(enderecoDTO.getNumero())
+                            .bairro(enderecoDTO.getBairro())
+                            .cidade(enderecoDTO.getCidade())
+                            .estado(enderecoDTO.getEstado())
+                            .professor(professor) // Relaciona com o professor
+                            .build();
+                    professor.addEndereco(novoEndereco);
+                } else {
+                    // Atualiza um endereço existente
+                    Endereco enderecoExistente = professor.getEnderecos().stream()
+                            .filter(e -> e.getId_endereco().equals(enderecoDTO.getIdEndereco()))
+                            .findFirst()
+                            .orElseThrow(() -> new RuntimeException("Endereço não encontrado"));
 
-                enderecoExistente.setCep(enderecoDTO.getCep());
-                enderecoExistente.setRua(enderecoDTO.getRua());
-                enderecoExistente.setNumero(enderecoDTO.getNumero());
-                enderecoExistente.setBairro(enderecoDTO.getBairro());
-                enderecoExistente.setCidade(enderecoDTO.getCidade());
-                enderecoExistente.setEstado(enderecoDTO.getEstado());
+                    enderecoExistente.setCep(enderecoDTO.getCep());
+                    enderecoExistente.setRua(enderecoDTO.getRua());
+                    enderecoExistente.setNumero(enderecoDTO.getNumero());
+                    enderecoExistente.setBairro(enderecoDTO.getBairro());
+                    enderecoExistente.setCidade(enderecoDTO.getCidade());
+                    enderecoExistente.setEstado(enderecoDTO.getEstado());
+                }
             }
         }
 
         // Atualiza os telefones (cria novos ou atualiza os existentes)
-        for (TelefoneDTO telefoneDTO : professorDTO.getTelefones()) {
-            if (telefoneDTO.getId() == null) {
-                // Cria um novo telefone
-                Telefone novoTelefone = Telefone.builder()
-                        .ddd(telefoneDTO.getDdd())
-                        .numero(telefoneDTO.getNumero())
-                        .professor(professor) // Relaciona com o professor
-                        .build();
-                professor.addTelefone(novoTelefone);
-            } else {
-                // Atualiza um telefone existente
-                Telefone telefoneExistente = professor.getTelefones().stream()
-                        .filter(t -> t.getId().equals(telefoneDTO.getId()))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Telefone não encontrado"));
+        if (professorDTO.getTelefones() != null) {
+            for (TelefoneDTO telefoneDTO : professorDTO.getTelefones()) {
+                if (telefoneDTO.getId() == null) {
+                    // Cria um novo telefone
+                    Telefone novoTelefone = Telefone.builder()
+                            .ddd(telefoneDTO.getDdd())
+                            .numero(telefoneDTO.getNumero())
+                            .professor(professor) // Relaciona com o professor
+                            .build();
+                    professor.addTelefone(novoTelefone);
+                } else {
+                    // Atualiza um telefone existente
+                    Telefone telefoneExistente = professor.getTelefones().stream()
+                            .filter(t -> t.getId().equals(telefoneDTO.getId()))
+                            .findFirst()
+                            .orElseThrow(() -> new RuntimeException("Telefone não encontrado"));
 
-                telefoneExistente.setDdd(telefoneDTO.getDdd());
-                telefoneExistente.setNumero(telefoneDTO.getNumero());
+                    telefoneExistente.setDdd(telefoneDTO.getDdd());
+                    telefoneExistente.setNumero(telefoneDTO.getNumero());
+                }
             }
         }
 
-        // Salva o professor atualizado
+        // Verifica e associa turmas e disciplinas, se fornecidos
+        if (professorDTO.getTurmasDisciplinas() != null) {
+            // Remove todas as associações antigas
+            professor.getTurmaDisciplinaProfessores().clear();
+
+            for (TurmaDisciplinaDTO tdDTO : professorDTO.getTurmasDisciplinas()) {
+                // Verifica se a turma existe
+                Turma turma = turmaRepository.findById(tdDTO.getTurmaId())
+                        .orElseThrow(() -> new RuntimeException("Turma com ID " + tdDTO.getTurmaId() + " não encontrada"));
+
+                // Verifica se a disciplina existe
+                Disciplina disciplina = disciplinaRepository.findById(tdDTO.getDisciplinaId())
+                        .orElseThrow(() -> new RuntimeException("Disciplina com ID " + tdDTO.getDisciplinaId() + " não encontrada"));
+
+                // Cria a associação Turma-Disciplina-Professor
+                TurmaDisciplinaProfessor turmaDisciplinaProfessor = new TurmaDisciplinaProfessor();
+                turmaDisciplinaProfessor.setProfessor(professor);
+                turmaDisciplinaProfessor.setTurma(turma);
+                turmaDisciplinaProfessor.setDisciplina(disciplina);
+
+                // Adiciona a associação ao professor
+                professor.addTurmaDisciplinaProfessor(turmaDisciplinaProfessor);
+            }
+        }
+
+        // Salva o professor atualizado no banco de dados
         Professor updatedProfessor = professorRepository.save(professor);
 
         // Retorna o DTO atualizado
         return convertToDto(updatedProfessor);
     }
+
 
     
     public List<ProfessorDTO> getAllProfessores() {

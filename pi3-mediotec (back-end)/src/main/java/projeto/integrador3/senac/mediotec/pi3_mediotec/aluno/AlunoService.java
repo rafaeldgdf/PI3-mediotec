@@ -3,9 +3,13 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.aluno;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.Endereco;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.EnderecoDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.Telefone;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.Turma;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaRepository;
@@ -24,6 +28,10 @@ public class AlunoService {
     
     @Autowired
     private TurmaRepository turmaRepository;
+    
+    @Autowired
+    private CoordenacaoRepository coordenacaoRepository;
+
    
     
 
@@ -41,58 +49,103 @@ public class AlunoService {
     }
 
     // Cria um novo aluno
-    public AlunoDTO saveAluno(Aluno aluno) {
-        if (alunoRepository.existsByCpf(aluno.getCpf())) {
-            throw new RuntimeException("Aluno com CPF " + aluno.getCpf() + " já existe");
+    @Transactional
+    public AlunoDTO saveAluno(AlunoDTO alunoDTO) {
+        Aluno aluno = new Aluno();
+
+        aluno.setNome(alunoDTO.getNome());
+        aluno.setUltimoNome(alunoDTO.getUltimoNome());
+        aluno.setGenero(alunoDTO.getGenero());
+        aluno.setCpf(alunoDTO.getCpf());
+        aluno.setEmail(alunoDTO.getEmail());
+
+        // Associa a coordenacao pelo ID
+        Coordenacao coordenacao = coordenacaoRepository.findById(alunoDTO.getCoordenacaoId())
+                .orElseThrow(() -> new RuntimeException("Coordenação não encontrada: " + alunoDTO.getCoordenacaoId()));
+        aluno.setCoordenacao(coordenacao);
+
+        // Associa as turmas pelo ID
+        Set<Turma> turmas = new HashSet<>();
+        for (Long turmaId : alunoDTO.getTurmasIds()) {
+            Turma turma = turmaRepository.findById(turmaId)
+                    .orElseThrow(() -> new RuntimeException("Turma não encontrada: " + turmaId));
+            turmas.add(turma);
+        }
+        aluno.setTurmas(turmas);
+
+        // Endereços e telefones são opcionais
+        if (alunoDTO.getEnderecos() != null) {
+            aluno.getEnderecos().forEach(endereco -> endereco.setAluno(aluno));
+        }
+        if (alunoDTO.getTelefones() != null) {
+            aluno.getTelefones().forEach(telefone -> telefone.setAluno(aluno));
         }
 
-        // Associa os endereços e telefones ao aluno
-        aluno.getEnderecos().forEach(endereco -> endereco.setAluno(aluno));
-        aluno.getTelefones().forEach(telefone -> telefone.setAluno(aluno));
-
-        // Certifique-se de que as turmas estão sendo recuperadas do banco de dados
-        if (aluno.getTurmas() != null) {
-            Set<Turma> turmas = new HashSet<>();
-            for (Turma turma : aluno.getTurmas()) {
-                Turma existingTurma = turmaRepository.findById(turma.getId())
-                        .orElseThrow(() -> new RuntimeException("Turma não encontrada: " + turma.getId()));
-                turmas.add(existingTurma);
-                aluno.addTurma(existingTurma);
-            }
-            aluno.setTurmas(turmas);
-        }
-
-        // Salva o aluno com a associação das turmas
+        // Salva o aluno com as turmas associadas
         Aluno savedAluno = alunoRepository.save(aluno);
-
-        // Aqui, o Hibernate deve persistir as relações na tabela intermediária automaticamente
         return convertToDto(savedAluno);
     }
 
 
 
     // Edita um aluno existente
-    public AlunoDTO updateAluno(Long idAluno, Aluno alunoDetails) {
-        Aluno aluno = alunoRepository.findById(idAluno)
-                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+    @Transactional
+    public AlunoDTO updateAluno(Long id, AlunoDTO alunoDTO) {
+        Aluno aluno = alunoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado: " + id));
 
-        aluno.setNome(alunoDetails.getNome());
-        aluno.setUltimoNome(alunoDetails.getUltimoNome());
-        aluno.setGenero(alunoDetails.getGenero());
-        aluno.setCpf(alunoDetails.getCpf());
-        aluno.setEmail(alunoDetails.getEmail());
-        aluno.setEnderecos(alunoDetails.getEnderecos());
-        aluno.setTelefones(alunoDetails.getTelefones());
-        aluno.setTurmas(alunoDetails.getTurmas());
+        aluno.setNome(alunoDTO.getNome());
+        aluno.setUltimoNome(alunoDTO.getUltimoNome());
+        aluno.setGenero(alunoDTO.getGenero());
+        aluno.setCpf(alunoDTO.getCpf());
+        aluno.setEmail(alunoDTO.getEmail());
 
-        aluno.getEnderecos().forEach(endereco -> endereco.setAluno(aluno));
-        aluno.getTelefones().forEach(telefone -> telefone.setAluno(aluno));
-        aluno.getTurmas().forEach(turma -> turma.getAlunos().add(aluno));
+        // Atualiza a coordenacao
+        Coordenacao coordenacao = coordenacaoRepository.findById(alunoDTO.getCoordenacaoId())
+                .orElseThrow(() -> new RuntimeException("Coordenação não encontrada: " + alunoDTO.getCoordenacaoId()));
+        aluno.setCoordenacao(coordenacao);
 
+        // Atualiza as turmas
+        Set<Turma> turmas = new HashSet<>();
+        for (Long turmaId : alunoDTO.getTurmasIds()) {
+            Turma turma = turmaRepository.findById(turmaId)
+                    .orElseThrow(() -> new RuntimeException("Turma não encontrada: " + turmaId));
+            turmas.add(turma);
+        }
+        aluno.setTurmas(turmas);
+
+        // Atualiza os endereços se fornecidos
+        if (alunoDTO.getEnderecos() != null) {
+            aluno.getEnderecos().clear();  // Remove os endereços antigos
+            alunoDTO.getEnderecos().forEach(enderecoDTO -> {
+                Endereco endereco = new Endereco();
+                endereco.setCep(enderecoDTO.getCep());
+                endereco.setRua(enderecoDTO.getRua());
+                endereco.setNumero(enderecoDTO.getNumero());
+                endereco.setBairro(enderecoDTO.getBairro());
+                endereco.setCidade(enderecoDTO.getCidade());
+                endereco.setEstado(enderecoDTO.getEstado());
+                endereco.setAluno(aluno);  // Configura o aluno no endereço
+                aluno.getEnderecos().add(endereco);
+            });
+        }
+
+        // Atualiza os telefones se fornecidos
+        if (alunoDTO.getTelefones() != null) {
+            aluno.getTelefones().clear();  // Remove os telefones antigos
+            alunoDTO.getTelefones().forEach(telefoneDTO -> {
+                Telefone telefone = new Telefone();
+                telefone.setDdd(telefoneDTO.getDdd());
+                telefone.setNumero(telefoneDTO.getNumero());
+                telefone.setAluno(aluno);  // Configura o aluno no telefone
+                aluno.getTelefones().add(telefone);
+            });
+        }
+
+        // Salva o aluno atualizado no banco de dados
         Aluno updatedAluno = alunoRepository.save(aluno);
         return convertToDto(updatedAluno);
     }
-
 
     // Deleta um aluno
     public void deleteAluno(Long idAluno) {
@@ -112,7 +165,11 @@ public class AlunoService {
                 .genero(aluno.getGenero())
                 .cpf(aluno.getCpf())
                 .email(aluno.getEmail())
-                .enderecos(aluno.getEnderecos().stream()
+                .coordenacaoId(aluno.getCoordenacao().getId())
+                .turmasIds(aluno.getTurmas().stream()
+                        .map(Turma::getId)
+                        .collect(Collectors.toSet()))
+                .enderecos(aluno.getEnderecos() != null ? aluno.getEnderecos().stream()
                         .map(endereco -> EnderecoDTO.builder()
                                 .cep(endereco.getCep())
                                 .rua(endereco.getRua())
@@ -121,13 +178,13 @@ public class AlunoService {
                                 .cidade(endereco.getCidade())
                                 .estado(endereco.getEstado())
                                 .build())
-                        .collect(Collectors.toSet()))
-                .telefones(aluno.getTelefones().stream()
+                        .collect(Collectors.toSet()) : null)
+                .telefones(aluno.getTelefones() != null ? aluno.getTelefones().stream()
                         .map(telefone -> TelefoneDTO.builder()
                                 .ddd(telefone.getDdd())
                                 .numero(telefone.getNumero())
                                 .build())
-                        .collect(Collectors.toSet()))
+                        .collect(Collectors.toSet()) : null)
                 .build();
     }
     
