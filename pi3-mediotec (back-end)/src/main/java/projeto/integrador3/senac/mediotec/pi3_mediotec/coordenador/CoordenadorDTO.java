@@ -10,6 +10,8 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import jakarta.persistence.Column;
+
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder 
@@ -21,6 +23,7 @@ public class CoordenadorDTO {
     private String genero;
     private Date data_nascimento;
     private String email;
+    private boolean status;
     private Set<EnderecoDTO> enderecos;
     private Set<TelefoneDTO> telefones;
 }

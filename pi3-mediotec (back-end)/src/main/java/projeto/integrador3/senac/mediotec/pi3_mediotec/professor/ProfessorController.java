@@ -19,7 +19,6 @@ public class ProfessorController {
     // Método GET para listar todos os professores
     @GetMapping
     public ResponseEntity<List<ProfessorResumidoDTO>> getAllProfessores() {
-        // Alterado para retornar lista de ProfessorResumidoDTO
         List<ProfessorResumidoDTO> professores = professorService.getAllProfessores();
         return new ResponseEntity<>(professores, HttpStatus.OK);
     }
@@ -27,24 +26,15 @@ public class ProfessorController {
     // Método GET para buscar professor por CPF
     @GetMapping("/{cpf}")
     public ResponseEntity<ProfessorResumidoDTO> getProfessorById(@PathVariable String cpf) {
-        // Alterado para retornar ProfessorResumidoDTO
         Optional<ProfessorResumidoDTO> professor = professorService.getProfessorById(cpf);
         return professor.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                         .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    // Método GET para listar disciplinas lecionadas por um professor específico
-    @GetMapping("/{professorId}/disciplinas")
-    public ResponseEntity<List<Disciplina>> getDisciplinasByProfessor(@PathVariable String professorId) {
-        List<Disciplina> disciplinas = professorService.getDisciplinasByProfessor(professorId);
-        return new ResponseEntity<>(disciplinas, HttpStatus.OK);
     }
 
  // Método POST para criar um novo professor
     @PostMapping
     public ResponseEntity<ProfessorResumidoDTO> createProfessor(@RequestBody ProfessorDTO professorDTO) {
         try {
-            // Cria o professor e retorna ProfessorResumidoDTO
             ProfessorResumidoDTO savedProfessor = professorService.saveProfessor(professorDTO);
             return new ResponseEntity<>(savedProfessor, HttpStatus.CREATED);
         } catch (RuntimeException e) {
@@ -56,7 +46,6 @@ public class ProfessorController {
     @PutMapping("/{cpf}")
     public ResponseEntity<ProfessorResumidoDTO> updateProfessor(@PathVariable String cpf, @RequestBody ProfessorDTO professorDTO) {
         try {
-            // Atualize o professor e retorne ProfessorResumidoDTO
             ProfessorResumidoDTO updatedProfessor = professorService.updateProfessor(cpf, professorDTO);
             return new ResponseEntity<>(updatedProfessor, HttpStatus.OK);
         } catch (RuntimeException e) {

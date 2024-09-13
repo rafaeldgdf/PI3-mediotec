@@ -22,6 +22,7 @@ public class AlunoDTO {
     private String ultimoNome;
     private String genero;
     private Date data_nascimento;
+    private boolean status;
     private String cpf;
     private String email;
     private Set<EnderecoDTO> enderecos;

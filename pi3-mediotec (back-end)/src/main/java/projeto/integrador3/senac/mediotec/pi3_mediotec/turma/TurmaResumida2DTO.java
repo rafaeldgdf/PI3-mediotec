@@ -11,5 +11,6 @@ public class TurmaResumida2DTO {
     private Long id;     // ID da Turma
     private String nome;  // Nome da Turma
     private int ano;      // Ano da Turma
+    private boolean ativa;
 }
 

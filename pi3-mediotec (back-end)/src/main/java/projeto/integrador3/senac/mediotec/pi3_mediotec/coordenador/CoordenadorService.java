@@ -1,16 +1,15 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.Endereco;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.EnderecoDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.Telefone;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneDTO;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 
 @Service
 public class CoordenadorService {
@@ -18,71 +17,111 @@ public class CoordenadorService {
     @Autowired
     private CoordenadorRepository coordenadorRepository;
 
-//CRUD 
-
-    // Lista todos
+    // Lista todos os coordenadores e retorna uma lista de CoordenadorDTO
     public List<CoordenadorDTO> getAllCoordenadores() {
         return coordenadorRepository.findAll().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
-    // Busca pelo id
+    // Busca coordenador por ID (CPF) e retorna CoordenadorDTO
     public Optional<CoordenadorDTO> getCoordenadorById(String id) {
         return coordenadorRepository.findById(id)
                 .map(this::convertToDto);
     }
 
-    // Cria
-    public CoordenadorDTO saveCoordenador(Coordenador coordenador) {
-        
-        if (coordenadorRepository.existsByCpf(coordenador.getCpf())) {
-            throw new RuntimeException("Coordenador com CPF " + coordenador.getCpf() + " já existe");
+    // Cria um coordenador diretamente no método (sem usar convertToEntity)
+    public CoordenadorDTO saveCoordenador(CoordenadorDTO coordenadorDTO) {
+        // Verifica se o CPF já existe
+        if (coordenadorRepository.existsByCpf(coordenadorDTO.getCpf())) {
+            throw new RuntimeException("Coordenador com CPF " + coordenadorDTO.getCpf() + " já existe");
         }
 
-        // Configura a relação bidirecional entre coordenador e endereços/telefones
-        coordenador.getEnderecos().forEach(endereco -> endereco.setCoordenador(coordenador));
-        coordenador.getTelefones().forEach(telefone -> telefone.setCoordenador(coordenador));
+        // Converte DTO diretamente para entidade dentro do método
+        Coordenador coordenador = new Coordenador();
+        coordenador.setCpf(coordenadorDTO.getCpf());
+        coordenador.setNome(coordenadorDTO.getNome());
+        coordenador.setUltimoNome(coordenadorDTO.getUltimoNome());
+        coordenador.setGenero(coordenadorDTO.getGenero());
+        coordenador.setData_nascimento(coordenadorDTO.getData_nascimento());
+        coordenador.setEmail(coordenadorDTO.getEmail());
 
+        // Define o status inicial como ativo
+        coordenador.setStatus(true);
+
+        // Associa endereços ao coordenador
+        coordenador.setEnderecos(coordenadorDTO.getEnderecos().stream()
+                .map(enderecoDTO -> Endereco.builder()
+                        .cep(enderecoDTO.getCep())
+                        .rua(enderecoDTO.getRua())
+                        .numero(enderecoDTO.getNumero())
+                        .bairro(enderecoDTO.getBairro())
+                        .cidade(enderecoDTO.getCidade())
+                        .estado(enderecoDTO.getEstado())
+                        .build())
+                .collect(Collectors.toSet()));
+
+        // Associa telefones ao coordenador
+        coordenador.setTelefones(coordenadorDTO.getTelefones().stream()
+                .map(telefoneDTO -> Telefone.builder()
+                        .ddd(telefoneDTO.getDdd())
+                        .numero(telefoneDTO.getNumero())
+                        .build())
+                .collect(Collectors.toSet()));
+
+        // Salva a entidade e retorna o DTO correspondente
         Coordenador savedCoordenador = coordenadorRepository.save(coordenador);
         return convertToDto(savedCoordenador);
     }
 
-    // Edita
-    public CoordenadorDTO updateCoordenador(String id, Coordenador coordenadorDetails) {
+    // Atualiza um coordenador existente (sem usar convertToEntity)
+    public CoordenadorDTO updateCoordenador(String id, CoordenadorDTO coordenadorDTO) {
+        // Busca o coordenador existente no banco
         Coordenador coordenador = coordenadorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Coordenador não encontrado"));
 
-        if (coordenadorDetails.getCpf() != null && !coordenadorDetails.getCpf().isEmpty()) {
-            if (!coordenador.getCpf().equals(coordenadorDetails.getCpf()) &&
-                    coordenadorRepository.existsById(coordenadorDetails.getCpf())) {
-                throw new RuntimeException("Coordenador com CPF " + coordenadorDetails.getCpf() + " já existe");
-            }
-            coordenador.setCpf(coordenadorDetails.getCpf());
-        }
+        // Atualiza os dados do coordenador diretamente a partir do DTO
+        coordenador.setNome(coordenadorDTO.getNome());
+        coordenador.setUltimoNome(coordenadorDTO.getUltimoNome());
+        coordenador.setGenero(coordenadorDTO.getGenero());
+        coordenador.setData_nascimento(coordenadorDTO.getData_nascimento());
+        coordenador.setEmail(coordenadorDTO.getEmail());
 
-        coordenador.setNome(coordenadorDetails.getNome());
-        coordenador.setUltimoNome(coordenadorDetails.getUltimoNome());
-        coordenador.setGenero(coordenadorDetails.getGenero());
-        coordenador.setData_nascimento(coordenadorDetails.getData_nascimento());
-        coordenador.setEmail(coordenadorDetails.getEmail());
-        coordenador.setEnderecos(coordenadorDetails.getEnderecos());
-        coordenador.setTelefones(coordenadorDetails.getTelefones());
-   
+        // Atualiza endereços
+        coordenador.setEnderecos(coordenadorDTO.getEnderecos().stream()
+                .map(enderecoDTO -> Endereco.builder()
+                        .cep(enderecoDTO.getCep())
+                        .rua(enderecoDTO.getRua())
+                        .numero(enderecoDTO.getNumero())
+                        .bairro(enderecoDTO.getBairro())
+                        .cidade(enderecoDTO.getCidade())
+                        .estado(enderecoDTO.getEstado())
+                        .build())
+                .collect(Collectors.toSet()));
 
+        // Atualiza telefones
+        coordenador.setTelefones(coordenadorDTO.getTelefones().stream()
+                .map(telefoneDTO -> Telefone.builder()
+                        .ddd(telefoneDTO.getDdd())
+                        .numero(telefoneDTO.getNumero())
+                        .build())
+                .collect(Collectors.toSet()));
+
+        // Atualiza o status
+        coordenador.setStatus(coordenadorDTO.isStatus());
+
+        // Salva a entidade e retorna o DTO atualizado
         Coordenador updatedCoordenador = coordenadorRepository.save(coordenador);
         return convertToDto(updatedCoordenador);
     }
 
-    // Deleta
+    // Deleta um coordenador por ID (CPF)
     public void deleteCoordenador(String id) {
         Coordenador coordenador = coordenadorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Coordenador not found"));
+                .orElseThrow(() -> new RuntimeException("Coordenador não encontrado"));
         coordenadorRepository.delete(coordenador);
     }
-    
-//Métodos específicos e tratamentos de erros da classe 
-    
+
     // Converte Coordenador para CoordenadorDTO
     private CoordenadorDTO convertToDto(Coordenador coordenador) {
         return CoordenadorDTO.builder()
@@ -92,22 +131,33 @@ public class CoordenadorService {
                 .genero(coordenador.getGenero())
                 .data_nascimento(coordenador.getData_nascimento())
                 .email(coordenador.getEmail())
+                .status(coordenador.isStatus())
                 .enderecos(coordenador.getEnderecos().stream()
-                        .<EnderecoDTO>map(endereco -> EnderecoDTO.builder()
-                                .cep(endereco.getCep())
-                                .rua(endereco.getRua())
-                                .numero(endereco.getNumero())
-                                .bairro(endereco.getBairro())
-                                .cidade(endereco.getCidade())
-                                .estado(endereco.getEstado())
-                                .build())
+                        .map(this::convertEnderecoToDto)
                         .collect(Collectors.toSet()))
                 .telefones(coordenador.getTelefones().stream()
-                        .<TelefoneDTO>map(telefone -> TelefoneDTO.builder()
-                                .ddd(telefone.getDdd())
-                                .numero(telefone.getNumero())
-                                .build())
+                        .map(this::convertTelefoneToDto)
                         .collect(Collectors.toSet()))
-                .build(); 
+                .build();
+    }
+
+    // Converte Endereco (entidade) para EnderecoDTO
+    private EnderecoDTO convertEnderecoToDto(Endereco endereco) {
+        return EnderecoDTO.builder()
+                .cep(endereco.getCep())
+                .rua(endereco.getRua())
+                .numero(endereco.getNumero())
+                .bairro(endereco.getBairro())
+                .cidade(endereco.getCidade())
+                .estado(endereco.getEstado())
+                .build();
+    }
+
+    // Converte Telefone (entidade) para TelefoneDTO
+    private TelefoneDTO convertTelefoneToDto(Telefone telefone) {
+        return TelefoneDTO.builder()
+                .ddd(telefone.getDdd())
+                .numero(telefone.getNumero())
+                .build();
     }
 }

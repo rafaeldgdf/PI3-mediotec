@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoResumidoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoResumidaDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaResumida2DTO;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
@@ -20,6 +21,7 @@ public class TurmaDTO {
     private String nome;
     private int ano;
     private CoordenacaoResumidaDTO coordenacao;
+    private Set<DisciplinaResumida2DTO> disciplinas; 
     private Set<DisciplinaProfessorDTO> disciplinasProfessores;
     private Set<AlunoResumidoDTO> alunos;
 }

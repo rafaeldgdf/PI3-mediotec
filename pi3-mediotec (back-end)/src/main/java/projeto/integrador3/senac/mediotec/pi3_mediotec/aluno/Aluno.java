@@ -52,6 +52,9 @@ public class Aluno extends Usuario {
     @Column(nullable = true, unique = true)
     private String cpf;
     
+    @Column
+    private boolean status;
+    
     @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(nullable = false)
     private Set<Endereco> enderecos;

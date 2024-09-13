@@ -28,6 +28,7 @@ public class ProfessorDTO {
     private String genero;
     private Date data_nascimento;
     private String email;
+    private boolean status;
     private Set<EnderecoDTO> enderecos;
     private Set<TelefoneDTO> telefones;
     private Long coordenacaoId;

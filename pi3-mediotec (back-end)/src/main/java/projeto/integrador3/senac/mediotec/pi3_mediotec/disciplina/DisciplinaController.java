@@ -16,14 +16,14 @@ public class DisciplinaController {
 
     // GET all disciplines (more detailed with full objects)
     @GetMapping
-    public List<DisciplinaResumidaDTO> getAllDisciplinas() {
+    public List<DisciplinaGetDTO> getAllDisciplinas() {
         return disciplinaService.getAllDisciplinas();
     }
 
     // GET discipline by ID (more detailed with full objects)
     @GetMapping("/{id}")
-    public ResponseEntity<DisciplinaResumidaDTO> getDisciplinaById(@PathVariable Long id) {
-        Optional<DisciplinaResumidaDTO> disciplina = disciplinaService.getDisciplinaById(id);
+    public ResponseEntity<DisciplinaGetDTO> getDisciplinaById(@PathVariable Long id) {
+        Optional<DisciplinaGetDTO> disciplina = disciplinaService.getDisciplinaById(id);
         return disciplina.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

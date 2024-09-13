@@ -55,6 +55,11 @@ public class AlunoService {
         aluno.setGenero(alunoResumidoDTO.getGenero());
         aluno.setCpf(alunoResumidoDTO.getCpf());
         aluno.setEmail(alunoResumidoDTO.getEmail());
+        
+        
+        // Define status como true ao criar um novo professor 
+        aluno.setStatus(true); 
+        
 
         // Associa endereços ao aluno
         aluno.setEnderecos(alunoResumidoDTO.getEnderecos().stream()
@@ -103,6 +108,9 @@ public class AlunoService {
         aluno.setGenero(alunoDTO.getGenero());
         aluno.setCpf(alunoDTO.getCpf());
         aluno.setEmail(alunoDTO.getEmail());
+        
+        // Permite a alteração do status através do PUT
+        aluno.setStatus(alunoDTO.isStatus());
 
         // Atualizar endereços
         aluno.setEnderecos(alunoDTO.getEnderecos().stream()

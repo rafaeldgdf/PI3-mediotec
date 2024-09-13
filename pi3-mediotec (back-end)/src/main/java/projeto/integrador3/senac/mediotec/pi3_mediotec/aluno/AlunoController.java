@@ -5,6 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import projeto.integrador3.senac.mediotec.pi3_mediotec.conceito.ConceitoDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.conceito.ConceitoService;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +17,9 @@ public class AlunoController {
 
     @Autowired
     private AlunoService alunoService;
+    
+    @Autowired
+    private ConceitoService conceitoService;
 
     // Lista todos os alunos
     @GetMapping
@@ -61,5 +67,20 @@ public class AlunoController {
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+    
+    // Rota para visualizar todos os conceitos de um aluno
+    @GetMapping("/{alunoId}/conceito")
+    public ResponseEntity<List<ConceitoDTO>> listarConceitosPorAluno(@PathVariable Long alunoId) {
+        List<ConceitoDTO> conceitos = conceitoService.buscarConceitosPorAluno(alunoId);
+        return ResponseEntity.ok(conceitos);
+    }
+
+    // Rota para visualizar conceitos de um aluno por uma disciplina específica
+    @GetMapping("/{alunoId}/disciplina/{disciplinaId}")
+    public ResponseEntity<List<ConceitoDTO>> listarConceitosPorAlunoEDisciplina(
+            @PathVariable Long alunoId, @PathVariable Long disciplinaId) {
+        List<ConceitoDTO> conceitos = conceitoService.buscarConceitosPorAlunoEDisciplina(alunoId, disciplinaId);
+        return ResponseEntity.ok(conceitos);
     }
 }

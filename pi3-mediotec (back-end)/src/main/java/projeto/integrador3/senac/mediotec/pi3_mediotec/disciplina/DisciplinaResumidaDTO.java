@@ -16,3 +16,4 @@ public class DisciplinaResumidaDTO {
     private ProfessorResumidoDTO professor;  // Detalhes simples do professor (ID, nome, sobrenome)
 
 }
+

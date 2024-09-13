@@ -57,6 +57,9 @@ public class Turma implements Serializable {
     @Column(nullable = false)
     private int ano;
     
+    @Column
+    private boolean status;
+    
     @JsonIgnore
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

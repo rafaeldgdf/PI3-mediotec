@@ -90,6 +90,10 @@ public class ProfessorService {
                 .telefones(telefones)
                 .build();
         
+     // Define status como true ao criar um novo professor 
+        professor.setStatus(true); 
+        
+        
      // Verifica e associa turmas e disciplinas, se fornecidos
         if (professorDTO.getTurmasDisciplinas() != null) {
             professor.getTurmaDisciplinaProfessores().clear();
@@ -133,6 +137,9 @@ public class ProfessorService {
         professor.setGenero(professorDTO.getGenero());
         professor.setEmail(professorDTO.getEmail());
         professor.setData_nascimento(professorDTO.getData_nascimento());
+        
+        // Permite a alteração do status através do PUT
+        professor.setStatus(professorDTO.isStatus());
 
         // Atualiza a coordenação, se fornecida
         if (professorDTO.getCoordenacaoId() != null) {
@@ -193,7 +200,7 @@ public class ProfessorService {
             }
         }
 
-        // Verifica e associa turmas e disciplinas, se fornecidos
+     
      // Verifica e associa turmas e disciplinas, se fornecidos
         if (professorDTO.getTurmasDisciplinas() != null) {
             professor.getTurmaDisciplinaProfessores().clear();

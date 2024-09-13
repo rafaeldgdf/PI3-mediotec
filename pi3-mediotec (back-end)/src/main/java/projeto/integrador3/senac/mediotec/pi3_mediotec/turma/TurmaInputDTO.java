@@ -11,6 +11,7 @@ public class TurmaInputDTO {
 
     private String nome;
     private int ano;
+    private boolean status;
     private Long coordenacaoId;
     private Set<Long> alunosIds;
     private Set<DisciplinaProfessorInputDTO> disciplinasProfessores;

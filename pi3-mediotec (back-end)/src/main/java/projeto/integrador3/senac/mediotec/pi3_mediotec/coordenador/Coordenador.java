@@ -42,6 +42,9 @@ public class Coordenador extends Usuario{
     @Column(nullable = false, unique = true)
     private String cpf;
    	
+    @Column
+    private boolean status;
+      	
     @OneToMany(mappedBy = "coordenador", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(nullable = true)
     private Set<Endereco> enderecos;

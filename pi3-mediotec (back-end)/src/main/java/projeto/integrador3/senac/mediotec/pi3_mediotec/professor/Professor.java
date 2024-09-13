@@ -54,6 +54,9 @@ public class Professor extends Usuario {
     @Column(nullable = true)
     private Set<Telefone> telefones;
     
+    @Column
+    private boolean status;
+    
     @JsonIgnore
     @OneToMany(mappedBy = "professor")
     private Set<TurmaDisciplinaProfessor> turmaDisciplinaProfessores; // Atualizado para refletir a nova entidade

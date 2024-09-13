@@ -29,13 +29,7 @@ public class TurmaController {
         return turma.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-    
-    //Listar turma as disciplinasde uma turma
-    @GetMapping("/{turmaId}/disciplinas")
-    public ResponseEntity<List<DisciplinaDTO>> getDisciplinasByTurma(@PathVariable Long turmaId) {
-        List<DisciplinaDTO> disciplinas = turmaService.getDisciplinasByTurma(turmaId);
-        return ResponseEntity.ok(disciplinas);  // Retorna a lista de disciplinas da turma
-    }
+
 
     // Endpoint para criar uma nova turma
     @PostMapping

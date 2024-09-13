@@ -14,39 +14,53 @@ public class ConceitoController {
     @Autowired
     private ConceitoService conceitoService;
 
+    // Rota para listar todos os conceitos (GET) - retorna o DTO completo
     @GetMapping
     public ResponseEntity<List<ConceitoDTO>> listarConceitos() {
         List<ConceitoDTO> conceitos = conceitoService.listarConceitos();
         return ResponseEntity.ok(conceitos);
     }
 
+    // Rota para buscar conceito por ID (GET) - retorna o DTO completo
     @GetMapping("/{id}")
     public ResponseEntity<ConceitoDTO> buscarConceitoPorId(@PathVariable Long id) {
         Optional<ConceitoDTO> conceito = conceitoService.buscarConceitoPorId(id);
         return conceito.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // Rota para criar um novo conceito (POST) - usa ConceitoResumidoDTO
     @PostMapping
-    public ResponseEntity<ConceitoDTO> criarConceito(@RequestBody ConceitoDTO conceitoDTO) {
-        ConceitoDTO novoConceito = conceitoService.salvarConceito(conceitoDTO);
-        return ResponseEntity.ok(novoConceito);
+    public ResponseEntity<ConceitoDTO> criarConceito(@RequestBody ConceitoResumidoDTO conceitoResumidoDTO) {
+        try {
+            ConceitoDTO novoConceito = conceitoService.salvarConceito(conceitoResumidoDTO);
+            return ResponseEntity.ok(novoConceito);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
+    // Rota para atualizar um conceito existente (PUT) - usa ConceitoResumidoDTO
     @PutMapping("/{id}")
-    public ResponseEntity<ConceitoDTO> atualizarConceito(@PathVariable Long id, @RequestBody ConceitoDTO conceitoDTO) {
-        ConceitoDTO conceitoAtualizado = conceitoService.atualizarConceito(id, conceitoDTO);
-        return ResponseEntity.ok(conceitoAtualizado);
+    public ResponseEntity<ConceitoDTO> atualizarConceito(@PathVariable Long id, @RequestBody ConceitoResumidoDTO conceitoResumidoDTO) {
+        try {
+            ConceitoDTO conceitoAtualizado = conceitoService.atualizarConceito(id, conceitoResumidoDTO);
+            return ResponseEntity.ok(conceitoAtualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
+    // Rota para deletar um conceito (DELETE)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarConceito(@PathVariable Long id) {
-        conceitoService.deletarConceito(id);
-        return ResponseEntity.noContent().build();
+        try {
+            conceitoService.deletarConceito(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @GetMapping("/aluno/{alunoId}")
-    public ResponseEntity<List<ConceitoDTO>> buscarConceitosPorAluno(@PathVariable Long alunoId) {
-        List<ConceitoDTO> conceitos = conceitoService.buscarConceitosPorAluno(alunoId);
-        return ResponseEntity.ok(conceitos);
-    }
+
 }
+
