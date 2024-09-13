@@ -66,8 +66,8 @@ public class Coordenacao implements Serializable {
     @Column(nullable = true)
     private Set<Telefone> telefones;
     
-    @OneToOne
-    private Coordenador coordenador;
+    @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Coordenador> coordenadores;
     
     @JsonIgnore
     @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -96,6 +96,12 @@ public class Coordenacao implements Serializable {
     public void addProfessor(Professor professor) {
         professor.setCoordenacao(this);
         this.professores.add(professor);
+    }
+    
+
+    public void addCoordenador(Coordenador coordenador) {
+        coordenador.setCoordenacao(this); // Configura a relação inversa
+        this.coordenadores.add(coordenador);
     }
     
     @Override

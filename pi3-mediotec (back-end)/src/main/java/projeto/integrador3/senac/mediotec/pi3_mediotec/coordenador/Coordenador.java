@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -19,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.Endereco;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.Telefone;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.usuario.Usuario;
@@ -47,9 +49,13 @@ public class Coordenador extends Usuario{
     @OneToMany(mappedBy = "coordenador", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(nullable = true)
     private Set<Telefone> telefones;
+    
+    @ManyToOne
+    @JoinColumn(name = "id_coordenacao") // Chave estrangeira para a tabela coordenacao
+    private Coordenacao coordenacao;
    	
     
-    //funcoes para configurar as bilateridades 
+    //funcoes para configurar as bilateridades	 
     public void addEndereco(Endereco endereco) {
         endereco.setCoordenador(this); 
         this.enderecos.add(endereco);
@@ -59,4 +65,6 @@ public class Coordenador extends Usuario{
         telefone.setCoordenador(this); 
         this.telefones.add(telefone);
     }
+    
+    
 }

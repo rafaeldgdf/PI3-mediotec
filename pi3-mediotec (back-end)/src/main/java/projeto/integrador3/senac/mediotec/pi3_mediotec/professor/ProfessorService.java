@@ -252,15 +252,21 @@ public class ProfessorService {
 
     // Método para converter Professor para ProfessorResumidoDTO
     private ProfessorResumidoDTO convertToDto(Professor professor) {
-        CoordenadorResumidoDTO coordenadorDTO = null;
+        // Mapeia os coordenadores da coordenacao associada ao professor
+        List<CoordenadorResumidoDTO> coordenadoresDTO = null;
 
-        if (professor.getCoordenacao() != null && professor.getCoordenacao().getCoordenador() != null) {
-            coordenadorDTO = CoordenadorResumidoDTO.builder()
-                .cpf(professor.getCoordenacao().getCoordenador().getCpf())
-                .nomeCoordenador(professor.getCoordenacao().getCoordenador().getNome() + " " + professor.getCoordenacao().getCoordenador().getUltimoNome())
-                .build();
+        if (professor.getCoordenacao() != null) {
+            // Se houver coordenadores associados à coordenacao, mapeie-os
+            coordenadoresDTO = professor.getCoordenacao().getCoordenadores().stream()
+                .map(coordenador -> CoordenadorResumidoDTO.builder()
+                    .cpf(coordenador.getCpf())
+                    .nomeCoordenador(coordenador.getNome() + " " + coordenador.getUltimoNome())
+                    .email(coordenador.getEmail())
+                    .build())
+                .collect(Collectors.toList());
         }
 
+        // Mapeia as turmas e disciplinas associadas ao professor
         Set<TurmaDisciplinaResumidaDTO> turmasDisciplinas = professor.getTurmaDisciplinaProfessores().stream()
             .map(tdp -> TurmaDisciplinaResumidaDTO.builder()
                 .turma(TurmaResumidaDTO.builder()
@@ -275,12 +281,14 @@ public class ProfessorService {
                 .build())
             .collect(Collectors.toSet());
 
+        // Retorna o ProfessorResumidoDTO preenchido com todos os dados
         return ProfessorResumidoDTO.builder()
             .cpf(professor.getCpf())
             .nome(professor.getNome())
             .ultimoNome(professor.getUltimoNome())
-            .coordenador(coordenadorDTO)
-            .turmasDisciplinas(turmasDisciplinas)
+            .coordenadores(coordenadoresDTO) // Adiciona a lista de coordenadores
+            .turmasDisciplinas(turmasDisciplinas) // Associa as turmas e disciplinas
             .build();
     }
+
 }

@@ -148,52 +148,51 @@ public class AlunoService {
  // Conversão de Aluno para AlunoDTO (completo para GET)
     private AlunoDTO convertToDto(Aluno aluno) {
         // Mapeia as turmas do aluno para TurmaResumidaDTO
-    	Set<TurmaResumidaDTO> turmasDTO = aluno.getTurmas().stream()
-    		    .map((Turma turma) -> {
-    		        CoordenacaoResumidaDTO coordenacaoDTO = null;
-    		        Coordenacao coordenacao = turma.getCoordenacao();
-    		        
-    		        // Código de verificação e mapeamento de coordenador
-    		        if (coordenacao != null) {
-    		            CoordenadorResumidoDTO coordenadorDTO = null;
-    		            if (coordenacao.getCoordenador() != null) {
-    		                coordenadorDTO = CoordenadorResumidoDTO.builder()
-    		                    .cpf(coordenacao.getCoordenador().getCpf())
-    		                    .nomeCoordenador(coordenacao.getCoordenador().getNome() + " " + coordenacao.getCoordenador().getUltimoNome())
-    		                    .email(coordenacao.getCoordenador().getEmail())
-    		                    .build();
-    		            }
+        Set<TurmaResumidaDTO> turmasDTO = aluno.getTurmas().stream()
+            .map((Turma turma) -> {
+                CoordenacaoResumidaDTO coordenacaoDTO = null;
+                Coordenacao coordenacao = turma.getCoordenacao();
+                
+                // Código de verificação e mapeamento de coordenadores
+                if (coordenacao != null) {
+                    // Mapeia a lista de coordenadores
+                    List<CoordenadorResumidoDTO> coordenadoresDTO = coordenacao.getCoordenadores().stream()
+                        .map(coordenador -> CoordenadorResumidoDTO.builder()
+                            .cpf(coordenador.getCpf())
+                            .nomeCoordenador(coordenador.getNome() + " " + coordenador.getUltimoNome())
+                            .email(coordenador.getEmail())
+                            .build())
+                        .collect(Collectors.toList());
 
-    		            coordenacaoDTO = CoordenacaoResumidaDTO.builder()
-    		                .id(coordenacao.getId())
-    		                .nome(coordenacao.getNome())
-    		                .coordenador(coordenadorDTO)
-    		                .build();
-    		        }
+                    // Constroi o CoordenacaoResumidaDTO
+                    coordenacaoDTO = CoordenacaoResumidaDTO.builder()
+                        .id(coordenacao.getId())
+                        .nome(coordenacao.getNome())
+                        .coordenadores(coordenadoresDTO) // Adiciona a lista de coordenadores
+                        .build();
+                }
 
-    		     // Mapeamento das disciplinas e professores
-    		        Set<DisciplinaProfessorDTO> disciplinaProfessorDTO = turma.getTurmaDisciplinaProfessores() // Verifique se é uma Collection
-    		            .stream() // Certifique-se de que getTurmaDisciplinaProfessores retorna uma Collection ou List
-    		            .map((TurmaDisciplinaProfessor turmaDisciplinaProfessor) -> DisciplinaProfessorDTO.builder()
-    		                .professorId(turmaDisciplinaProfessor.getProfessor().getCpf())  // ID do professor
-    		                .nomeProfessor(turmaDisciplinaProfessor.getProfessor().getNome() + " " +
-    		                                turmaDisciplinaProfessor.getProfessor().getUltimoNome())  // Nome completo do professor
-    		                .email(turmaDisciplinaProfessor.getProfessor().getEmail())  // Email do professor
-    		                .nomesDisciplinas(Set.of(turmaDisciplinaProfessor.getDisciplina().getNome()))  // Nome da disciplina
-    		                .build())  // Fechamento do builder
-    		            .collect(Collectors.toSet());  // Fechamento do map e do collect
+                // Mapeamento das disciplinas e professores
+                Set<DisciplinaProfessorDTO> disciplinaProfessorDTO = turma.getTurmaDisciplinaProfessores()
+                    .stream()
+                    .map((TurmaDisciplinaProfessor turmaDisciplinaProfessor) -> DisciplinaProfessorDTO.builder()
+                        .professorId(turmaDisciplinaProfessor.getProfessor().getCpf())
+                        .nomeProfessor(turmaDisciplinaProfessor.getProfessor().getNome() + " " +
+                                       turmaDisciplinaProfessor.getProfessor().getUltimoNome())
+                        .email(turmaDisciplinaProfessor.getProfessor().getEmail())
+                        .nomesDisciplinas(Set.of(turmaDisciplinaProfessor.getDisciplina().getNome()))
+                        .build())
+                    .collect(Collectors.toSet());
 
-
-    		        return TurmaResumidaDTO.builder()
-    		            .id(turma.getId())
-    		            .nome(turma.getNome())
-    		            .ano(turma.getAno())
-    		            .coordenacao(coordenacaoDTO)
-    		            .disciplinaProfessores(disciplinaProfessorDTO)
-    		            .build();
-    		    })
-    		    .collect(Collectors.toSet());
-
+                return TurmaResumidaDTO.builder()
+                    .id(turma.getId())
+                    .nome(turma.getNome())
+                    .ano(turma.getAno())
+                    .coordenacao(coordenacaoDTO)
+                    .disciplinaProfessores(disciplinaProfessorDTO)
+                    .build();
+            })
+            .collect(Collectors.toSet());
 
         // Converte o Aluno para AlunoDTO com todos os campos
         return AlunoDTO.builder()

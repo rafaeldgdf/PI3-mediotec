@@ -1,5 +1,7 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao;
 
+import java.util.List;
+
 import lombok.Builder;
 import lombok.Data;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.CoordenadorResumidoDTO;
@@ -9,5 +11,5 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.CoordenadorRe
 public class CoordenacaoResumidaDTO {
     private Long id;
     private String nome;
-    private CoordenadorResumidoDTO coordenador; 
+    private List<CoordenadorResumidoDTO> coordenadores; 
 }

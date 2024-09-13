@@ -1,5 +1,6 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.professor;
 
+import java.util.List;
 import java.util.Set;
 
 import lombok.Builder;
@@ -13,7 +14,7 @@ public class ProfessorResumidoDTO {
     private String nome;        // Nome do Professor
     private String ultimoNome;  // Sobrenome do Professor
     private String email;
-    private CoordenadorResumidoDTO coordenador;
+    private List<CoordenadorResumidoDTO> coordenadores;
     private Set<TurmaDisciplinaResumidaDTO> turmasDisciplinas;
 }
 
