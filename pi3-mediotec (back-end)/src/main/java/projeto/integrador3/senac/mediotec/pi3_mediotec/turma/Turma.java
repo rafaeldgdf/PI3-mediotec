@@ -48,9 +48,7 @@ public class Turma implements Serializable {
     @Column(name = "id_turma")
     private Long id;
 
-    @NotNull(message = "{turma.nome.notnull}")
-    @Size(min = 3, max = 100, message = "{turma.nome.size}")
-    @Column(nullable = false)
+   
     private String nome;
 
     @NotNull(message = "{turma.ano.notnull}")

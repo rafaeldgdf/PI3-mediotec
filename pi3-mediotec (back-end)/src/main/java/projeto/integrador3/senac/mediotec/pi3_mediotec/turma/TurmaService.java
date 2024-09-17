@@ -19,6 +19,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorId;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -48,7 +49,6 @@ public class TurmaService {
     @Transactional
     public TurmaDTO saveTurma(TurmaInputDTO turmaDTO) {
         Turma turma = new Turma();
-        turma.setNome(turmaDTO.getNome());
         turma.setAno(turmaDTO.getAno());
         
         // Define status como true ao criar uma nova turma
@@ -59,43 +59,21 @@ public class TurmaService {
                 .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
         turma.setCoordenacao(coordenacao);
 
-        // Adiciona alunos à turma, se forem fornecidos
-        if (turmaDTO.getAlunosIds() != null && !turmaDTO.getAlunosIds().isEmpty()) {
-            for (Long alunoId : turmaDTO.getAlunosIds()) {
-                Aluno aluno = alunoRepository.findById(alunoId)
-                        .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-                turma.addAluno(aluno);
-            }
-        }
-
         // Salva a turma para gerar o ID
         Turma savedTurma = turmaRepository.save(turma);
 
-        // Associa disciplinas e professores à turma, se forem fornecidos
-        if (turmaDTO.getDisciplinasProfessores() != null && !turmaDTO.getDisciplinasProfessores().isEmpty()) {
-            for (DisciplinaProfessorInputDTO dpDTO : turmaDTO.getDisciplinasProfessores()) {
-                Professor professor = professorRepository.findById(dpDTO.getProfessorId())
-                        .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+        // Gerar o nome da turma baseado no ID
+        String nomeGerado = String.format("Turma %02d", savedTurma.getId()); // Nome no formato "Turma 01", "Turma 02", etc.
+        savedTurma.setNome(nomeGerado);
 
-                for (Long disciplinaId : dpDTO.getDisciplinasIds()) {
-                    Disciplina disciplina = disciplinaRepository.findById(disciplinaId)
-                            .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
+        // Salva novamente para incluir o nome gerado
+        turmaRepository.save(savedTurma);
 
-                    // Cria a relação Turma-Disciplina-Professor
-                    TurmaDisciplinaProfessor turmaDisciplinaProfessor = new TurmaDisciplinaProfessor();
-                    turmaDisciplinaProfessor.setId(new TurmaDisciplinaProfessorId(savedTurma.getId(), disciplina.getId(), professor.getCpf()));
-                    turmaDisciplinaProfessor.setTurma(savedTurma);
-                    turmaDisciplinaProfessor.setDisciplina(disciplina);
-                    turmaDisciplinaProfessor.setProfessor(professor);
-
-                    // Salva a relação no repositório de TurmaDisciplinaProfessor
-                    turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
-                }
-            }
-        }
+        // Lógica adicional para alunos, disciplinas, etc. pode vir aqui.
 
         return convertToDto(savedTurma);
-    }
+    }	
+
 
 
 
@@ -107,10 +85,12 @@ public class TurmaService {
                 .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
 
         // Atualiza os atributos da turma
-        turma.setNome(turmaDTO.getNome());
         turma.setAno(turmaDTO.getAno());
-        
-        
+
+        // Gerar o nome da turma baseado no ID (mesma lógica do cadastro)
+        String nomeGerado = String.format("Turma %02d", turma.getId());
+        turma.setNome(nomeGerado);
+
         // Verifica se a coordenação foi fornecida e faz a associação
         Coordenacao coordenacao = coordenacaoRepository.findById(turmaDTO.getCoordenacaoId())
                 .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
@@ -123,15 +103,17 @@ public class TurmaService {
 
             // Associa os novos alunos
             for (Long alunoId : turmaDTO.getAlunosIds()) {
-                Aluno aluno = alunoRepository.findById(alunoId)
-                        .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-                turma.addAluno(aluno);  // Atualiza a relação bilateral
+                if (alunoId != 0) {  // Verifica se o ID do aluno é válido
+                    Aluno aluno = alunoRepository.findById(alunoId)
+                            .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+                    turma.addAluno(aluno);  // Atualiza a relação bilateral
+                }
             }
         }
 
         // Permite a alteração do status através do PUT
         turma.setStatus(turmaDTO.isStatus());
-        
+
         // Limpa as associações antigas de Turma-Disciplina-Professor
         turmaDisciplinaProfessorRepository.deleteByTurmaId(turma.getId());
 
@@ -143,18 +125,20 @@ public class TurmaService {
 
                 // Associa as disciplinas aos professores
                 for (Long disciplinaId : dpDTO.getDisciplinasIds()) {
-                    Disciplina disciplina = disciplinaRepository.findById(disciplinaId)
-                            .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
+                    if (disciplinaId != 0) {  // Verifica se o ID da disciplina é válido
+                        Disciplina disciplina = disciplinaRepository.findById(disciplinaId)
+                                .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
 
-                    // Cria a nova relação entre Turma, Disciplina e Professor
-                    TurmaDisciplinaProfessor turmaDisciplinaProfessor = new TurmaDisciplinaProfessor();
-                    turmaDisciplinaProfessor.setId(new TurmaDisciplinaProfessorId(turma.getId(), disciplina.getId(), professor.getCpf()));
-                    turmaDisciplinaProfessor.setTurma(turma);
-                    turmaDisciplinaProfessor.setDisciplina(disciplina);
-                    turmaDisciplinaProfessor.setProfessor(professor);
+                        // Cria a nova relação entre Turma, Disciplina e Professor
+                        TurmaDisciplinaProfessor turmaDisciplinaProfessor = new TurmaDisciplinaProfessor();
+                        turmaDisciplinaProfessor.setId(new TurmaDisciplinaProfessorId(turma.getId(), disciplina.getId(), professor.getCpf()));
+                        turmaDisciplinaProfessor.setTurma(turma);
+                        turmaDisciplinaProfessor.setDisciplina(disciplina);
+                        turmaDisciplinaProfessor.setProfessor(professor);
 
-                    // Salva a nova relação no repositório
-                    turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
+                        // Salva a nova relação no repositório
+                        turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
+                    }
                 }
             }
         }
@@ -162,7 +146,7 @@ public class TurmaService {
         // Salva as atualizações da turma
         Turma updatedTurma = turmaRepository.save(turma);
 
-        // Retorna a turma atualizada convertida para o DTO, incluindo nomes de professores e disciplinas
+        // Retorna a turma atualizada convertida para o DTO
         return convertToDto(updatedTurma);
     }
 
@@ -214,21 +198,23 @@ public class TurmaService {
 
  // Método auxiliar para converter Turma para TurmaDTO, incluindo nomes de professores e disciplinas
     private TurmaDTO convertToDto(Turma turma) {
-        // Converte as disciplinas associadas para DisciplinaResumida2DTO
-        Set<DisciplinaResumida2DTO> disciplinasDTO = turma.getTurmaDisciplinaProfessores().stream()
+        // Converte as disciplinas associadas para DisciplinaResumida2DTO, garantindo que a coleção não seja nula
+        Set<DisciplinaResumida2DTO> disciplinasDTO = turma.getTurmaDisciplinaProfessores() != null ?
+            turma.getTurmaDisciplinaProfessores().stream()
                 .map(turmaDisciplinaProfessor -> turmaDisciplinaProfessor.getDisciplina())  // Obtém as disciplinas
                 .distinct()  // Remove duplicatas, se necessário
                 .map(disciplina -> DisciplinaResumida2DTO.builder()
                         .id(disciplina.getId())
                         .nome(disciplina.getNome())
                         .build())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet()) : Collections.emptySet();
 
-        // Mantém o campo disciplinasProfessores como estava
-        Set<DisciplinaProfessorDTO> disciplinasProfessoresDTO = turma.getTurmaDisciplinaProfessores().stream()
+        // Mantém o campo disciplinasProfessores, garantindo que a coleção não seja nula
+        Set<DisciplinaProfessorDTO> disciplinasProfessoresDTO = turma.getTurmaDisciplinaProfessores() != null ?
+            turma.getTurmaDisciplinaProfessores().stream()
                 .collect(Collectors.groupingBy(
-                        tdp -> tdp.getProfessor().getCpf(),
-                        Collectors.mapping(tdp -> tdp.getDisciplina(), Collectors.toSet())
+                    tdp -> tdp.getProfessor().getCpf(),
+                    Collectors.mapping(tdp -> tdp.getDisciplina(), Collectors.toSet())
                 ))
                 .entrySet().stream()
                 .map(e -> {
@@ -246,27 +232,32 @@ public class TurmaService {
                             .nomesDisciplinas(nomesDisciplinas)  // Nomes das disciplinas associadas a esse professor
                             .build();
                 })
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet()) : Collections.emptySet();
+
+        // Garante que a lista de alunos não seja nula
+        Set<AlunoResumidoDTO> alunosDTO = turma.getAlunos() != null ?
+            turma.getAlunos().stream()
+                .map(aluno -> AlunoResumidoDTO.builder()
+                    .id(aluno.getId())
+                    .nomeAluno(aluno.getNome() + " " + aluno.getUltimoNome())
+                    .email(aluno.getEmail())
+                    .build())
+                .collect(Collectors.toSet()) : Collections.emptySet();
 
         return TurmaDTO.builder()
-                .id(turma.getId())
-                .nome(turma.getNome())
-                .ano(turma.getAno())
-                .coordenacao(CoordenacaoResumidaDTO.builder()
-                        .id(turma.getCoordenacao().getId())
-                        .nome(turma.getCoordenacao().getNome())
-                        .build())
-                .disciplinas(disciplinasDTO)  // Adiciona a lista de disciplinas resumidas
-                .disciplinasProfessores(disciplinasProfessoresDTO)  // Mantém as disciplinas associadas aos professores
-                .alunos(turma.getAlunos().stream()
-                        .map(aluno -> AlunoResumidoDTO.builder()
-                                .id(aluno.getId())
-                                .nomeAluno(aluno.getNome() + " " + aluno.getUltimoNome())
-                                .email(aluno.getEmail())
-                                .build())
-                        .collect(Collectors.toSet()))
-                .build();
+            .id(turma.getId())
+            .nome(turma.getNome())  // Nome já gerado automaticamente
+            .ano(turma.getAno())
+            .coordenacao(CoordenacaoResumidaDTO.builder()
+                    .id(turma.getCoordenacao().getId())
+                    .nome(turma.getCoordenacao().getNome())
+                    .build())
+            .disciplinas(disciplinasDTO)  // Adiciona a lista de disciplinas resumidas
+            .disciplinasProfessores(disciplinasProfessoresDTO)  // Mantém as disciplinas associadas aos professores
+            .alunos(alunosDTO)  // Adiciona a lista de alunos
+            .build();
     }
+
 
 
 }

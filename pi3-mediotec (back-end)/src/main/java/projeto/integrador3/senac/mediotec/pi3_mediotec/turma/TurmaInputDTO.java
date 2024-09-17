@@ -8,8 +8,6 @@ import lombok.Data;
 @Builder
 @Data
 public class TurmaInputDTO {
-
-    private String nome;
     private int ano;
     private boolean status;
     private Long coordenacaoId;

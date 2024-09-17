@@ -67,6 +67,7 @@ public class Coordenacao implements Serializable {
     private Set<Telefone> telefones;
     
     @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(nullable = false)
     private Set<Coordenador> coordenadores;
     
     @JsonIgnore

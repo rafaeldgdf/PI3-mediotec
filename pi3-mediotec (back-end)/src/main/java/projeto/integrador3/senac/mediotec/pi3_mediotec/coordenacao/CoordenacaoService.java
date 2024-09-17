@@ -25,6 +25,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaResumida2DTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaResumidaDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessor;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -90,14 +91,17 @@ public class CoordenacaoService {
             coordenacao.setTelefones(telefones);
         }
 
-        // Associa coordenadores via IDs
-        if (coordenacaoDTO.getCoordenadoresIds() != null) {
+     // Associa coordenadores via IDs
+        if (coordenacaoDTO.getCoordenadoresIds() == null || coordenacaoDTO.getCoordenadoresIds().isEmpty()) {
+            throw new RuntimeException("Pelo menos um coordenador deve ser informado.");
+        } else {
             Set<Coordenador> coordenadores = coordenacaoDTO.getCoordenadoresIds().stream()
                 .map(cpf -> coordenadorRepository.findById(cpf)
                     .orElseThrow(() -> new RuntimeException("Coordenador com CPF " + cpf + " não encontrado")))
                 .collect(Collectors.toSet());
             coordenacao.setCoordenadores(coordenadores);
         }
+
 
         // Associa turmas via IDs
         if (coordenacaoDTO.getTurmasIds() != null) {
@@ -197,54 +201,59 @@ public class CoordenacaoService {
     }
 
     private CoordenacaoDTO convertToDto(Coordenacao coordenacao) {
-        // Mapeia os endereços da coordenacao
-        Set<EnderecoDTO> enderecosDTO = coordenacao.getEnderecos().stream()
-            .map(endereco -> EnderecoDTO.builder()
-                .cep(endereco.getCep())
-                .rua(endereco.getRua())
-                .numero(endereco.getNumero())
-                .bairro(endereco.getBairro())
-                .cidade(endereco.getCidade())
-                .estado(endereco.getEstado())
-                .build())
-            .collect(Collectors.toSet());
+        // Garante que os endereços não sejam nulos, evitando NullPointerException
+        Set<EnderecoDTO> enderecosDTO = (coordenacao.getEnderecos() != null) ?
+            coordenacao.getEnderecos().stream()
+                .map(endereco -> EnderecoDTO.builder()
+                    .cep(endereco.getCep())
+                    .rua(endereco.getRua())
+                    .numero(endereco.getNumero())
+                    .bairro(endereco.getBairro())
+                    .cidade(endereco.getCidade())
+                    .estado(endereco.getEstado())
+                    .build())
+                .collect(Collectors.toSet()) : Collections.emptySet();
 
-        // Mapeia os telefones da coordenacao
-        Set<TelefoneDTO> telefonesDTO = coordenacao.getTelefones().stream()
-            .map(telefone -> TelefoneDTO.builder()
-                .ddd(telefone.getDdd())
-                .numero(telefone.getNumero())
-                .build())
-            .collect(Collectors.toSet());
+        // Garante que os telefones não sejam nulos
+        Set<TelefoneDTO> telefonesDTO = (coordenacao.getTelefones() != null) ?
+            coordenacao.getTelefones().stream()
+                .map(telefone -> TelefoneDTO.builder()
+                    .ddd(telefone.getDdd())
+                    .numero(telefone.getNumero())
+                    .build())
+                .collect(Collectors.toSet()) : Collections.emptySet();
 
-        // Mapeia os coordenadores da coordenacao utilizando CoordenadorResumido2DTO
-        List<CoordenadorResumido2DTO> coordenadoresDTO = coordenacao.getCoordenadores().stream()
-            .map(coordenador -> CoordenadorResumido2DTO.builder()
-                .cpf(coordenador.getCpf())
-                .nomeCoordenador(coordenador.getNome() + " " + coordenador.getUltimoNome())
-                .email(coordenador.getEmail())
-                .telefones(coordenador.getTelefones())  // Assumindo que 'Coordenador' tem 'telefones'
-                .build())
-            .collect(Collectors.toList());
+        // Mapeia os coordenadores da coordenacao, garantindo que não sejam nulos
+        List<CoordenadorResumido2DTO> coordenadoresDTO = (coordenacao.getCoordenadores() != null) ?
+            coordenacao.getCoordenadores().stream()
+                .map(coordenador -> CoordenadorResumido2DTO.builder()
+                    .cpf(coordenador.getCpf())
+                    .nomeCoordenador(coordenador.getNome() + " " + coordenador.getUltimoNome())
+                    .email(coordenador.getEmail())
+                    .telefones(coordenador.getTelefones())  // Assumindo que 'Coordenador' tem 'telefones'
+                    .build())
+                .collect(Collectors.toList()) : Collections.emptyList();
 
-        // Mapeia as turmas da coordenacao utilizando TurmaResumida2DTO
-        Set<TurmaResumida2DTO> turmasDTO = coordenacao.getTurmas().stream()
-            .map(turma -> TurmaResumida2DTO.builder()
-                .id(turma.getId())
-                .nome(turma.getNome())
-                .ano(turma.getAno())
-                .build())
-            .collect(Collectors.toSet());
+        // Garante que as turmas não sejam nulas
+        Set<TurmaResumida2DTO> turmasDTO = (coordenacao.getTurmas() != null) ?
+            coordenacao.getTurmas().stream()
+                .map(turma -> TurmaResumida2DTO.builder()
+                    .id(turma.getId())
+                    .nome(turma.getNome())
+                    .ano(turma.getAno())
+                    .build())
+                .collect(Collectors.toSet()) : Collections.emptySet();
 
-        // Mapeia os professores da coordenacao utilizando ProfessorResumido2DTO
-        Set<ProfessorResumido2DTO> professoresDTO = coordenacao.getProfessores().stream()
-            .map(professor -> ProfessorResumido2DTO.builder()
-                .cpf(professor.getCpf())
-                .nomeProfessor(professor.getNome() + "" + professor.getUltimoNome())
-                .email(professor.getEmail())
-                .telefones(professor.getTelefones())  // Assumindo que 'Professor' tem 'telefones'
-                .build())
-            .collect(Collectors.toSet());
+        // Garante que os professores não sejam nulos
+        Set<ProfessorResumido2DTO> professoresDTO = (coordenacao.getProfessores() != null) ?
+            coordenacao.getProfessores().stream()
+                .map(professor -> ProfessorResumido2DTO.builder()
+                    .cpf(professor.getCpf())
+                    .nomeProfessor(professor.getNome() + " " + professor.getUltimoNome())
+                    .email(professor.getEmail())
+                    .telefones(professor.getTelefones())  // Assumindo que 'Professor' tem 'telefones'
+                    .build())
+                .collect(Collectors.toSet()) : Collections.emptySet();
 
         // Converte a Coordenacao para CoordenacaoDTO sem redundâncias
         return CoordenacaoDTO.builder()
