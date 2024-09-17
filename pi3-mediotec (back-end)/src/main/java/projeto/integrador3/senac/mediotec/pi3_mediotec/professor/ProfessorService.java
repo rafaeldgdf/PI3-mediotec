@@ -256,14 +256,15 @@ public class ProfessorService {
         
         professorRepository.delete(professor);
     }
-
-    // Método para converter Professor para ProfessorResumidoDTO
+    
+    
+ // Método para converter Professor para ProfessorResumidoDTO
     private ProfessorResumidoDTO convertToDto(Professor professor) {
-        // Mapeia os coordenadores da coordenacao associada ao professor
+        // Mapeia os coordenadores da coordenação associada ao professor
         List<CoordenadorResumidoDTO> coordenadoresDTO = null;
 
-        if (professor.getCoordenacao() != null) {
-            // Se houver coordenadores associados à coordenacao, mapeie-os
+        if (professor.getCoordenacao() != null && professor.getCoordenacao().getCoordenadores() != null) {
+            // Se houver coordenadores associados à coordenação, mapeie-os
             coordenadoresDTO = professor.getCoordenacao().getCoordenadores().stream()
                 .map(coordenador -> CoordenadorResumidoDTO.builder()
                     .cpf(coordenador.getCpf())
@@ -273,29 +274,31 @@ public class ProfessorService {
                 .collect(Collectors.toList());
         }
 
-        // Mapeia as turmas e disciplinas associadas ao professor
-        Set<TurmaDisciplinaResumidaDTO> turmasDisciplinas = professor.getTurmaDisciplinaProfessores().stream()
-            .map(tdp -> TurmaDisciplinaResumidaDTO.builder()
-                .turma(TurmaResumidaDTO.builder()
-                    .id(tdp.getTurma().getId())
-                    .nome(tdp.getTurma().getNome())
-                    .ano(tdp.getTurma().getAno())
+        // Mapeia as turmas e disciplinas associadas ao professor, se existirem
+        Set<TurmaDisciplinaResumidaDTO> turmasDisciplinas = professor.getTurmaDisciplinaProfessores() != null ?
+            professor.getTurmaDisciplinaProfessores().stream()
+                .map(tdp -> TurmaDisciplinaResumidaDTO.builder()
+                    .turma(TurmaResumidaDTO.builder()
+                        .id(tdp.getTurma().getId())
+                        .nome(tdp.getTurma().getNome())
+                        .ano(tdp.getTurma().getAno())
+                        .build())
+                    .disciplina(DisciplinaResumida2DTO.builder()
+                        .id(tdp.getDisciplina().getId())
+                        .nome(tdp.getDisciplina().getNome())
+                        .build())
                     .build())
-                .disciplina(DisciplinaResumida2DTO.builder()
-                    .id(tdp.getDisciplina().getId())
-                    .nome(tdp.getDisciplina().getNome())
-                    .build())
-                .build())
-            .collect(Collectors.toSet());
+                .collect(Collectors.toSet()) : Collections.emptySet();  // Se não houver turmas, retorna um conjunto vazio.
 
         // Retorna o ProfessorResumidoDTO preenchido com todos os dados
         return ProfessorResumidoDTO.builder()
             .cpf(professor.getCpf())
             .nome(professor.getNome())
             .ultimoNome(professor.getUltimoNome())
-            .coordenadores(coordenadoresDTO) // Adiciona a lista de coordenadores
-            .turmasDisciplinas(turmasDisciplinas) // Associa as turmas e disciplinas
+            .coordenadores(coordenadoresDTO != null && !coordenadoresDTO.isEmpty() ? coordenadoresDTO : null) // Lista de coordenadores ou nulo se vazia
+            .turmasDisciplinas(turmasDisciplinas) // Associa as turmas e disciplinas, ou lista vazia se não houver
             .build();
     }
+
 
 }

@@ -51,33 +51,63 @@ public class TurmaService {
         Turma turma = new Turma();
         turma.setAno(turmaDTO.getAno());
         
-        // Define status como true ao criar uma nova turma
-        turma.setStatus(true); 
+        // Define status ao criar uma nova turma
+        turma.setStatus(turmaDTO.isStatus());
 
         // Verifica se a coordenação foi fornecida
         Coordenacao coordenacao = coordenacaoRepository.findById(turmaDTO.getCoordenacaoId())
                 .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
         turma.setCoordenacao(coordenacao);
 
-        // Salva a turma para gerar o ID
+        // Salva a turma inicialmente para gerar o ID
         Turma savedTurma = turmaRepository.save(turma);
 
         // Gerar o nome da turma baseado no ID
-        String nomeGerado = String.format("Turma %02d", savedTurma.getId()); // Nome no formato "Turma 01", "Turma 02", etc.
+        String nomeGerado = String.format("Turma %02d", savedTurma.getId());
         savedTurma.setNome(nomeGerado);
 
         // Salva novamente para incluir o nome gerado
         turmaRepository.save(savedTurma);
 
-        // Lógica adicional para alunos, disciplinas, etc. pode vir aqui.
+        // Associa alunos à turma, se forem fornecidos
+        if (turmaDTO.getAlunosIds() != null && !turmaDTO.getAlunosIds().isEmpty()) {
+            for (Long alunoId : turmaDTO.getAlunosIds()) {
+                Aluno aluno = alunoRepository.findById(alunoId)
+                        .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+                turma.addAluno(aluno);  // Atualiza a relação aluno-turma
+            }
+        }
+
+        // Associa disciplinas e professores à turma, se forem fornecidos
+        if (turmaDTO.getDisciplinasProfessores() != null && !turmaDTO.getDisciplinasProfessores().isEmpty()) {
+            for (DisciplinaProfessorInputDTO dpDTO : turmaDTO.getDisciplinasProfessores()) {
+                Professor professor = professorRepository.findById(dpDTO.getProfessorId())
+                        .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+
+                for (Long disciplinaId : dpDTO.getDisciplinasIds()) {
+                    Disciplina disciplina = disciplinaRepository.findById(disciplinaId)
+                            .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
+
+                    // Cria a relação Turma-Disciplina-Professor
+                    TurmaDisciplinaProfessor turmaDisciplinaProfessor = new TurmaDisciplinaProfessor();
+                    turmaDisciplinaProfessor.setId(new TurmaDisciplinaProfessorId(savedTurma.getId(), disciplina.getId(), professor.getCpf()));
+                    turmaDisciplinaProfessor.setTurma(savedTurma);
+                    turmaDisciplinaProfessor.setDisciplina(disciplina);
+                    turmaDisciplinaProfessor.setProfessor(professor);
+
+                    // Salva a relação no repositório de TurmaDisciplinaProfessor
+                    turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
+                }
+            }
+        }
 
         return convertToDto(savedTurma);
-    }	
+    }
 
 
 
 
-    // Atualiza uma turma existente
+// Atualiza uma turma existente
     @Transactional
     public TurmaDTO updateTurma(Long id, TurmaInputDTO turmaDTO) {
         // Busca a turma existente no banco de dados
@@ -86,33 +116,29 @@ public class TurmaService {
 
         // Atualiza os atributos da turma
         turma.setAno(turmaDTO.getAno());
+        turma.setStatus(turmaDTO.isStatus());
 
-        // Gerar o nome da turma baseado no ID (mesma lógica do cadastro)
-        String nomeGerado = String.format("Turma %02d", turma.getId());
-        turma.setNome(nomeGerado);
-
-        // Verifica se a coordenação foi fornecida e faz a associação
+        // Atualiza a coordenação se fornecida
         Coordenacao coordenacao = coordenacaoRepository.findById(turmaDTO.getCoordenacaoId())
                 .orElseThrow(() -> new RuntimeException("Coordenação não encontrada"));
         turma.setCoordenacao(coordenacao);
 
-        // Atualiza os alunos apenas se fornecidos
+        // Gera novamente o nome da turma baseado no ID (mantém a lógica de nome)
+        String nomeGerado = String.format("Turma %02d", turma.getId());
+        turma.setNome(nomeGerado);
+
+        // Atualiza os alunos se fornecidos
         if (turmaDTO.getAlunosIds() != null) {
-            // Limpa a lista atual de alunos
+            // Limpa os alunos atuais
             turma.getAlunos().clear();
 
             // Associa os novos alunos
             for (Long alunoId : turmaDTO.getAlunosIds()) {
-                if (alunoId != 0) {  // Verifica se o ID do aluno é válido
-                    Aluno aluno = alunoRepository.findById(alunoId)
-                            .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-                    turma.addAluno(aluno);  // Atualiza a relação bilateral
-                }
+                Aluno aluno = alunoRepository.findById(alunoId)
+                        .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+                turma.addAluno(aluno);  // Atualiza a relação aluno-turma
             }
         }
-
-        // Permite a alteração do status através do PUT
-        turma.setStatus(turmaDTO.isStatus());
 
         // Limpa as associações antigas de Turma-Disciplina-Professor
         turmaDisciplinaProfessorRepository.deleteByTurmaId(turma.getId());
@@ -123,22 +149,19 @@ public class TurmaService {
                 Professor professor = professorRepository.findById(dpDTO.getProfessorId())
                         .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
 
-                // Associa as disciplinas aos professores
                 for (Long disciplinaId : dpDTO.getDisciplinasIds()) {
-                    if (disciplinaId != 0) {  // Verifica se o ID da disciplina é válido
-                        Disciplina disciplina = disciplinaRepository.findById(disciplinaId)
-                                .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
+                    Disciplina disciplina = disciplinaRepository.findById(disciplinaId)
+                            .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
 
-                        // Cria a nova relação entre Turma, Disciplina e Professor
-                        TurmaDisciplinaProfessor turmaDisciplinaProfessor = new TurmaDisciplinaProfessor();
-                        turmaDisciplinaProfessor.setId(new TurmaDisciplinaProfessorId(turma.getId(), disciplina.getId(), professor.getCpf()));
-                        turmaDisciplinaProfessor.setTurma(turma);
-                        turmaDisciplinaProfessor.setDisciplina(disciplina);
-                        turmaDisciplinaProfessor.setProfessor(professor);
+                    // Cria a nova relação entre Turma, Disciplina e Professor
+                    TurmaDisciplinaProfessor turmaDisciplinaProfessor = new TurmaDisciplinaProfessor();
+                    turmaDisciplinaProfessor.setId(new TurmaDisciplinaProfessorId(turma.getId(), disciplina.getId(), professor.getCpf()));
+                    turmaDisciplinaProfessor.setTurma(turma);
+                    turmaDisciplinaProfessor.setDisciplina(disciplina);
+                    turmaDisciplinaProfessor.setProfessor(professor);
 
-                        // Salva a nova relação no repositório
-                        turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
-                    }
+                    // Salva a nova relação no repositório
+                    turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
                 }
             }
         }
