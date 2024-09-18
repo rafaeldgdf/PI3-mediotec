@@ -1,5 +1,4 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.conceito;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,20 +43,19 @@ public class ConceitoService {
 
         // Criação do conceito
         Conceito conceito = Conceito.builder()
-                .nota(conceitoResumidoDTO.getNota())
-                .unidade(conceitoResumidoDTO.getUnidade())
+                .notaUnidade1(conceitoResumidoDTO.getNotaUnidade1())
+                .notaUnidade2(conceitoResumidoDTO.getNotaUnidade2())
+                .notaUnidade3(conceitoResumidoDTO.getNotaUnidade3())
+                .notaUnidade4(conceitoResumidoDTO.getNotaUnidade4())
+                .recuperacaoNota(conceitoResumidoDTO.getRecuperacaoNota())
                 .aluno(aluno)
                 .turmaDisciplinaProfessor(turmaDisciplinaProfessor)
                 .build();
 
-        // Valida a nota e define o conceito automaticamente
-        conceito.validarNota();
-        conceito.calcularConceito();
-
-        // Salva o conceito
+        // Valida e calcula a média e status de aprovação
+        conceito.calcularMediaEStatus();
+        
         Conceito savedConceito = conceitoRepository.save(conceito);
-
-        // Retorna o DTO resumido
         return convertToDTO(savedConceito);
     }
 
@@ -68,12 +66,15 @@ public class ConceitoService {
                 .orElseThrow(() -> new RuntimeException("Conceito não encontrado"));
 
         // Atualiza os campos do conceito
-        conceito.setNota(conceitoResumidoDTO.getNota());
-        conceito.setUnidade(conceitoResumidoDTO.getUnidade());
+        conceito.setNotaUnidade1(conceitoResumidoDTO.getNotaUnidade1());
+        conceito.setNotaUnidade2(conceitoResumidoDTO.getNotaUnidade2());
+        conceito.setNotaUnidade3(conceitoResumidoDTO.getNotaUnidade3());
+        conceito.setNotaUnidade4(conceitoResumidoDTO.getNotaUnidade4());
+        conceito.setRecuperacaoNota(conceitoResumidoDTO.getRecuperacaoNota());
 
-        // Valida e recalcula o conceito
-        conceito.validarNota();
-        conceito.calcularConceito();
+
+        // Valida e recalcula o conceito, média e status de aprovação
+        conceito.calcularMediaEStatus();
 
         // Salva o conceito atualizado
         Conceito updatedConceito = conceitoRepository.save(conceito);
@@ -116,15 +117,75 @@ public class ConceitoService {
                 .collect(Collectors.toList());
     }
 
+    
+    @Transactional
+    public ConceitoDTO salvarConceitoParaAluno(String idProfessor, Long idAluno, Long idDisciplina, ConceitoResumidoDTO conceitoResumidoDTO) {
+        // Busca o aluno pelo ID passado
+        Aluno aluno = alunoRepository.findById(idAluno)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+
+        // Busca TurmaDisciplinaProfessor pelo ID composto
+        TurmaDisciplinaProfessor turmaDisciplinaProfessor = turmaDisciplinaProfessorRepository.findById(
+                new TurmaDisciplinaProfessorId(
+                        conceitoResumidoDTO.getTurmaId(),
+                        idDisciplina,
+                        idProfessor))
+                .orElseThrow(() -> new RuntimeException("TurmaDisciplinaProfessor não encontrado"));
+
+        // Criação do conceito
+        Conceito conceito = Conceito.builder()
+                .notaUnidade1(conceitoResumidoDTO.getNotaUnidade1())
+                .notaUnidade2(conceitoResumidoDTO.getNotaUnidade2())
+                .notaUnidade3(conceitoResumidoDTO.getNotaUnidade3())
+                .notaUnidade4(conceitoResumidoDTO.getNotaUnidade4())
+                .recuperacaoNota(conceitoResumidoDTO.getRecuperacaoNota())
+                .aluno(aluno)
+                .turmaDisciplinaProfessor(turmaDisciplinaProfessor)
+                .build();
+
+        // Valida e calcula a média e status de aprovação
+        conceito.calcularMediaEStatus();
+        
+        Conceito savedConceito = conceitoRepository.save(conceito);
+        return convertToDTO(savedConceito);
+    }
+
+    @Transactional
+    public ConceitoDTO atualizarConceitoParaAluno(String idProfessor, Long idAluno, Long idDisciplina, Long idConceito, ConceitoResumidoDTO conceitoResumidoDTO) {
+        Conceito conceito = conceitoRepository.findById(idConceito)
+                .orElseThrow(() -> new RuntimeException("Conceito não encontrado"));
+
+        // Atualiza os campos do conceito
+        conceito.setNotaUnidade1(conceitoResumidoDTO.getNotaUnidade1());
+        conceito.setNotaUnidade2(conceitoResumidoDTO.getNotaUnidade2());
+        conceito.setNotaUnidade3(conceitoResumidoDTO.getNotaUnidade3());
+        conceito.setNotaUnidade4(conceitoResumidoDTO.getNotaUnidade4());
+        conceito.setRecuperacaoNota(conceitoResumidoDTO.getRecuperacaoNota());
+
+        // Valida e recalcula o conceito, média e status de aprovação
+        conceito.calcularMediaEStatus();
+
+        // Salva o conceito atualizado
+        Conceito updatedConceito = conceitoRepository.save(conceito);
+
+        // Retorna o DTO atualizado
+        return convertToDTO(updatedConceito);
+    }
+
+    
+    
     // Método auxiliar para converter a entidade Conceito em ConceitoDTO
     private ConceitoDTO convertToDTO(Conceito conceito) {
         return ConceitoDTO.builder()
                 .idConceito(conceito.getId_conceito())
-                .nota(conceito.getNota())
-                .conceito(conceito.getConceito())
-                .unidade(conceito.getUnidade())
+                .notaUnidade1(conceito.getNotaUnidade1())
+                .notaUnidade2(conceito.getNotaUnidade2())
+                .notaUnidade3(conceito.getNotaUnidade3())
+                .notaUnidade4(conceito.getNotaUnidade4())
+                .recuperacaoNota(conceito.getRecuperacaoNota())
+                .mediaFinal(conceito.getMediaFinal())
+                .aprovado(conceito.getAprovado())
                 .aluno(AlunoResumidoDTO.builder()
-                        .id(conceito.getAluno().getId())
                         .nomeAluno(conceito.getAluno().getNome())
                         .email(conceito.getAluno().getEmail())
                         .build())
@@ -136,7 +197,4 @@ public class ConceitoService {
                         .build())
                 .build();
     }
-      
-    
 }
-

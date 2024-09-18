@@ -9,8 +9,6 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.responsavel.ResponsavelDT
 @Builder
 @Data
 public class AlunoResumidoDTO {
-    private Long id;  // ID do aluno
     private String nomeAluno;  // Nome do aluno
     private String email;
-    private Set<ResponsavelDTO> responsaveis;
 }

@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.web.server.ResponseStatusException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -19,6 +21,12 @@ public class CoordenadorController {
     @Autowired
     private CoordenadorService coordenadorService;
 
+    // Lista todos os coordenadores
+    @Operation(summary = "Listar todos os coordenadores", description = "Retorna uma lista de todos os coordenadores cadastrados")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de coordenadores retornada com sucesso"),
+        @ApiResponse(responseCode = "500", description = "Erro interno no servidor ao listar coordenadores")
+    })
     @GetMapping
     public ResponseEntity<List<CoordenadorDTO>> getAllCoordenadores() {
         try {
@@ -29,6 +37,13 @@ public class CoordenadorController {
         }
     }
 
+    // Busca um coordenador por ID
+    @Operation(summary = "Buscar coordenador por ID", description = "Retorna os detalhes de um coordenador específico com base no ID fornecido")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Coordenador retornado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Coordenador não encontrado"),
+        @ApiResponse(responseCode = "500", description = "Erro interno no servidor ao buscar coordenador")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<CoordenadorDTO> getCoordenadorById(@PathVariable String id) {
         try {
@@ -40,6 +55,13 @@ public class CoordenadorController {
         }
     }
 
+    // Cria um novo coordenador
+    @Operation(summary = "Criar novo coordenador", description = "Cria um novo coordenador com os dados fornecidos")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Coordenador criado com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Erro de validação ao criar o coordenador"),
+        @ApiResponse(responseCode = "500", description = "Erro interno no servidor ao criar coordenador")
+    })
     @PostMapping
     public ResponseEntity<CoordenadorDTO> createCoordenador(@RequestBody CoordenadorDTO coordenadorDTO) {
         try {
@@ -50,6 +72,13 @@ public class CoordenadorController {
         }
     }
 
+    // Atualiza um coordenador existente
+    @Operation(summary = "Atualizar coordenador", description = "Atualiza os dados de um coordenador existente com base no ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Coordenador atualizado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Coordenador não encontrado"),
+        @ApiResponse(responseCode = "500", description = "Erro interno no servidor ao atualizar coordenador")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<CoordenadorDTO> updateCoordenador(@PathVariable String id, @RequestBody CoordenadorDTO coordenadorDTO) {
         try {
@@ -60,6 +89,13 @@ public class CoordenadorController {
         }
     }
 
+    // Deleta um coordenador por ID
+    @Operation(summary = "Deletar coordenador", description = "Deleta um coordenador existente com base no ID fornecido")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Coordenador deletado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Coordenador não encontrado"),
+        @ApiResponse(responseCode = "500", description = "Erro interno no servidor ao deletar coordenador")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCoordenador(@PathVariable String id) {
         try {

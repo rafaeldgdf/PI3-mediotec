@@ -264,7 +264,6 @@ public class TurmaService {
         Set<AlunoResumidoDTO> alunosDTO = turma.getAlunos() != null ?
             turma.getAlunos().stream()
                 .map(aluno -> AlunoResumidoDTO.builder()
-                    .id(aluno.getId())
                     .nomeAluno(aluno.getNome() + " " + aluno.getUltimoNome())
                     .email(aluno.getEmail())
                     .build())
