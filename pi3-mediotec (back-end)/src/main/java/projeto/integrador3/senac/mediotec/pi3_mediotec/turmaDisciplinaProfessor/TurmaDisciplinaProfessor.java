@@ -1,5 +1,4 @@
-package projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor;
-import java.io.Serializable;
+	package projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,27 +23,26 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.Turma;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "turma_disciplina_professor") // Alterado o nome da tabela
-public class TurmaDisciplinaProfessor implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+@Table(name = "turma_disciplina_professor")
+public class TurmaDisciplinaProfessor {
 
     @EmbeddedId
     private TurmaDisciplinaProfessorId id;
 
-    @MapsId("turmaId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_turma")
+    @MapsId("turmaId")
+    @JoinColumn(name = "id_turma", nullable = false)
     private Turma turma;
 
-    @MapsId("disciplinaId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_disciplina")
+    @MapsId("disciplinaId")
+    @JoinColumn(name = "id_disciplina", nullable = false)
     private Disciplina disciplina;
 
-    @MapsId("professorId")
     @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("professorId")
     @JoinColumn(name = "id_professor", nullable = false)
     private Professor professor;
 
+    // getters e setters
 }

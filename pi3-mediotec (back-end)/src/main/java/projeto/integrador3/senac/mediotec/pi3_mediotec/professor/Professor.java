@@ -1,5 +1,6 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.professor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -46,12 +47,11 @@ public class Professor extends Usuario {
     private Coordenacao coordenacao;
     
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = true)
-    private Set<Endereco> enderecos;
-    
+    private Set<Endereco> enderecos = new HashSet<>();
+
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = true)
-    private Set<Telefone> telefones;
+    private Set<Telefone> telefones = new HashSet<>();
+
     
     @Column
     private boolean status;

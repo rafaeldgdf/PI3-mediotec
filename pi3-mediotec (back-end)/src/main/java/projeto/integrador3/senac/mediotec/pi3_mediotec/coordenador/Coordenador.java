@@ -1,5 +1,6 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -16,6 +17,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -45,13 +47,13 @@ public class Coordenador extends Usuario{
     @Column
     private boolean status;
       	
+    @Builder.Default
     @OneToMany(mappedBy = "coordenador", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = true)
-    private Set<Endereco> enderecos;
+    private Set<Endereco> enderecos = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "coordenador", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = true)
-    private Set<Telefone> telefones;
+    private Set<Telefone> telefones = new HashSet<>();
     
     @ManyToOne
     @JoinColumn(name = "id_coordenacao") // Chave estrangeira para a tabela coordenacao

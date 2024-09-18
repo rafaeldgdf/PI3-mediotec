@@ -59,39 +59,44 @@ public class CoordenacaoService {
                 .map(this::convertToDto);
     }
 
-    // Cria nova coordenacao
     public CoordenacaoDTO saveCoordenacao(CoordenacaoCadastroDTO coordenacaoDTO) {
         Coordenacao coordenacao = new Coordenacao();
         coordenacao.setNome(coordenacaoDTO.getNome());
         coordenacao.setDescricao(coordenacaoDTO.getDescricao());
 
-        // Associa e cria endereços
-        if (coordenacaoDTO.getEnderecos() != null) {
-            Set<Endereco> enderecos = coordenacaoDTO.getEnderecos().stream()
-                .map(enderecoDTO -> Endereco.builder()
+        // Adiciona e associa endereços à coordenacao
+        if (coordenacaoDTO.getEnderecos() != null && !coordenacaoDTO.getEnderecos().isEmpty()) {
+            // Limpa a coleção existente antes de adicionar novos itens
+            coordenacao.getEnderecos().clear();
+            coordenacaoDTO.getEnderecos().forEach(enderecoDTO -> {
+                Endereco endereco = Endereco.builder()
                     .cep(enderecoDTO.getCep())
                     .rua(enderecoDTO.getRua())
                     .numero(enderecoDTO.getNumero())
                     .bairro(enderecoDTO.getBairro())
                     .cidade(enderecoDTO.getCidade())
                     .estado(enderecoDTO.getEstado())
-                    .build())
-                .collect(Collectors.toSet());
-            coordenacao.setEnderecos(enderecos);
+                    .coordenacao(coordenacao) // Associação bidirecional
+                    .build();
+                coordenacao.getEnderecos().add(endereco);
+            });
         }
 
-        // Associa e cria telefones
-        if (coordenacaoDTO.getTelefones() != null) {
-            Set<Telefone> telefones = coordenacaoDTO.getTelefones().stream()
-                .map(telefoneDTO -> Telefone.builder()
+        // Adiciona e associa telefones à coordenacao
+        if (coordenacaoDTO.getTelefones() != null && !coordenacaoDTO.getTelefones().isEmpty()) {
+            // Limpa a coleção existente antes de adicionar novos itens
+            coordenacao.getTelefones().clear();
+            coordenacaoDTO.getTelefones().forEach(telefoneDTO -> {
+                Telefone telefone = Telefone.builder()
                     .ddd(telefoneDTO.getDdd())
                     .numero(telefoneDTO.getNumero())
-                    .build())
-                .collect(Collectors.toSet());
-            coordenacao.setTelefones(telefones);
+                    .coordenacao(coordenacao) // Associação bidirecional
+                    .build();
+                coordenacao.getTelefones().add(telefone);
+            });
         }
 
-     // Associa coordenadores via IDs
+        // Associa coordenadores via IDs
         if (coordenacaoDTO.getCoordenadoresIds() == null || coordenacaoDTO.getCoordenadoresIds().isEmpty()) {
             throw new RuntimeException("Pelo menos um coordenador deve ser informado.");
         } else {
@@ -102,9 +107,8 @@ public class CoordenacaoService {
             coordenacao.setCoordenadores(coordenadores);
         }
 
-
         // Associa turmas via IDs
-        if (coordenacaoDTO.getTurmasIds() != null) {
+        if (coordenacaoDTO.getTurmasIds() != null && !coordenacaoDTO.getTurmasIds().isEmpty()) {
             Set<Turma> turmas = coordenacaoDTO.getTurmasIds().stream()
                 .map(id -> turmaRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Turma com ID " + id + " não encontrada")))
@@ -113,7 +117,7 @@ public class CoordenacaoService {
         }
 
         // Associa professores via IDs
-        if (coordenacaoDTO.getProfessoresIds() != null) {
+        if (coordenacaoDTO.getProfessoresIds() != null && !coordenacaoDTO.getProfessoresIds().isEmpty()) {
             Set<Professor> professores = coordenacaoDTO.getProfessoresIds().stream()
                 .map(cpf -> professorRepository.findById(cpf)
                     .orElseThrow(() -> new RuntimeException("Professor com CPF " + cpf + " não encontrado")))
@@ -135,62 +139,40 @@ public class CoordenacaoService {
         coordenacao.setNome(coordenacaoDTO.getNome());
         coordenacao.setDescricao(coordenacaoDTO.getDescricao());
 
-        // Atualiza os endereços e telefones completos
+        // Atualiza endereços sem recriar a coleção
         if (coordenacaoDTO.getEnderecos() != null) {
-            Set<Endereco> enderecos = coordenacaoDTO.getEnderecos().stream()
-                .map(enderecoDTO -> Endereco.builder()
+            Set<Endereco> enderecosAntigos = coordenacao.getEnderecos();  // Pega a coleção existente
+            enderecosAntigos.clear();  // Limpa a coleção
+            coordenacaoDTO.getEnderecos().forEach(enderecoDTO -> {
+                Endereco endereco = Endereco.builder()
                     .cep(enderecoDTO.getCep())
                     .rua(enderecoDTO.getRua())
                     .numero(enderecoDTO.getNumero())
                     .bairro(enderecoDTO.getBairro())
                     .cidade(enderecoDTO.getCidade())
                     .estado(enderecoDTO.getEstado())
-                    .build())
-                .collect(Collectors.toSet());
-            coordenacao.setEnderecos(enderecos);
+                    .build();
+                coordenacao.addEndereco(endereco);  // Adiciona novo endereço à coleção existente
+            });
         }
 
+        // Atualiza telefones sem recriar a coleção
         if (coordenacaoDTO.getTelefones() != null) {
-            Set<Telefone> telefones = coordenacaoDTO.getTelefones().stream()
-                .map(telefoneDTO -> Telefone.builder()
+            Set<Telefone> telefonesAntigos = coordenacao.getTelefones();  // Pega a coleção existente
+            telefonesAntigos.clear();  // Limpa a coleção
+            coordenacaoDTO.getTelefones().forEach(telefoneDTO -> {
+                Telefone telefone = Telefone.builder()
                     .ddd(telefoneDTO.getDdd())
                     .numero(telefoneDTO.getNumero())
-                    .build())
-                .collect(Collectors.toSet());
-            coordenacao.setTelefones(telefones);
+                    .build();
+                coordenacao.addTelefone(telefone);  // Adiciona novo telefone à coleção existente
+            });
         }
 
-        // Atualiza os coordenadores via IDs
-        if (coordenacaoDTO.getCoordenadoresIds() != null) {
-            Set<Coordenador> coordenadores = coordenacaoDTO.getCoordenadoresIds().stream()
-                .map(cpf -> coordenadorRepository.findById(cpf)
-                    .orElseThrow(() -> new RuntimeException("Coordenador com CPF " + cpf + " não encontrado")))
-                .collect(Collectors.toSet());
-            coordenacao.setCoordenadores(coordenadores);
-        }
-
-        // Atualiza turmas via IDs
-        if (coordenacaoDTO.getTurmasIds() != null) {
-            Set<Turma> turmas = coordenacaoDTO.getTurmasIds().stream()
-                .map(idTurma -> turmaRepository.findById(idTurma)
-                    .orElseThrow(() -> new RuntimeException("Turma com ID " + idTurma + " não encontrada")))
-                .collect(Collectors.toSet());
-            coordenacao.setTurmas(turmas);
-        }
-
-        // Atualiza professores via IDs
-        if (coordenacaoDTO.getProfessoresIds() != null) {
-            Set<Professor> professores = coordenacaoDTO.getProfessoresIds().stream()
-                .map(cpf -> professorRepository.findById(cpf)
-                    .orElseThrow(() -> new RuntimeException("Professor com CPF " + cpf + " não encontrado")))
-                .collect(Collectors.toSet());
-            coordenacao.setProfessores(professores);
-        }
-
-        // Salva a coordenacao e retorna o DTO atualizado
         Coordenacao updatedCoordenacao = coordenacaoRepository.save(coordenacao);
         return convertToDto(updatedCoordenacao);
     }
+
 
 
     // Deleta coordenacao

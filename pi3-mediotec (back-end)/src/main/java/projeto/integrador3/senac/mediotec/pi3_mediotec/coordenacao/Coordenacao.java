@@ -1,6 +1,7 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -58,13 +59,13 @@ public class Coordenacao implements Serializable {
     @Column
     private String descricao;
     
+    @Builder.Default
     @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = true)
-    private Set<Endereco> enderecos;
+    private Set<Endereco> enderecos = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = true)
-    private Set<Telefone> telefones;
+    private Set<Telefone> telefones = new HashSet<>();
     
     @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(nullable = false)

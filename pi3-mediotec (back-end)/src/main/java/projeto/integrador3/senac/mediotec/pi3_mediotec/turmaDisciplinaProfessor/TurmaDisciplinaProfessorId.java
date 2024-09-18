@@ -19,8 +19,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Embeddable
 public class TurmaDisciplinaProfessorId implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "id_turma")
     private Long turmaId;
@@ -31,12 +31,13 @@ public class TurmaDisciplinaProfessorId implements Serializable {
     @Column(name = "id_professor")
     private String professorId;
 
+    // Equals e hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TurmaDisciplinaProfessorId that = (TurmaDisciplinaProfessorId) o;
-        return Objects.equals(turmaId, that.turmaId) && 
+        return Objects.equals(turmaId, that.turmaId) &&
                Objects.equals(disciplinaId, that.disciplinaId) &&
                Objects.equals(professorId, that.professorId);
     }
@@ -46,3 +47,4 @@ public class TurmaDisciplinaProfessorId implements Serializable {
         return Objects.hash(turmaId, disciplinaId, professorId);
     }
 }
+
