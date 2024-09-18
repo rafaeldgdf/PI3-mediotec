@@ -27,6 +27,7 @@ import lombok.experimental.SuperBuilder;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.Endereco;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.presenca.Presenca;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.responsavel.Responsavel;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.Telefone;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.Turma;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.usuario.Usuario;
@@ -40,57 +41,64 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.usuario.Usuario;
 @AllArgsConstructor
 @Table(name = "aluno")
 public class Aluno extends Usuario {
-	
-	private static final long serialVersionUID = 1L;
+    
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "matricula_aluno")
     private Long id;
-    
-    @Size(min = 1, max = 100, message = "{usuario.cpf.size}")
-    @Column(nullable = true, unique = true)
+
+  
+    @Column(nullable = false, unique = true)
     private String cpf;
-    
+
     @Column
     private boolean status;
-    
-    @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = false)
-    private Set<Endereco> enderecos;
 
+    @Builder.Default
     @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(nullable = false)
-    private Set<Telefone> telefones;
-    
+    private Set<Endereco> enderecos = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Telefone> telefones = new HashSet<>();
 
     @Builder.Default
     @ManyToMany(mappedBy = "alunos", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Turma> turmas = new HashSet<>();
-    
+
     @JsonIgnore
     @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Presenca> presencas;
-    
+    private Set<Presenca> presencas = new HashSet<>();
+
     @ManyToOne
     private Coordenacao coordenacao;
-    
-    
-    
-    // Métodos extras para configurar as bilateralidades
+
+    @Builder.Default
+    @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Responsavel> responsaveis = new HashSet<>();
+
+    // Métodos auxiliares para configurar as relações
     public void addEndereco(Endereco endereco) {
-        endereco.setAluno(this); 
+        endereco.setAluno(this);
         this.enderecos.add(endereco);
     }
 
     public void addTelefone(Telefone telefone) {
-        telefone.setAluno(this); 
+        telefone.setAluno(this);
         this.telefones.add(telefone);
     }
-    
+
     public void addTurma(Turma turma) {
         this.turmas.add(turma);
-        turma.getAlunos().add(this);  
+        turma.getAlunos().add(this);
+    }
+
+    public void addResponsavel(Responsavel responsavel) {
+        responsavel.setAluno(this);
+        this.responsaveis.add(responsavel);
     }
 }
+
 

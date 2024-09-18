@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class DisciplinaResumida2DTO {
-    private Long id;            
+public class DisciplinaResumida2DTO {          
     private String nome; 
 
 }

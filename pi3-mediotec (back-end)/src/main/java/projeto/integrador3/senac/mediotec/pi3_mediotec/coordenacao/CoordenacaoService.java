@@ -238,7 +238,6 @@ public class CoordenacaoService {
         Set<TurmaResumida2DTO> turmasDTO = (coordenacao.getTurmas() != null) ?
             coordenacao.getTurmas().stream()
                 .map(turma -> TurmaResumida2DTO.builder()
-                    .id(turma.getId())
                     .nome(turma.getNome())
                     .ano(turma.getAno())
                     .build())

@@ -6,7 +6,6 @@ import lombok.Data;
 @Builder
 @Data
 public class CoordenadorResumidoDTO {
-    private String cpf;
     private String nomeCoordenador;
     private String email;
     

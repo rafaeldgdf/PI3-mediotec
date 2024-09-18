@@ -10,7 +10,6 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties({"aluno", "professor", "coordenador", "coordenacao"})
 public class EnderecoDTO {
-    private Long idEndereco;
     private String cep;
     private String rua;
     private String numero;

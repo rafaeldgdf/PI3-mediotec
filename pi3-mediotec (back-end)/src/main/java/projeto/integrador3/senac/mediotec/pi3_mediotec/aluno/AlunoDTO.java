@@ -3,7 +3,8 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.aluno;
 import lombok.Builder;
 import lombok.Data;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.EnderecoDTO;
-
+import projeto.integrador3.senac.mediotec.pi3_mediotec.responsavel.Responsavel;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.responsavel.ResponsavelDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneDTO;
 
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaResumidaDTO;
@@ -28,4 +29,5 @@ public class AlunoDTO {
     private Set<EnderecoDTO> enderecos;
     private Set<TelefoneDTO> telefones;
     private Set<TurmaResumidaDTO> turmas; // Turmas com disciplinas e coordenadores
+    private Set<ResponsavelDTO> responsaveis;
 }

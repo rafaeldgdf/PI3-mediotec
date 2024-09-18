@@ -227,7 +227,6 @@ public class TurmaService {
                 .map(turmaDisciplinaProfessor -> turmaDisciplinaProfessor.getDisciplina())  // Obtém as disciplinas
                 .distinct()  // Remove duplicatas, se necessário
                 .map(disciplina -> DisciplinaResumida2DTO.builder()
-                        .id(disciplina.getId())
                         .nome(disciplina.getNome())
                         .build())
                 .collect(Collectors.toSet()) : Collections.emptySet();
@@ -272,7 +271,6 @@ public class TurmaService {
             .nome(turma.getNome())  // Nome já gerado automaticamente
             .ano(turma.getAno())
             .coordenacao(CoordenacaoResumidaDTO.builder()
-                    .id(turma.getCoordenacao().getId())
                     .nome(turma.getCoordenacao().getNome())
                     .build())
             .disciplinas(disciplinasDTO)  // Adiciona a lista de disciplinas resumidas

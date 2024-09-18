@@ -133,7 +133,6 @@ public class EnderecoService {
 
     private EnderecoDTO convertToDTO(Endereco endereco) {
         return EnderecoDTO.builder()
-                .idEndereco(endereco.getId_endereco())
                 .cep(endereco.getCep())
                 .rua(endereco.getRua())
                 .numero(endereco.getNumero())
@@ -145,7 +144,6 @@ public class EnderecoService {
 
     private Endereco convertToEntity(EnderecoDTO enderecoDTO) {
         return Endereco.builder()
-                .id_endereco(enderecoDTO.getIdEndereco())
                 .cep(enderecoDTO.getCep())
                 .rua(enderecoDTO.getRua())
                 .numero(enderecoDTO.getNumero())

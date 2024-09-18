@@ -147,7 +147,6 @@ public class TelefoneService {
 
     private TelefoneDTO convertToDTO(Telefone telefone) {
         return TelefoneDTO.builder()
-                .id(telefone.getId())
                 .ddd(telefone.getDdd())
                 .numero(telefone.getNumero())
                 .build();
@@ -155,7 +154,6 @@ public class TelefoneService {
 
     private Telefone convertToEntity(TelefoneDTO telefoneDTO) {
         return Telefone.builder()
-                .id(telefoneDTO.getId())
                 .ddd(telefoneDTO.getDdd())
                 .numero(telefoneDTO.getNumero())
                 .build();

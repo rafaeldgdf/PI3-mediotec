@@ -38,7 +38,6 @@ public class Professor extends Usuario {
 
     @Id
     @NotNull(message = "{usuario.cpf.notnull}")
-    @Size(min = 11, max = 11, message = "{usuario.cpf.size}")
     @Column(nullable = false, unique = true)
     private String cpf;
     

@@ -17,6 +17,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.Aluno;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.Coordenador;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.Professor;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.responsavel.Responsavel;
 
 @Data
 @Entity
@@ -61,6 +62,19 @@ public class Telefone {
     @ManyToOne
     @JoinColumn(name = "coordenacao_id")
     private Coordenacao coordenacao;
+    
+    
+    // Adicionando a relação com Responsável
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "responsavel_id")
+    private Responsavel responsavel;
+
+    // Método setResponsavel para criar a relação bilateral
+    public void setResponsavel(Responsavel responsavel) {
+        this.responsavel = responsavel;
+    }
+    
     
     @Override
     public int hashCode() {
