@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+/*
 @RestController
 @RequestMapping("/horarios")
 public class HorarioController {
@@ -50,3 +50,4 @@ public class HorarioController {
         return ResponseEntity.noContent().build();
     }
 }
+*/

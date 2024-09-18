@@ -9,6 +9,9 @@ import lombok.Data;
 @Data
 public class TurmaInputDTO {
     private int ano;
+    private int anoLetivo;      
+    private String anoEscolar;
+    private String turno;
     private boolean status;
     private Long coordenacaoId;
     private Set<Long> alunosIds;

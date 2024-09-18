@@ -53,7 +53,13 @@ public class Turma implements Serializable {
 
     @NotNull(message = "{turma.ano.notnull}")
     @Column(nullable = false)
-    private int ano;
+    private int anoLetivo;
+    
+    @Column
+    private String anoEscolar;
+    
+    @Column
+    private String turno;
     
     @Column
     private boolean status;

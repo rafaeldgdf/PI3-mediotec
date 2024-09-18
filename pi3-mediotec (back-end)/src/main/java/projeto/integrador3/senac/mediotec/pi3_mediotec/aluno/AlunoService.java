@@ -367,7 +367,9 @@ public class AlunoService {
 
                 return TurmaResumidaDTO.builder()
                     .nome(turma.getNome())
-                    .ano(turma.getAno())
+                    .anoLetivo(turma.getAnoLetivo())
+                    .anoEscolar(turma.getAnoEscolar())
+                    .turno(turma.getTurno())
                     .coordenacao(coordenacaoDTO)
                     .disciplinaProfessores(!disciplinaProfessorDTO.isEmpty() ? disciplinaProfessorDTO : null)
                     .build();

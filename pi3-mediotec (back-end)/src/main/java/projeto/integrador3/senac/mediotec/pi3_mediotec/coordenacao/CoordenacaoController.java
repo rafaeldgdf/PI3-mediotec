@@ -8,54 +8,65 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.server.ResponseStatusException;
+
 @RestController
 @RequestMapping("/coordenacoes")
+@Tag(name = "Coordenação", description = "Gerenciamento das Coordenações")
 public class CoordenacaoController {
 
     @Autowired
     private CoordenacaoService coordenacaoService;
 
-    // Retorna todas as coordenacoes
     @GetMapping
     public ResponseEntity<List<CoordenacaoDTO>> getAllCoordenacoes() {
-        List<CoordenacaoDTO> coordenacoes = coordenacaoService.getAllCoordenacoes();
-        return new ResponseEntity<>(coordenacoes, HttpStatus.OK);
+        try {
+            List<CoordenacaoDTO> coordenacoes = coordenacaoService.getAllCoordenacoes();
+            return new ResponseEntity<>(coordenacoes, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao listar coordenações", e);
+        }
     }
 
-    // Retorna uma coordenacao específica por ID
     @GetMapping("/{id}")
     public ResponseEntity<CoordenacaoDTO> getCoordenacaoById(@PathVariable Long id) {
-        Optional<CoordenacaoDTO> coordenacao = coordenacaoService.getCoordenacaoById(id);
-        return coordenacao.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                          .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        try {
+            Optional<CoordenacaoDTO> coordenacao = coordenacaoService.getCoordenacaoById(id);
+            return coordenacao.map(ResponseEntity::ok)
+                              .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Coordenação não encontrada"));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar coordenação", e);
+        }
     }
 
-    // Cria uma nova coordenacao (utilizando o DTO CoordenacaoCadastroDTO para envio de IDs e dados completos de endereços/telefones)
     @PostMapping
     public ResponseEntity<CoordenacaoDTO> createCoordenacao(@RequestBody CoordenacaoCadastroDTO coordenacaoCadastroDTO) {
-        CoordenacaoDTO savedCoordenacao = coordenacaoService.saveCoordenacao(coordenacaoCadastroDTO);
-        return new ResponseEntity<>(savedCoordenacao, HttpStatus.CREATED);
+        try {
+            CoordenacaoDTO savedCoordenacao = coordenacaoService.saveCoordenacao(coordenacaoCadastroDTO);
+            return new ResponseEntity<>(savedCoordenacao, HttpStatus.CREATED);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao criar coordenação", e);
+        }
     }
 
-    // Atualiza uma coordenacao existente (utilizando o CoordenacaoCadastroDTO)
     @PutMapping("/{id}")
     public ResponseEntity<CoordenacaoDTO> updateCoordenacao(@PathVariable Long id, @RequestBody CoordenacaoCadastroDTO coordenacaoCadastroDTO) {
         try {
             CoordenacaoDTO updatedCoordenacao = coordenacaoService.updateCoordenacao(id, coordenacaoCadastroDTO);
             return new ResponseEntity<>(updatedCoordenacao, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Coordenação não encontrada", e);
         }
     }
 
-    // Deleta uma coordenacao existente
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCoordenacao(@PathVariable Long id) {
         try {
             coordenacaoService.deleteCoordenacao(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Coordenação não encontrada", e);
         }
     }
 }

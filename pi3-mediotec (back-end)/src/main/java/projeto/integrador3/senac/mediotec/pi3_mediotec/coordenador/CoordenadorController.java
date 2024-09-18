@@ -8,58 +8,65 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.web.server.ResponseStatusException;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/coordenadores")
+@Tag(name = "Coordenador", description = "Gerenciamento dos Coordenadores")
 public class CoordenadorController {
 
     @Autowired
     private CoordenadorService coordenadorService;
 
-    // Rota para listar todos os coordenadores
     @GetMapping
     public ResponseEntity<List<CoordenadorDTO>> getAllCoordenadores() {
-        List<CoordenadorDTO> coordenadores = coordenadorService.getAllCoordenadores();
-        return new ResponseEntity<>(coordenadores, HttpStatus.OK);
+        try {
+            List<CoordenadorDTO> coordenadores = coordenadorService.getAllCoordenadores();
+            return new ResponseEntity<>(coordenadores, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar coordenadores", e);
+        }
     }
 
-    // Rota para obter um coordenador por CPF (ID)
     @GetMapping("/{id}")
     public ResponseEntity<CoordenadorDTO> getCoordenadorById(@PathVariable String id) {
-        Optional<CoordenadorDTO> coordenador = coordenadorService.getCoordenadorById(id);
-        return coordenador.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                          .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        try {
+            Optional<CoordenadorDTO> coordenador = coordenadorService.getCoordenadorById(id);
+            return coordenador.map(ResponseEntity::ok)
+                              .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Coordenador não encontrado"));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar coordenador", e);
+        }
     }
 
-    // Rota para criar um novo coordenador (POST), agora usando CoordenadorDTO
     @PostMapping
     public ResponseEntity<CoordenadorDTO> createCoordenador(@RequestBody CoordenadorDTO coordenadorDTO) {
         try {
             CoordenadorDTO savedCoordenador = coordenadorService.saveCoordenador(coordenadorDTO);
             return new ResponseEntity<>(savedCoordenador, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao criar coordenador", e);
         }
     }
 
-    // Rota para atualizar um coordenador existente (PUT), agora usando CoordenadorDTO
     @PutMapping("/{id}")
     public ResponseEntity<CoordenadorDTO> updateCoordenador(@PathVariable String id, @RequestBody CoordenadorDTO coordenadorDTO) {
         try {
             CoordenadorDTO updatedCoordenador = coordenadorService.updateCoordenador(id, coordenadorDTO);
             return new ResponseEntity<>(updatedCoordenador, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Coordenador não encontrado", e);
         }
     }
 
-    // Rota para deletar um coordenador por CPF (ID)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCoordenador(@PathVariable String id) {
         try {
             coordenadorService.deleteCoordenador(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Coordenador não encontrado", e);
         }
     }
 }

@@ -19,7 +19,10 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaResu
 public class TurmaDTO {
     private Long id;
     private String nome;
-    private int ano;
+    private int anoLetivo;      
+    private String anoEscolar;
+    private String turno;
+    private boolean status;
     private CoordenacaoResumidaDTO coordenacao;
     private Set<DisciplinaResumida2DTO> disciplinas; 
     private Set<DisciplinaProfessorDTO> disciplinasProfessores;

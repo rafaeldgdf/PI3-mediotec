@@ -48,11 +48,11 @@ public class TurmaService {
 
     @Transactional
     public TurmaDTO saveTurma(TurmaInputDTO turmaDTO) {
-        Turma turma = new Turma();
-        turma.setAno(turmaDTO.getAno());
-        
-        // Define status ao criar uma nova turma
-        turma.setStatus(turmaDTO.isStatus());
+        Turma turma = new Turma();	
+        turma.setAnoLetivo(turmaDTO.getAno());
+        turma.setAnoEscolar(turmaDTO.getAnoEscolar()); // Novo atributo anoEscolar
+        turma.setTurno(turmaDTO.getTurno());
+        turma.setStatus(turmaDTO.isStatus());         // Define status ao criar uma nova turma
 
         // Verifica se a coordenação foi fornecida
         Coordenacao coordenacao = coordenacaoRepository.findById(turmaDTO.getCoordenacaoId())
@@ -94,7 +94,8 @@ public class TurmaService {
                     turmaDisciplinaProfessor.setTurma(savedTurma);
                     turmaDisciplinaProfessor.setDisciplina(disciplina);
                     turmaDisciplinaProfessor.setProfessor(professor);
-
+                    
+                    
                     // Salva a relação no repositório de TurmaDisciplinaProfessor
                     turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
                 }
@@ -115,8 +116,11 @@ public class TurmaService {
                 .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
 
         // Atualiza os atributos da turma
-        turma.setAno(turmaDTO.getAno());
-        turma.setStatus(turmaDTO.isStatus());
+        turma.setAnoLetivo(turmaDTO.getAno());
+        turma.setAnoEscolar(turmaDTO.getAnoEscolar()); 
+        turma.setTurno(turmaDTO.getTurno());          
+        turma.setStatus(turmaDTO.isStatus());          
+
 
         // Atualiza a coordenação se fornecida
         Coordenacao coordenacao = coordenacaoRepository.findById(turmaDTO.getCoordenacaoId())
@@ -269,7 +273,9 @@ public class TurmaService {
         return TurmaDTO.builder()
             .id(turma.getId())
             .nome(turma.getNome())  // Nome já gerado automaticamente
-            .ano(turma.getAno())
+            .anoEscolar(turma.getAnoEscolar())  // Novo campo anoEscolar
+            .turno(turma.getTurno())            // Novo campo turno
+            .status(turma.isStatus())           // Status da turma
             .coordenacao(CoordenacaoResumidaDTO.builder()
                     .nome(turma.getCoordenacao().getNome())
                     .build())

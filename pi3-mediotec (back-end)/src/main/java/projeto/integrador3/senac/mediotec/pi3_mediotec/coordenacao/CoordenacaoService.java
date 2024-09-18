@@ -221,7 +221,9 @@ public class CoordenacaoService {
             coordenacao.getTurmas().stream()
                 .map(turma -> TurmaResumida2DTO.builder()
                     .nome(turma.getNome())
-                    .ano(turma.getAno())
+                    .anoLetivo(turma.getAnoLetivo())
+                    .anoEscolar(turma.getAnoEscolar())
+                    .turno(turma.getTurno())
                     .build())
                 .collect(Collectors.toSet()) : Collections.emptySet();
 

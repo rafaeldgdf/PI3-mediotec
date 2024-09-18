@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 public class TurmaResumida2DTO {
     private String nome;  // Nome da Turma
-    private int ano;      // Ano da Turma
+    private int anoLetivo;      // Ano da Turma
+    private String anoEscolar;
+    private String turno;
 }
 

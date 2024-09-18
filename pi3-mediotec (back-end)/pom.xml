@@ -36,6 +36,7 @@
     		<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
     		<version>2.1.0</version>
 		</dependency>
+
 		
 		<dependency> <!-- dependencia email e size -->
     		<groupId>org.springframework.boot</groupId>
