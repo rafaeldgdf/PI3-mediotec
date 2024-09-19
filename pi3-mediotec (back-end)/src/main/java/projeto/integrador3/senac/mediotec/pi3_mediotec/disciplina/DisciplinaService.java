@@ -145,7 +145,6 @@ public class DisciplinaService {
 
         // Retorna os campos relevantes, sem lançar exceções, e permitindo que as associações sejam nulas
         return DisciplinaResumidaDTO.builder()
-            .id(disciplina.getId())
             .nome(disciplina.getNome())
             .cargaHoraria(disciplina.getCarga_horaria())
             .build();
@@ -165,7 +164,6 @@ public class DisciplinaService {
 
         // Retorna os campos relevantes para GET, verificando se há associações
         return DisciplinaGetDTO.builder()
-            .id(disciplina.getId())
             .nome(disciplina.getNome())
             .carga_horaria(disciplina.getCarga_horaria())
             .nomeTurma(turmaDisciplinaProfessor != null && turmaDisciplinaProfessor.getTurma() != null

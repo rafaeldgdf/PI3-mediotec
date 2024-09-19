@@ -216,7 +216,6 @@ public class TurmaService {
     
     private DisciplinaDTO convertToDisciplinaDTO(Disciplina disciplina) {
         return DisciplinaDTO.builder()
-                .id(disciplina.getId())
                 .nome(disciplina.getNome())
                 .cargaHoraria(disciplina.getCarga_horaria())
                 .build();
@@ -270,7 +269,6 @@ public class TurmaService {
                 .collect(Collectors.toSet()) : Collections.emptySet();
 
         return TurmaDTO.builder()
-            .id(turma.getId())
             .nome(turma.getNome())  // Nome já gerado automaticamente
             .anoEscolar(turma.getAnoEscolar())  // Novo campo anoEscolar
             .turno(turma.getTurno())            // Novo campo turno

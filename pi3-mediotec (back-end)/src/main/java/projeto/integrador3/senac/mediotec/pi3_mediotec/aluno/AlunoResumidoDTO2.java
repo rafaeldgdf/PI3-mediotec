@@ -17,7 +17,6 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneDTO;
 @Builder
 @Data
 public class AlunoResumidoDTO2 {
-    private Long id;
     private String nome;
     private String ultimoNome;
     private String genero;

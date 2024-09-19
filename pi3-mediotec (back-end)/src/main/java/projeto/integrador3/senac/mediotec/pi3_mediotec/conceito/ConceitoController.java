@@ -21,14 +21,6 @@ public class ConceitoController {
     @Autowired
     private ConceitoService conceitoService;
 
-    // Rota para listar todos os conceitos (GET) - retorna o DTO completo
-    @Operation(summary = "Listar todos os conceitos", description = "Retorna uma lista de todos os conceitos cadastrados")
-    @GetMapping
-    public ResponseEntity<List<ConceitoDTO>> listarConceitos() {
-        logger.info("Listando todos os conceitos.");
-        List<ConceitoDTO> conceitos = conceitoService.listarConceitos();
-        return ResponseEntity.ok(conceitos);
-    }
 
     // Rota para buscar conceito por ID (GET) - retorna o DTO completo
     @Operation(summary = "Buscar conceito por ID", description = "Retorna um conceito com base no seu ID")

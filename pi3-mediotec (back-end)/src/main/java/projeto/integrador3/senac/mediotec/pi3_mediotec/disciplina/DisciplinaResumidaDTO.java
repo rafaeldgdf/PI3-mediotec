@@ -8,7 +8,6 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaResumidaDTO;
 @Builder
 @Data
 public class DisciplinaResumidaDTO {
-    private Long id;             // ID da Disciplina
     private String nome;         // Nome da Disciplina
     private int cargaHoraria;    // Carga Horária
 

@@ -6,7 +6,6 @@ import lombok.Data;
 @Builder
 @Data
 public class DisciplinaGetDTO {
-    private Long id;           // ID da Disciplina
     private String nome;       // Nome da Disciplina
     private int carga_horaria;
     private String nomeTurma;  // Nome da Turma

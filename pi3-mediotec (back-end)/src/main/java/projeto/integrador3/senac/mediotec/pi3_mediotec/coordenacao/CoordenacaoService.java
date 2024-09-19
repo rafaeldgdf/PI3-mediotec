@@ -240,7 +240,6 @@ public class CoordenacaoService {
 
         // Converte a Coordenacao para CoordenacaoDTO sem redundâncias
         return CoordenacaoDTO.builder()
-            .id(coordenacao.getId())
             .nome(coordenacao.getNome())
             .descricao(coordenacao.getDescricao())
             .enderecos(enderecosDTO)
