@@ -1,7 +1,10 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.Endereco;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.EnderecoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.Telefone;
@@ -17,6 +20,9 @@ public class CoordenadorService {
 
     @Autowired
     private CoordenadorRepository coordenadorRepository;
+
+    @Autowired
+    private CoordenacaoRepository coordenacaoRepository; // Para associar a Coordenacao
 
     // Lista todos os coordenadores e retorna uma lista de CoordenadorDTO
     public List<CoordenadorDTO> getAllCoordenadores() {
@@ -47,9 +53,23 @@ public class CoordenadorService {
         coordenador.setEmail(coordenadorDTO.getEmail());
         coordenador.setStatus(true); // Define o status inicial como ativo
 
+        // Adiciona a coordenação, se o idCoordenacao estiver presente no DTO
+        if (coordenadorDTO.getIdCoordenacao() != null) {
+            Coordenacao coordenacao = coordenacaoRepository.findById(coordenadorDTO.getIdCoordenacao())
+                    .orElseThrow(() -> new RuntimeException("Coordenação com ID " + coordenadorDTO.getIdCoordenacao() + " não encontrada"));
+            
+            // Associa a coordenação ao coordenador
+            coordenador.setCoordenacao(coordenacao);
+            
+            // Também é possível garantir que o coordenador seja adicionado à coleção de coordenadores da coordenação
+            coordenacao.getCoordenadores().add(coordenador);
+            
+            // Salva a coordenação caso haja necessidade
+            coordenacaoRepository.save(coordenacao); // Isso garante que a associação seja persistida
+        }
+
         // Adiciona e associa endereços ao coordenador
         if (coordenadorDTO.getEnderecos() != null && !coordenadorDTO.getEnderecos().isEmpty()) {
-            // Limpa a coleção existente antes de adicionar novos itens
             coordenador.getEnderecos().clear();
             coordenadorDTO.getEnderecos().forEach(enderecoDTO -> {
                 Endereco endereco = Endereco.builder()
@@ -67,7 +87,6 @@ public class CoordenadorService {
 
         // Adiciona e associa telefones ao coordenador
         if (coordenadorDTO.getTelefones() != null && !coordenadorDTO.getTelefones().isEmpty()) {
-            // Limpa a coleção existente antes de adicionar novos itens
             coordenador.getTelefones().clear();
             coordenadorDTO.getTelefones().forEach(telefoneDTO -> {
                 Telefone telefone = Telefone.builder()
@@ -79,11 +98,10 @@ public class CoordenadorService {
             });
         }
 
-        // Salva a entidade e retorna o DTO correspondente
+        // Salva o coordenador e retorna o DTO correspondente
         Coordenador savedCoordenador = coordenadorRepository.save(coordenador);
         return convertToDto(savedCoordenador);
     }
-
 
 
     public CoordenadorDTO updateCoordenador(String id, CoordenadorDTO coordenadorDTO) {
@@ -99,9 +117,17 @@ public class CoordenadorService {
         coordenador.setEmail(coordenadorDTO.getEmail());
         coordenador.setStatus(coordenadorDTO.isStatus());
 
+        // Atualiza a coordenação, se o idCoordenacao for passado no DTO
+        if (coordenadorDTO.getIdCoordenacao() != null) {
+            Coordenacao coordenacao = coordenacaoRepository.findById(coordenadorDTO.getIdCoordenacao())
+                    .orElseThrow(() -> new RuntimeException("Coordenação com ID " + coordenadorDTO.getIdCoordenacao() + " não encontrada"));
+            coordenador.setCoordenacao(coordenacao);
+        } else {
+            coordenador.setCoordenacao(null);  // Se idCoordenacao for null, remove a associação
+        }
+
         // Atualiza os endereços do coordenador
         if (coordenadorDTO.getEnderecos() != null && !coordenadorDTO.getEnderecos().isEmpty()) {
-            // Limpa a coleção existente antes de adicionar novos itens
             coordenador.getEnderecos().clear();
             coordenadorDTO.getEnderecos().forEach(enderecoDTO -> {
                 Endereco endereco = Endereco.builder()
@@ -119,7 +145,6 @@ public class CoordenadorService {
 
         // Atualiza os telefones do coordenador
         if (coordenadorDTO.getTelefones() != null && !coordenadorDTO.getTelefones().isEmpty()) {
-            // Limpa a coleção existente antes de adicionar novos itens
             coordenador.getTelefones().clear();
             coordenadorDTO.getTelefones().forEach(telefoneDTO -> {
                 Telefone telefone = Telefone.builder()
@@ -135,8 +160,6 @@ public class CoordenadorService {
         Coordenador updatedCoordenador = coordenadorRepository.save(coordenador);
         return convertToDto(updatedCoordenador);
     }
-
-
 
     // Deleta um coordenador por ID (CPF)
     public void deleteCoordenador(String id) {
@@ -161,6 +184,7 @@ public class CoordenadorService {
                 .telefones(coordenador.getTelefones().stream()
                         .map(this::convertTelefoneToDto)
                         .collect(Collectors.toSet()))
+                .idCoordenacao(coordenador.getCoordenacao() != null ? coordenador.getCoordenacao().getId() : null) // Converte a coordenação
                 .build();
     }
 

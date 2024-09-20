@@ -96,7 +96,7 @@ public class ProfessorService {
                             .build())
                     .collect(Collectors.toSet());
 
-            enderecos.forEach(enderecoRepository::save);  // Persistir manualmente
+            enderecos.forEach(enderecoRepository::save);  // Persistir manualmente os endereços
             savedProfessor.setEnderecos(enderecos);
         }
 
@@ -110,8 +110,28 @@ public class ProfessorService {
                             .build())
                     .collect(Collectors.toSet());
 
-            telefones.forEach(telefoneRepository::save);  // Persistir manualmente
+            telefones.forEach(telefoneRepository::save);  // Persistir manualmente os telefones
             savedProfessor.setTelefones(telefones);
+        }
+
+        // Adiciona turmas e disciplinas ao professor (opcional)
+        if (professorDTO.getTurmasDisciplinas() != null && !professorDTO.getTurmasDisciplinas().isEmpty()) {
+            professorDTO.getTurmasDisciplinas().forEach(turmaDisciplinaDTO -> {
+                Turma turma = turmaRepository.findById(turmaDisciplinaDTO.getTurmaId())
+                        .orElseThrow(() -> new RuntimeException("Turma com ID " + turmaDisciplinaDTO.getTurmaId() + " não encontrada"));
+                Disciplina disciplina = disciplinaRepository.findById(turmaDisciplinaDTO.getDisciplinaId())
+                        .orElseThrow(() -> new RuntimeException("Disciplina com ID " + turmaDisciplinaDTO.getDisciplinaId() + " não encontrada"));
+
+                TurmaDisciplinaProfessor tdp = TurmaDisciplinaProfessor.builder()
+                        .professor(savedProfessor)  // Associa o professor
+                        .turma(turma)
+                        .disciplina(disciplina)
+                        .id(new TurmaDisciplinaProfessorId(turma.getId(), disciplina.getId(), savedProfessor.getCpf()))  // ID composto
+                        .build();
+
+                turmaDisciplinaProfessorRepository.save(tdp);  // Persiste a associação
+                savedProfessor.addTurmaDisciplinaProfessor(tdp);  // Adiciona a associação ao professor
+            });
         }
 
         // Atualiza o professor no banco de dados com todos os relacionamentos
@@ -120,6 +140,7 @@ public class ProfessorService {
         // Retorna o ProfessorResumidoDTO
         return convertToDto(updatedProfessor);
     }
+
 
 
 
@@ -154,8 +175,9 @@ public class ProfessorService {
                         .bairro(enderecoDTO.getBairro())
                         .cidade(enderecoDTO.getCidade())
                         .estado(enderecoDTO.getEstado())
+                        .professor(professor)  // Associa o endereço ao professor
                         .build();
-                professor.addEndereco(endereco);  // Associa o novo endereço ao professor
+                professor.addEndereco(endereco);  // Adiciona o novo endereço ao professor
             });
         }
 
@@ -166,8 +188,9 @@ public class ProfessorService {
                 Telefone telefone = Telefone.builder()
                         .ddd(telefoneDTO.getDdd())
                         .numero(telefoneDTO.getNumero())
+                        .professor(professor)  // Associa o telefone ao professor
                         .build();
-                professor.addTelefone(telefone);  // Associa o novo telefone ao professor
+                professor.addTelefone(telefone);  // Adiciona o novo telefone ao professor
             });
         }
 
@@ -181,10 +204,14 @@ public class ProfessorService {
                         .orElseThrow(() -> new RuntimeException("Disciplina com ID " + turmaDisciplinaDTO.getDisciplinaId() + " não encontrada"));
 
                 TurmaDisciplinaProfessor tdp = TurmaDisciplinaProfessor.builder()
+                        .professor(professor)  // Associa o professor
                         .turma(turma)
                         .disciplina(disciplina)
+                        .id(new TurmaDisciplinaProfessorId(turma.getId(), disciplina.getId(), professor.getCpf()))  // ID composto
                         .build();
-                professor.addTurmaDisciplinaProfessor(tdp);  // Associa a nova turma e disciplina ao professor
+
+                turmaDisciplinaProfessorRepository.save(tdp);  // Persiste a nova associação
+                professor.addTurmaDisciplinaProfessor(tdp);  // Adiciona a associação ao professor
             });
         }
 
@@ -195,6 +222,9 @@ public class ProfessorService {
         return convertToDto(updatedProfessor);
     }
 
+
+    
+    
     // Deleta um professor pelo CPF
     public void deleteProfessor(String cpf) {
         Professor professor = professorRepository.findById(cpf)

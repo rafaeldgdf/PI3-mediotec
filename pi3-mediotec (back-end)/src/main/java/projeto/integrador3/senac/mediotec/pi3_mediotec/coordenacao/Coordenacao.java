@@ -55,7 +55,7 @@ public class Coordenacao implements Serializable {
     @Column(nullable = false)
     private String nome;
     
-    @Size(max = 50)
+    @Size(max = 100)
     @Column
     private String descricao;
     

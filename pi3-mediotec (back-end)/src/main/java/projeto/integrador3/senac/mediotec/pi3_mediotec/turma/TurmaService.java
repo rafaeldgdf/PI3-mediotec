@@ -49,7 +49,7 @@ public class TurmaService {
     @Transactional
     public TurmaDTO saveTurma(TurmaInputDTO turmaDTO) {
         Turma turma = new Turma();	
-        turma.setAnoLetivo(turmaDTO.getAno());
+        turma.setAnoLetivo(turmaDTO.getAnoLetivo());
         turma.setAnoEscolar(turmaDTO.getAnoEscolar()); // Novo atributo anoEscolar
         turma.setTurno(turmaDTO.getTurno());
         turma.setStatus(turmaDTO.isStatus());         // Define status ao criar uma nova turma
@@ -116,7 +116,7 @@ public class TurmaService {
                 .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
 
         // Atualiza os atributos da turma
-        turma.setAnoLetivo(turmaDTO.getAno());
+        turma.setAnoLetivo(turmaDTO.getAnoLetivo());
         turma.setAnoEscolar(turmaDTO.getAnoEscolar()); 
         turma.setTurno(turmaDTO.getTurno());          
         turma.setStatus(turmaDTO.isStatus());          
