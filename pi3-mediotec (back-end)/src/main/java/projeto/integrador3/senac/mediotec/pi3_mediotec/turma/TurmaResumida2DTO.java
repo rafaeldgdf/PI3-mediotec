@@ -1,12 +1,14 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.turma;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 
 @Builder
 @Data
+@AllArgsConstructor  // Gera o construtor necessário
 public class TurmaResumida2DTO {
     private String nome;  // Nome da Turma
     private int anoLetivo;      // Ano da Turma

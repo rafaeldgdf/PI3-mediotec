@@ -1,44 +1,54 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.comunicado;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.emitente.Emitente;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.receptor.Receptor;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.Professor;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.Coordenador;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.List;
 
+@Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "comunicado")
 public class Comunicado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_comunicado;
+    private Long id;
 
-    @NotNull(message = "{comunicado.conteudo.notnull}")
-    @Size(min = 10, max = 100, message = "{comunicado.conteudo.size}")
     @Column(nullable = false)
     private String conteudo;
 
-    @NotNull(message = "{comunicado.data.notnull}")
-    @Temporal(TemporalType.DATE)
     @Column(nullable = false)
-    private Date dataEnvio;
+    private LocalDateTime dataEnvio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_emitente", nullable = false)
-    private Emitente emitente;
+    // Relação com o Professor que enviou o comunicado
+    @ManyToOne
+    @JoinColumn(name = "remetente_professor_id")
+    private Professor remetenteProfessor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_receptor", nullable = false)
-    private Receptor receptor;
+    // Relação com a Coordenação que enviou o comunicado
+    @ManyToOne
+    @JoinColumn(name = "remetente_coordenacao_id")
+    private Coordenacao remetenteCoordenacao;
+    
+
+    // Alunos que receberam o comunicado
+    @ElementCollection
+    @CollectionTable(name = "comunicado_receptor_alunos", joinColumns = @JoinColumn(name = "comunicado_id"))
+    @Column(name = "aluno_id")
+    private List<Long> receptorAlunos;
+
+    // Turmas que receberam o comunicado
+    @ElementCollection
+    @CollectionTable(name = "comunicado_receptor_turmas", joinColumns = @JoinColumn(name = "comunicado_id"))
+    @Column(name = "turma_id")
+    private List<Long> receptorTurmas;
 }
