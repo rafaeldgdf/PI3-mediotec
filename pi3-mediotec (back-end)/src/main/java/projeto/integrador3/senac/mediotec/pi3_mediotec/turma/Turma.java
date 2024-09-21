@@ -43,27 +43,34 @@ public class Turma implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    // ============================= PRIMARY KEY =============================
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_turma")
     private Long id;
 
-   
+    // ============================= ATTRIBUTES =============================
+    
+    @Column
     private String nome;
 
     @NotNull(message = "{turma.ano.notnull}")
     @Column(nullable = false)
     private int anoLetivo;
-    
+
     @Column
     private String anoEscolar;
-    
+
     @Column
     private String turno;
-    
+
     @Column
     private boolean status;
+
+    // ============================= RELATIONSHIPS =============================
     
+    // Relacionamento ManyToMany com Aluno
     @JsonIgnore
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -73,34 +80,46 @@ public class Turma implements Serializable {
         inverseJoinColumns = @JoinColumn(name = "aluno_id")
     )
     private List<Aluno> alunos = new ArrayList<>();
-    
+
+    // Relacionamento ManyToOne com Coordenacao
     @ManyToOne
     @JoinColumn(name = "id_coordenacao")
     private Coordenacao coordenacao;
 
-    // Relacionamento com TurmaDisciplinaProfessor
-    @OneToMany(mappedBy = "turma", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    // Relacionamento OneToMany com TurmaDisciplinaProfessor
     @Builder.Default
+    @OneToMany(mappedBy = "turma", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<TurmaDisciplinaProfessor> turmaDisciplinaProfessores = new HashSet<>();
 
-    // Método extra para adicionar uma relação entre a turma e TurmaDisciplinaProfessor
+    // ============================= AUXILIARY METHODS =============================
+
+    /**
+     * Adiciona uma relação entre a turma e TurmaDisciplinaProfessor.
+     */
     public void addTurmaDisciplinaProfessor(TurmaDisciplinaProfessor turmaDisciplinaProfessor) {
-        turmaDisciplinaProfessores.add(turmaDisciplinaProfessor);
+        this.turmaDisciplinaProfessores.add(turmaDisciplinaProfessor);
         turmaDisciplinaProfessor.setTurma(this);
     }
 
-    // Método extra para remover uma relação entre a turma e TurmaDisciplinaProfessor
+    /**
+     * Remove uma relação entre a turma e TurmaDisciplinaProfessor.
+     */
     public void removeTurmaDisciplinaProfessor(TurmaDisciplinaProfessor turmaDisciplinaProfessor) {
-        turmaDisciplinaProfessores.remove(turmaDisciplinaProfessor);
+        this.turmaDisciplinaProfessores.remove(turmaDisciplinaProfessor);
         turmaDisciplinaProfessor.setTurma(null);
     }
 
-    // Método extra para configurar a bilateralidade
+    /**
+     * Adiciona um aluno à turma e configura a relação bidirecional.
+     */
     public void addAluno(Aluno aluno) {
         this.alunos.add(aluno);
         aluno.getTurmas().add(this);
     }
 
+    /**
+     * Remove um aluno da turma e configura a relação bidirecional.
+     */
     public void removeAluno(Aluno aluno) {
         this.alunos.remove(aluno);
         aluno.getTurmas().remove(this);

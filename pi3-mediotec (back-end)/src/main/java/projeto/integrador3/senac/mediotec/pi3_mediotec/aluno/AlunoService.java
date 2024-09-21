@@ -33,27 +33,47 @@ public class AlunoService {
     @Autowired
     private TurmaRepository turmaRepository;
 
-    // Lista todos os alunos com informações detalhadas (GET)
+    // ============================= GET METHODS =============================
+
+    /**
+     * Lista todos os alunos cadastrados com suas informações detalhadas.
+     * 
+     * @return Lista de AlunoDTO com informações detalhadas.
+     */
     public List<AlunoDTO> getAllAlunos() {
         return alunoRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(this::convertToDto) // Converte cada aluno para AlunoDTO
                 .collect(Collectors.toList());
     }
 
-    // Busca aluno pelo ID com informações detalhadas (GET)
+    /**
+     * Busca um aluno pelo ID e retorna suas informações detalhadas.
+     * 
+     * @param idAluno ID do aluno a ser buscado.
+     * @return Optional com AlunoDTO caso seja encontrado, vazio se não for.
+     */
     public Optional<AlunoDTO> getAlunoById(Long idAluno) {
         return alunoRepository.findById(idAluno)
-                .map(this::convertToDto);
+                .map(this::convertToDto); // Converte para AlunoDTO
     }
 
-    @Transactional  // Garante que o processo ocorra dentro de uma transação
-    public AlunoDTO saveAluno(AlunoResumidoDTO2 alunoResumidoDTO) {
+    // ============================= POST METHODS =============================
 
-        // Verifica se já existe um aluno com o CPF fornecido
+    /**
+     * Cria um novo aluno com os dados fornecidos e associa informações como endereços,
+     * telefones, turmas e responsáveis.
+     * 
+     * @param alunoResumidoDTO Dados resumidos do aluno a ser criado.
+     * @return AlunoDTO com as informações do aluno criado.
+     */
+    @Transactional
+    public AlunoDTO saveAluno(AlunoResumidoDTO2 alunoResumidoDTO) {
+        // Verifica se o aluno já existe pelo CPF
         if (alunoRepository.existsByCpf(alunoResumidoDTO.getCpf())) {
             throw new RuntimeException("Aluno com CPF " + alunoResumidoDTO.getCpf() + " já existe");
         }
 
+        // Cria o objeto Aluno e associa os dados básicos
         Aluno aluno = new Aluno();
         aluno.setNome(alunoResumidoDTO.getNome());
         aluno.setUltimoNome(alunoResumidoDTO.getUltimoNome());
@@ -63,7 +83,76 @@ public class AlunoService {
         aluno.setData_nascimento(alunoResumidoDTO.getData_nascimento());
         aluno.setStatus(true);
 
-        // Associa endereços ao aluno (opcional)
+        // Associa endereços, telefones, turmas e responsáveis
+        this.associateAddresses(alunoResumidoDTO, aluno);
+        this.associatePhones(alunoResumidoDTO, aluno);
+        this.associateTurmas(alunoResumidoDTO, aluno);
+
+        // Salva o aluno no banco de dados
+        Aluno savedAluno = alunoRepository.save(aluno);
+
+        // Associa e salva responsáveis ao aluno
+        this.associateResponsaveis(alunoResumidoDTO, savedAluno);
+
+        // Retorna o AlunoDTO criado
+        return convertToDto(savedAluno);
+    }
+
+    // ============================= PUT METHODS =============================
+
+    /**
+     * Atualiza as informações de um aluno existente com base no ID fornecido.
+     * 
+     * @param idAluno ID do aluno a ser atualizado.
+     * @param alunoResumidoDTO Dados atualizados do aluno.
+     * @return AlunoDTO com as informações atualizadas.
+     */
+    @Transactional
+    public AlunoDTO updateAluno(Long idAluno, AlunoResumidoDTO2 alunoResumidoDTO) {
+        // Busca o aluno no banco de dados
+        Aluno aluno = alunoRepository.findById(idAluno)
+            .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+
+        // Atualiza os dados do aluno
+        aluno.setNome(alunoResumidoDTO.getNome());
+        aluno.setUltimoNome(alunoResumidoDTO.getUltimoNome());
+        aluno.setGenero(alunoResumidoDTO.getGenero());
+        aluno.setCpf(alunoResumidoDTO.getCpf());
+        aluno.setEmail(alunoResumidoDTO.getEmail());
+        aluno.setData_nascimento(alunoResumidoDTO.getData_nascimento());
+        aluno.setStatus(true);
+
+        // Atualiza endereços, telefones e turmas
+        this.associateAddresses(alunoResumidoDTO, aluno);
+        this.associatePhones(alunoResumidoDTO, aluno);
+        this.associateTurmas(alunoResumidoDTO, aluno);
+
+        // Atualiza responsáveis e salva o aluno atualizado
+        this.associateResponsaveis(alunoResumidoDTO, aluno);
+
+        // Retorna o AlunoDTO atualizado
+        return convertToDto(alunoRepository.save(aluno));
+    }
+
+    // ============================= DELETE METHODS =============================
+
+    /**
+     * Deleta um aluno com base no seu ID.
+     * 
+     * @param idAluno ID do aluno a ser deletado.
+     */
+    public void deleteAluno(Long idAluno) {
+        Aluno aluno = alunoRepository.findById(idAluno)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado com o ID: " + idAluno));
+        alunoRepository.delete(aluno);
+    }
+
+    // ============================= MÉTODOS AUXILIARES =============================
+
+    /**
+     * Associa endereços ao aluno.
+     */
+    private void associateAddresses(AlunoResumidoDTO2 alunoResumidoDTO, Aluno aluno) {
         if (alunoResumidoDTO.getEnderecos() != null) {
             aluno.setEnderecos(alunoResumidoDTO.getEnderecos().stream()
                 .map(enderecoDTO -> Endereco.builder()
@@ -77,117 +166,27 @@ public class AlunoService {
                     .build())
                 .collect(Collectors.toSet()));
         }
-
-        // Associa telefones ao aluno (opcional)
-        if (alunoResumidoDTO.getTelefones() != null) {
-            aluno.setTelefones(alunoResumidoDTO.getTelefones().stream()
-                .map(telefoneDTO -> Telefone.builder()
-                    .ddd(telefoneDTO.getDdd())
-                    .numero(telefoneDTO.getNumero())
-                    .aluno(aluno)  // Associa o telefone ao aluno
-                    .build())
-                .collect(Collectors.toSet()));
-        }
-
-        // Associa turmas com base em IDs fornecidos (opcional)
-        if (alunoResumidoDTO.getTurmasIds() != null) {
-            Set<Turma> turmas = alunoResumidoDTO.getTurmasIds().stream()
-                .map(turmaId -> turmaRepository.findById(turmaId)
-                    .orElseThrow(() -> new RuntimeException("Turma com ID " + turmaId + " não encontrada")))
-                .collect(Collectors.toSet());
-            
-            aluno.setTurmas(turmas);
-
-            // Adiciona o aluno à turma (garante o mapeamento bidirecional)
-            for (Turma turma : turmas) {
-                turma.getAlunos().add(aluno);
-            }
-        }
-
-
-        // **Primeiro, salva o aluno para garantir que o ID seja gerado**
-        Aluno savedAluno = alunoRepository.save(aluno);
-
-        // Verifica se pelo menos um Responsável foi fornecido
-        if (alunoResumidoDTO.getResponsaveis() == null || alunoResumidoDTO.getResponsaveis().isEmpty()) {
-            throw new RuntimeException("Pelo menos um responsável deve ser fornecido.");
-        }
-
-        // Associa os responsáveis e telefones ao aluno
-        Set<Responsavel> responsaveis = alunoResumidoDTO.getResponsaveis().stream()
-            .map(responsavelDTO -> {
-                Responsavel responsavel = convertToResponsavel(responsavelDTO);
-                responsavel.setAluno(savedAluno);  // Associa o aluno ao responsável
-
-                // Associa os telefones ao responsável
-                if (responsavelDTO.getTelefones() != null) {
-                    Set<Telefone> telefones = responsavelDTO.getTelefones().stream()
-                        .map(telefoneDTO -> Telefone.builder()
-                            .ddd(telefoneDTO.getDdd())
-                            .numero(telefoneDTO.getNumero())
-                            .responsavel(responsavel)  // Associa o telefone ao responsável
-                            .build())
-                        .collect(Collectors.toSet());
-                    responsavel.setTelefones(telefones);
-                }
-
-                return responsavel;
-            })
-            .collect(Collectors.toSet());
-
-        // Atualiza os responsáveis para o aluno
-        savedAluno.setResponsaveis(responsaveis);
-
-        // **Salva os responsáveis e seus telefones no banco de dados**
-        Aluno updatedAluno = alunoRepository.save(savedAluno);
-
-        // Converte o aluno salvo em AlunoDTO completo e retorna
-        return convertToDto(updatedAluno);
     }
 
-    @Transactional  // Garante que o processo ocorra dentro de uma transação
-    public AlunoDTO updateAluno(Long idAluno, AlunoResumidoDTO2 alunoResumidoDTO) {
-        
-        // Busca o aluno existente no banco de dados
-        Aluno aluno = alunoRepository.findById(idAluno)
-            .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-
-        // Atualiza os dados básicos do aluno
-        aluno.setNome(alunoResumidoDTO.getNome());
-        aluno.setUltimoNome(alunoResumidoDTO.getUltimoNome());
-        aluno.setGenero(alunoResumidoDTO.getGenero());
-        aluno.setCpf(alunoResumidoDTO.getCpf());
-        aluno.setEmail(alunoResumidoDTO.getEmail());
-        aluno.setData_nascimento(alunoResumidoDTO.getData_nascimento());
-        aluno.setStatus(true);
-
-        // Atualiza endereços (opcional)
-        if (alunoResumidoDTO.getEnderecos() != null) {
-            aluno.setEnderecos(alunoResumidoDTO.getEnderecos().stream()
-                .map(enderecoDTO -> Endereco.builder()
-                    .cep(enderecoDTO.getCep())
-                    .rua(enderecoDTO.getRua())
-                    .numero(enderecoDTO.getNumero())
-                    .bairro(enderecoDTO.getBairro())
-                    .cidade(enderecoDTO.getCidade())
-                    .estado(enderecoDTO.getEstado())
-                    .aluno(aluno)  // Atualiza a referência bidirecional do aluno para o endereço
-                    .build())
-                .collect(Collectors.toSet()));
-        }
-
-        // Atualiza telefones (opcional)
+    /**
+     * Associa telefones ao aluno.
+     */
+    private void associatePhones(AlunoResumidoDTO2 alunoResumidoDTO, Aluno aluno) {
         if (alunoResumidoDTO.getTelefones() != null) {
             aluno.setTelefones(alunoResumidoDTO.getTelefones().stream()
                 .map(telefoneDTO -> Telefone.builder()
                     .ddd(telefoneDTO.getDdd())
                     .numero(telefoneDTO.getNumero())
-                    .aluno(aluno)  // Atualiza a referência bidirecional do aluno para o telefone
+                    .aluno(aluno)
                     .build())
                 .collect(Collectors.toSet()));
         }
+    }
 
-        // Atualiza turmas com base nos IDs fornecidos (opcional)
+    /**
+     * Associa turmas ao aluno com base nos IDs fornecidos.
+     */
+    private void associateTurmas(AlunoResumidoDTO2 alunoResumidoDTO, Aluno aluno) {
         if (alunoResumidoDTO.getTurmasIds() != null) {
             Set<Turma> turmas = alunoResumidoDTO.getTurmasIds().stream()
                 .map(turmaId -> turmaRepository.findById(turmaId)
@@ -196,13 +195,17 @@ public class AlunoService {
 
             aluno.setTurmas(turmas);
 
-            // Adiciona o aluno à turma (garante o mapeamento bidirecional)
+            // Adiciona o aluno à turma (mapeamento bidirecional)
             for (Turma turma : turmas) {
                 turma.getAlunos().add(aluno);
             }
         }
+    }
 
-        // Atualiza responsáveis (obrigatório)
+    /**
+     * Associa responsáveis e telefones ao aluno.
+     */
+    private void associateResponsaveis(AlunoResumidoDTO2 alunoResumidoDTO, Aluno aluno) {
         if (alunoResumidoDTO.getResponsaveis() == null || alunoResumidoDTO.getResponsaveis().isEmpty()) {
             throw new RuntimeException("Pelo menos um responsável deve ser fornecido.");
         }
@@ -210,40 +213,34 @@ public class AlunoService {
         Set<Responsavel> responsaveis = alunoResumidoDTO.getResponsaveis().stream()
             .map(responsavelDTO -> {
                 Responsavel responsavel = convertToResponsavel(responsavelDTO);
-                responsavel.setAluno(aluno);  // Atualiza a referência bidirecional do aluno para o responsável
+                responsavel.setAluno(aluno); // Associa o aluno ao responsável
 
-                // Atualiza os telefones do responsável
+                // Associa telefones ao responsável
                 if (responsavelDTO.getTelefones() != null) {
                     Set<Telefone> telefones = responsavelDTO.getTelefones().stream()
                         .map(telefoneDTO -> Telefone.builder()
                             .ddd(telefoneDTO.getDdd())
                             .numero(telefoneDTO.getNumero())
-                            .responsavel(responsavel)  // Atualiza a referência bidirecional do responsável para o telefone
+                            .responsavel(responsavel)
                             .build())
                         .collect(Collectors.toSet());
                     responsavel.setTelefones(telefones);
                 }
-
                 return responsavel;
-            })
-            .collect(Collectors.toSet());
+            }).collect(Collectors.toSet());
 
-        // Atualiza os responsáveis para o aluno
         aluno.setResponsaveis(responsaveis);
-
-        // Salva o aluno atualizado
-        Aluno updatedAluno = alunoRepository.save(aluno);
-
-        // Converte o aluno atualizado em AlunoDTO completo e retorna
-        return convertToDto(updatedAluno);
     }
 
+    // ============================= CONVERSORES =============================
 
-    // Converte de ResponsavelDTO para Responsavel
+    /**
+     * Converte um ResponsavelDTO para Responsavel.
+     */
     private Responsavel convertToResponsavel(ResponsavelDTO responsavelDTO) {
         if (responsavelDTO.getNome() == null || responsavelDTO.getUltimoNome() == null ||
             responsavelDTO.getCpfResponsavel() == null || responsavelDTO.getGrauParentesco() == null) {
-            throw new RuntimeException("Dados do responsável estão incompletos. Nome, sobrenome, CPF e grau de parentesco são obrigatórios.");
+            throw new RuntimeException("Dados do responsável incompletos. Nome, sobrenome, CPF e grau de parentesco são obrigatórios.");
         }
 
         Responsavel responsavel = new Responsavel();
@@ -252,48 +249,12 @@ public class AlunoService {
         responsavel.setCpfResponsavel(responsavelDTO.getCpfResponsavel());
         responsavel.setGrauParentesco(responsavelDTO.getGrauParentesco());
 
-        // Telefones opcionais
-        if (responsavelDTO.getTelefones() != null) {
-            Set<Telefone> telefones = responsavelDTO.getTelefones().stream()
-                .map(telefoneDTO -> Telefone.builder()
-                    .ddd(telefoneDTO.getDdd())
-                    .numero(telefoneDTO.getNumero())
-                    .responsavel(responsavel)
-                    .build())
-                .collect(Collectors.toSet());
-            responsavel.setTelefones(telefones);
-        }
-
         return responsavel;
     }
 
-    // Deleta um aluno pelo ID
-    public void deleteAluno(Long idAluno) {
-        Aluno aluno = alunoRepository.findById(idAluno)
-                .orElseThrow(() -> new RuntimeException("Aluno não encontrado com o ID: " + idAluno));
-        alunoRepository.delete(aluno);
-    }
-
-    // Converte de Responsavel para ResponsavelDTO
-    private ResponsavelDTO convertToResponsavelDTO(Responsavel responsavel) {
-        Set<TelefoneDTO> telefonesDTO = responsavel.getTelefones() != null ?
-                responsavel.getTelefones().stream()
-                .map(telefone -> TelefoneDTO.builder()
-                    .ddd(telefone.getDdd())
-                    .numero(telefone.getNumero())
-                    .build())
-                .collect(Collectors.toSet()) : Collections.emptySet();
-
-        return ResponsavelDTO.builder()
-            .nome(responsavel.getNome())
-            .ultimoNome(responsavel.getUltimoNome())
-            .cpfResponsavel(responsavel.getCpfResponsavel())
-            .telefones(telefonesDTO)
-            .grauParentesco(responsavel.getGrauParentesco())
-            .build();
-    }
-
- // Conversão de Aluno para AlunoDTO (completo para GET)
+    /**
+     * Converte um Aluno para AlunoDTO (completo para GET).
+     */
     private AlunoDTO convertToDto(Aluno aluno) {
         // Mapeia os endereços do aluno
         Set<EnderecoDTO> enderecosDTO = aluno.getEnderecos() != null ? aluno.getEnderecos().stream()

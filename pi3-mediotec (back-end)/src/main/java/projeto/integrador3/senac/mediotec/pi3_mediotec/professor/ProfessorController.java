@@ -9,27 +9,28 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.conceito.ConceitoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.conceito.ConceitoInputDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.conceito.ConceitoResumidoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.conceito.ConceitoService;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.Disciplina;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorResumidoDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/professores")
-@Tag(name = "Professor", description = "Operações relacionadas aos professores")
 public class ProfessorController {
 
     @Autowired
     private ProfessorService professorService;
 
     @Autowired
-    private ConceitoService conceitoService; // Serviço de Conceito
+    private ConceitoService conceitoService;
 
-    // Método GET para listar todos os professores
-    @Operation(summary = "Listar todos os professores", description = "Retorna uma lista de todos os professores cadastrados")
+    // ============================= MÉTODOS GET =============================
+
+    /**
+     * Lista todos os professores cadastrados no sistema.
+     * Tag: Professor
+     */
+    @Operation(summary = "Listar todos os professores", description = "Retorna uma lista de todos os professores cadastrados", tags = { "Professor" })
     @GetMapping
     public ResponseEntity<List<ProfessorResumidoDTO>> getAllProfessores() {
         try {
@@ -43,8 +44,11 @@ public class ProfessorController {
         }
     }
 
-    // Método GET para buscar professor por CPF
-    @Operation(summary = "Buscar professor por CPF", description = "Retorna um professor com base no seu CPF")
+    /**
+     * Busca um professor pelo CPF.
+     * Tag: Professor
+     */
+    @Operation(summary = "Buscar professor por CPF", description = "Retorna um professor com base no seu CPF", tags = { "Professor" })
     @GetMapping("/{cpf}")
     public ResponseEntity<ProfessorResumidoDTO> getProfessorById(@PathVariable String cpf) {
         try {
@@ -56,8 +60,13 @@ public class ProfessorController {
         }
     }
 
-    // Método POST para criar um novo professor
-    @Operation(summary = "Criar um novo professor", description = "Cria um novo professor com base nos dados fornecidos")
+    // ============================= MÉTODOS POST =============================
+
+    /**
+     * Cria um novo professor no sistema.
+     * Tag: Professor
+     */
+    @Operation(summary = "Criar um novo professor", description = "Cria um novo professor com base nos dados fornecidos", tags = { "Professor" })
     @PostMapping
     public ResponseEntity<ProfessorResumidoDTO> createProfessor(@RequestBody ProfessorDTO professorDTO) {
         try {
@@ -70,8 +79,13 @@ public class ProfessorController {
         }
     }
 
-    // Método PUT para atualizar um professor existente
-    @Operation(summary = "Atualizar professor", description = "Atualiza um professor existente com base no CPF fornecido")
+    // ============================= MÉTODOS PUT =============================
+
+    /**
+     * Atualiza um professor existente com base no CPF.
+     * Tag: Professor
+     */
+    @Operation(summary = "Atualizar professor", description = "Atualiza um professor existente com base no CPF fornecido", tags = { "Professor" })
     @PutMapping("/{cpf}")
     public ResponseEntity<ProfessorResumidoDTO> updateProfessor(@PathVariable String cpf, @RequestBody ProfessorDTO professorDTO) {
         try {
@@ -84,8 +98,13 @@ public class ProfessorController {
         }
     }
 
-    // Método DELETE para excluir um professor por CPF
-    @Operation(summary = "Deletar professor", description = "Deleta um professor com base no CPF fornecido")
+    // ============================= MÉTODOS DELETE =============================
+
+    /**
+     * Deleta um professor pelo CPF.
+     * Tag: Professor
+     */
+    @Operation(summary = "Deletar professor", description = "Deleta um professor com base no CPF fornecido", tags = { "Professor" })
     @DeleteMapping("/{cpf}")
     public ResponseEntity<Void> deleteProfessor(@PathVariable String cpf) {
         try {
@@ -98,9 +117,15 @@ public class ProfessorController {
         }
     }
 
-//Adicionar conceito a um aluno em uma disciplina com o ID da turma (POST)
+    // ============================= MÉTODOS DE CONCEITOS =============================
+
+    /**
+     * Adiciona um conceito a um aluno em uma disciplina e turma específicas.
+     * Tag: Conceitos
+     */
     @Operation(summary = "Adicionar conceito a um aluno em uma disciplina e turma específica", 
-               description = "Adiciona um conceito para um aluno em uma disciplina e turma específicas. Essa é a forma recomendada.")
+               description = "Adiciona um conceito para um aluno em uma disciplina e turma específicas.", 
+               tags = { "Conceitos" })  
     @PostMapping("/{idProfessor}/aluno/{idAluno}/disciplina/{idDisciplina}/turma/{idTurma}/conceitos")
     public ResponseEntity<ConceitoDTO> adicionarConceitoParaAlunoComTurma(
             @PathVariable String idProfessor,
@@ -116,10 +141,13 @@ public class ProfessorController {
         }
     }
 
-
- //Atualizar conceito de um aluno em uma disciplina com o ID da turma (PUT)
+    /**
+     * Atualiza um conceito de um aluno em uma disciplina e turma específicas.
+     * Tag: Conceitos
+     */
     @Operation(summary = "Atualizar conceito de um aluno em uma disciplina e turma específica", 
-               description = "Atualiza um conceito existente para um aluno em uma disciplina e turma específicas. Essa é a forma recomendada.")
+               description = "Atualiza um conceito existente para um aluno em uma disciplina e turma específicas.", 
+               tags = { "Conceitos" })  // Aqui também as operações são documentadas sob "Conceitos"
     @PutMapping("/{idProfessor}/aluno/{idAluno}/disciplina/{idDisciplina}/turma/{idTurma}/conceitos/{idConceito}")
     public ResponseEntity<ConceitoDTO> atualizarConceitoParaAlunoComTurma(
             @PathVariable String idProfessor,
@@ -136,10 +164,13 @@ public class ProfessorController {
         }
     }
 
-    
- // Rota para visualizar as notas de todos os alunos em uma turma específica
+    /**
+     * Visualiza as notas de todos os alunos de uma turma específica.
+     * Tag: Conceitos
+     */
     @Operation(summary = "Visualizar notas de todos os alunos de uma turma", 
-               description = "Retorna as notas de todos os alunos de uma turma específica em uma disciplina.")
+               description = "Retorna as notas de todos os alunos de uma turma específica em uma disciplina.", 
+               tags = { "Conceitos" })  // Operações de listagem de conceitos também estão sob "Conceitos"
     @GetMapping("/{idProfessor}/disciplina/{idDisciplina}/turma/{idTurma}/conceitos")
     public ResponseEntity<List<ConceitoDTO>> getConceitosPorTurma(
             @PathVariable String idProfessor,
@@ -155,11 +186,14 @@ public class ProfessorController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar conceitos", e);
         }
     }
-    
-    
- // Rota para visualizar as notas de um aluno em uma disciplina e turma específicas
+
+    /**
+     * Visualiza a nota de um aluno específico em uma disciplina e turma.
+     * Tag: Conceitos
+     */
     @Operation(summary = "Visualizar nota de um aluno", 
-               description = "Retorna as notas de um aluno específico em uma disciplina e turma.")
+               description = "Retorna as notas de um aluno específico em uma disciplina e turma.", 
+               tags = { "Conceitos" })  // Certifique-se de que todas as operações de conceitos tenham essa tag
     @GetMapping("/{idProfessor}/aluno/{idAluno}/disciplina/{idDisciplina}/turma/{idTurma}/conceitos")
     public ResponseEntity<ConceitoDTO> getConceitoPorAluno(
             @PathVariable String idProfessor,
@@ -175,7 +209,4 @@ public class ProfessorController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar conceito", e);
         }
     }
-
-
 }
-

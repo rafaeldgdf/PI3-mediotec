@@ -14,7 +14,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,46 +33,70 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.usuario.Usuario;
 @AllArgsConstructor
 @Table(name = "professor")
 public class Professor extends Usuario {
-    
+
     private static final long serialVersionUID = 1L;
+
+    // ============================= PRIMARY KEY =============================
 
     @Id
     @NotNull(message = "{usuario.cpf.notnull}")
     @Column(nullable = false, unique = true)
     private String cpf;
-    
+
+    // ============================= ATTRIBUTES =============================
+
+    @Column
+    private boolean status;
+
+    // ============================= RELATIONSHIPS =============================
+
+    // Coordenacao associada ao professor (Many-to-One)
     @ManyToOne
     @JoinColumn(name = "id_coordenacao")
     private Coordenacao coordenacao;
-    
+
+    // Endereços associados ao professor (One-to-Many)
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Endereco> enderecos = new HashSet<>();
 
+    // Telefones associados ao professor (One-to-Many)
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Telefone> telefones = new HashSet<>();
 
-    
-    @Column
-    private boolean status;
-    
+    // Relação com TurmaDisciplinaProfessor (One-to-Many)
     @JsonIgnore
     @OneToMany(mappedBy = "professor")
-    private Set<TurmaDisciplinaProfessor> turmaDisciplinaProfessores; // Atualizado para refletir a nova entidade
-    
-    // Funções para configurar as bilateralidades
+    private Set<TurmaDisciplinaProfessor> turmaDisciplinaProfessores = new HashSet<>();
+
+    // ============================= AUXILIARY METHODS =============================
+
+    /**
+     * Adiciona um endereço ao professor e configura a relação bidirecional.
+     * 
+     * @param endereco O endereço a ser adicionado.
+     */
     public void addEndereco(Endereco endereco) {
-        endereco.setProfessor(this); 
+        endereco.setProfessor(this);
         this.enderecos.add(endereco);
     }
 
+    /**
+     * Adiciona um telefone ao professor e configura a relação bidirecional.
+     * 
+     * @param telefone O telefone a ser adicionado.
+     */
     public void addTelefone(Telefone telefone) {
-        telefone.setProfessor(this); 
+        telefone.setProfessor(this);
         this.telefones.add(telefone);
     }
-    
+
+    /**
+     * Adiciona uma associação entre o professor e uma turma-disciplina-professor.
+     * 
+     * @param tdp A entidade que associa o professor à turma e disciplina.
+     */
     public void addTurmaDisciplinaProfessor(TurmaDisciplinaProfessor tdp) {
-        tdp.setProfessor(this); 
+        tdp.setProfessor(this);
         this.turmaDisciplinaProfessores.add(tdp);
     }
 }
-

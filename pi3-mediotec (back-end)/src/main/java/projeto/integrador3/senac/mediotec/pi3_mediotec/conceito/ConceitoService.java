@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 @Service
 public class ConceitoService {
 
+    // ============================= INJEÇÕES DE DEPENDÊNCIA =============================
+
     @Autowired
     private ConceitoRepository conceitoRepository;
 
@@ -26,6 +28,8 @@ public class ConceitoService {
 
     @Autowired
     private TurmaDisciplinaProfessorRepository turmaDisciplinaProfessorRepository;
+
+    // ============================= MÉTODOS DE CRUD =============================
 
     // Método para buscar um conceito por ID
     public Optional<ConceitoDTO> buscarConceitoPorId(Long id) {
@@ -96,8 +100,8 @@ public class ConceitoService {
         conceitoRepository.delete(conceito);
     }
 
-    
-    
+    // ============================= MÉTODOS PERSONALIZADOS =============================
+
     // Método para salvar o conceito de um aluno em uma turma e disciplina específica
     @Transactional
     public ConceitoDTO salvarConceitoParaAlunoComTurma(String cpf, Long idAluno, Long idDisciplina, Long idTurma, ConceitoInputDTO inputDTO) {
@@ -142,6 +146,7 @@ public class ConceitoService {
         conceito.setNoa2(Optional.ofNullable(inputDTO.getNoa2()).orElse(conceito.getNoa2()));
         conceito.setNoaFinal(Optional.ofNullable(inputDTO.getNoaFinal()).orElse(conceito.getNoaFinal()));
 
+        // Recalcula os conceitos e a média
         calcularConceitos(conceito);
         calcularMediaEStatus(conceito);
 
@@ -149,8 +154,6 @@ public class ConceitoService {
 
         return convertToDTO(conceito);
     }
-
-
 
     // Método para atualizar o conceito de um aluno
     @Transactional
@@ -190,7 +193,7 @@ public class ConceitoService {
         return convertToDTO(conceito);
     }
 
-
+    // ============================= MÉTODOS DE LISTAGEM =============================
 
     // Método para obter os conceitos de todos os alunos de uma turma específica
     public List<ConceitoDTO> getConceitosPorTurma(String idProfessor, Long idDisciplina, Long idTurma) {
@@ -200,7 +203,7 @@ public class ConceitoService {
                 .collect(Collectors.toList());
     }
     
- // Método para obter os conceitos de um alunoe específico 
+    // Método para obter os conceitos de um aluno específico 
     public ConceitoDTO getConceitoPorAluno(String idProfessor, Long idAluno, Long idDisciplina, Long idTurma) {
         // Verifica se o aluno existe
         Aluno aluno = alunoRepository.findById(idAluno)
@@ -220,7 +223,7 @@ public class ConceitoService {
         return convertToDTO(conceito);
     }
 
-
+    // ============================= CÁLCULOS E REGRAS DE NEGÓCIO =============================
 
     // Cálculos automáticos para os conceitos
     private void calcularConceitos(Conceito conceito) {
@@ -285,8 +288,9 @@ public class ConceitoService {
         // Calcula o conceito final com base na média final
         conceito.setConceitoFinal(calcularConceito(media));
     }
-    
-    
+
+    // ============================= MÉTODOS DE BUSCA =============================
+
     // Busca todos os conceitos de um aluno
     public List<ConceitoDTO> buscarConceitosPorAluno(Long idAluno) {
         // Verifica se o aluno existe
@@ -322,8 +326,9 @@ public class ConceitoService {
                 .collect(Collectors.toList());
     }
 
+    // ============================= CONVERSÃO DE ENTIDADES =============================
 
- // Converte a entidade Conceito para DTO
+    // Converte a entidade Conceito para DTO
     private ConceitoDTO convertToDTO(Conceito conceito) {
         return ConceitoDTO.builder()
                 .aluno(convertToAlunoResumidoDTO(conceito.getAluno()))  // Converte o aluno para AlunoResumidoDTO

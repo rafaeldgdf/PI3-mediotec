@@ -22,16 +22,36 @@ public class TurmaDisciplinaProfessorId implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    // ============================= CHAVES PRIMÁRIAS =============================
+
+    /**
+     * O campo `turmaId` representa a chave estrangeira que referencia a tabela `Turma`.
+     * Ele é mapeado diretamente para a coluna `id_turma` da tabela `turma_disciplina_professor`.
+     */
     @Column(name = "id_turma")
-    private Long turmaId;
+    private Long turmaId; // Chave primária associada à entidade `Turma`
 
+    /**
+     * O campo `disciplinaId` representa a chave estrangeira que referencia a tabela `Disciplina`.
+     * Ele é mapeado diretamente para a coluna `id_disciplina` da tabela `turma_disciplina_professor`.
+     */
     @Column(name = "id_disciplina")
-    private Long disciplinaId;
+    private Long disciplinaId; // Chave primária associada à entidade `Disciplina`
 
+    /**
+     * O campo `professorId` representa a chave estrangeira que referencia a tabela `Professor`.
+     * Ele é mapeado diretamente para a coluna `id_professor` da tabela `turma_disciplina_professor`.
+     */
     @Column(name = "id_professor")
-    private String professorId;
+    private String professorId; // Chave primária associada à entidade `Professor`
 
-    // Equals e hashCode
+    // ============================= MÉTODOS AUXILIARES =============================
+
+    /**
+     * Método `equals` para comparar dois objetos `TurmaDisciplinaProfessorId`.
+     * Este método garante que dois objetos sejam considerados iguais se seus atributos `turmaId`,
+     * `disciplinaId` e `professorId` forem iguais.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,9 +62,13 @@ public class TurmaDisciplinaProfessorId implements Serializable {
                Objects.equals(professorId, that.professorId);
     }
 
+    /**
+     * Método `hashCode` para gerar o código hash do objeto.
+     * Este método utiliza os campos `turmaId`, `disciplinaId` e `professorId`
+     * para garantir a unicidade do objeto em estruturas de dados baseadas em hash, como `HashSet`.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(turmaId, disciplinaId, professorId);
     }
 }
-

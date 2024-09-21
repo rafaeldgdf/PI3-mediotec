@@ -21,6 +21,13 @@ public class TurmaController {
     @Autowired
     private TurmaService turmaService;
 
+    // ============================= GET METHODS =============================
+
+    /**
+     * Lista todas as turmas cadastradas.
+     *
+     * @return Lista de TurmaDTO contendo os detalhes de todas as turmas.
+     */
     @Operation(summary = "Listar todas as turmas", description = "Retorna uma lista de todas as turmas")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de turmas retornada com sucesso"),
@@ -35,6 +42,12 @@ public class TurmaController {
         }
     }
 
+    /**
+     * Busca uma turma específica pelo seu ID.
+     *
+     * @param id ID da turma a ser buscada.
+     * @return ResponseEntity contendo os detalhes da turma.
+     */
     @Operation(summary = "Buscar turma por ID", description = "Retorna os detalhes de uma turma específica pelo ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Turma retornada com sucesso"),
@@ -52,6 +65,14 @@ public class TurmaController {
         }
     }
 
+    // ============================= POST METHODS =============================
+
+    /**
+     * Cria uma nova turma com base nos dados fornecidos.
+     *
+     * @param turmaDTO Dados resumidos da nova turma a ser criada.
+     * @return ResponseEntity contendo os detalhes da turma criada.
+     */
     @Operation(summary = "Criar nova turma", description = "Cria uma nova turma")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Turma criada com sucesso"),
@@ -67,6 +88,15 @@ public class TurmaController {
         }
     }
 
+    // ============================= PUT METHODS =============================
+
+    /**
+     * Atualiza uma turma existente com base no ID fornecido.
+     *
+     * @param id ID da turma a ser atualizada.
+     * @param turmaDTO Dados atualizados da turma.
+     * @return ResponseEntity contendo os detalhes da turma atualizada.
+     */
     @Operation(summary = "Atualizar turma", description = "Atualiza uma turma existente com base no ID fornecido")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Turma atualizada com sucesso"),
@@ -83,6 +113,14 @@ public class TurmaController {
         }
     }
 
+    // ============================= DELETE METHODS =============================
+
+    /**
+     * Deleta uma turma com base no seu ID.
+     *
+     * @param id ID da turma a ser deletada.
+     * @return ResponseEntity sem conteúdo.
+     */
     @Operation(summary = "Deletar turma", description = "Deleta uma turma existente com base no ID fornecido")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Turma deletada com sucesso"),

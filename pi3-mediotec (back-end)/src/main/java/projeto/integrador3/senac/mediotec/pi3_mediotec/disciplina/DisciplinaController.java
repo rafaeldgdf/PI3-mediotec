@@ -21,6 +21,10 @@ public class DisciplinaController {
     @Autowired
     private DisciplinaService disciplinaService;
 
+    /**
+     * Lista todas as disciplinas (GET)
+     * @return Lista de DisciplinaGetDTO com os detalhes de todas as disciplinas
+     */
     @Operation(summary = "Listar todas as disciplinas", description = "Retorna uma lista de todas as disciplinas")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de disciplinas retornada com sucesso"),
@@ -35,6 +39,11 @@ public class DisciplinaController {
         }
     }
 
+    /**
+     * Busca disciplina pelo ID (GET)
+     * @param id ID da disciplina
+     * @return Detalhes da disciplina como ResponseEntity<DisciplinaGetDTO>
+     */
     @Operation(summary = "Buscar disciplina por ID", description = "Retorna os detalhes de uma disciplina específica pelo ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Disciplina retornada com sucesso"),
@@ -52,6 +61,11 @@ public class DisciplinaController {
         }
     }
 
+    /**
+     * Cria uma nova disciplina (POST)
+     * @param disciplinaDTO DTO com os dados da disciplina
+     * @return Detalhes da disciplina criada como ResponseEntity<DisciplinaResumidaDTO>
+     */
     @Operation(summary = "Criar nova disciplina", description = "Cria uma nova disciplina")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Disciplina criada com sucesso"),
@@ -67,6 +81,12 @@ public class DisciplinaController {
         }
     }
 
+    /**
+     * Atualiza uma disciplina existente (PUT)
+     * @param id ID da disciplina a ser atualizada
+     * @param disciplinaDTO DTO com os dados atualizados da disciplina
+     * @return Detalhes da disciplina atualizada como ResponseEntity<DisciplinaResumidaDTO>
+     */
     @Operation(summary = "Atualizar disciplina", description = "Atualiza uma disciplina existente")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Disciplina atualizada com sucesso"),
@@ -85,6 +105,11 @@ public class DisciplinaController {
         }
     }
 
+    /**
+     * Deleta uma disciplina existente (DELETE)
+     * @param id ID da disciplina a ser deletada
+     * @return Resposta vazia com código HTTP 204 se for bem-sucedido
+     */
     @Operation(summary = "Deletar disciplina", description = "Deleta uma disciplina existente")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Disciplina deletada com sucesso"),

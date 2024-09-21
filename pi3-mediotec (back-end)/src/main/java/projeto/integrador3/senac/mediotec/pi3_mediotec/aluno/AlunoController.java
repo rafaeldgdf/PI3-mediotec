@@ -17,7 +17,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/alunos")
-@Tag(name = "Aluno", description = "Operações relacionadas a Alunos")
 public class AlunoController {
 
     private static final Logger logger = LoggerFactory.getLogger(AlunoController.class);
@@ -28,8 +27,10 @@ public class AlunoController {
     @Autowired
     private ConceitoService conceitoService;
 
+    // ============================= GET METHODS =============================
+
     // Lista todos os alunos
-    @Operation(summary = "Listar todos os alunos", description = "Retorna uma lista de todos os alunos cadastrados")
+    @Operation(summary = "Listar todos os alunos", description = "Retorna uma lista de todos os alunos cadastrados", tags = { "Aluno" })
     @GetMapping
     public ResponseEntity<List<AlunoDTO>> getAllAlunos() {
         logger.info("Listando todos os alunos.");
@@ -41,7 +42,7 @@ public class AlunoController {
     }
 
     // Busca aluno pelo ID
-    @Operation(summary = "Buscar aluno por ID", description = "Retorna um aluno com base no seu ID")
+    @Operation(summary = "Buscar aluno por ID", description = "Retorna um aluno com base no seu ID", tags = { "Aluno" })
     @GetMapping("/{id}")
     public ResponseEntity<AlunoDTO> getAlunoById(@PathVariable Long id) {
         logger.info("Buscando aluno com ID: {}", id);
@@ -53,8 +54,10 @@ public class AlunoController {
                 });
     }
 
+    // ============================= POST METHODS =============================
+
     // Cria um novo aluno
-    @Operation(summary = "Criar um novo aluno", description = "Cria um novo aluno com base nos dados fornecidos")
+    @Operation(summary = "Criar um novo aluno", description = "Cria um novo aluno com base nos dados fornecidos", tags = { "Aluno" })
     @PostMapping
     public ResponseEntity<AlunoDTO> createAluno(@RequestBody AlunoResumidoDTO2 alunoResumidoDTO) {
         try {
@@ -67,8 +70,10 @@ public class AlunoController {
         }
     }
 
+    // ============================= PUT METHODS =============================
+
     // Atualiza um aluno existente
-    @Operation(summary = "Atualizar aluno", description = "Atualiza um aluno existente com base no seu ID")
+    @Operation(summary = "Atualizar aluno", description = "Atualiza um aluno existente com base no seu ID", tags = { "Aluno" })
     @PutMapping("/{id}")
     public ResponseEntity<AlunoDTO> updateAluno(@PathVariable Long id, @RequestBody AlunoResumidoDTO2 alunoResumido2DTO) {
         try {
@@ -81,8 +86,10 @@ public class AlunoController {
         }
     }
 
+    // ============================= DELETE METHODS =============================
+
     // Deleta um aluno
-    @Operation(summary = "Deletar aluno", description = "Deleta um aluno com base no seu ID")
+    @Operation(summary = "Deletar aluno", description = "Deleta um aluno com base no seu ID", tags = { "Aluno" })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAluno(@PathVariable Long id) {
         try {
@@ -95,8 +102,10 @@ public class AlunoController {
         }
     }
 
+    // ============================= GET METHODS FOR CONCEITOS =============================
+
     // Rota para visualizar todos os conceitos de um aluno
-    @Operation(summary = "Listar todos os conceitos de um aluno", description = "Retorna uma lista de conceitos associados a um aluno")
+    @Operation(summary = "Listar todos os conceitos de um aluno", description = "Retorna uma lista de conceitos associados a um aluno", tags = { "Conceitos" })
     @GetMapping("/{idAluno}/conceitos")
     public ResponseEntity<List<ConceitoDTO>> listarTodosConceitosPorAluno(@PathVariable Long idAluno) {
         logger.info("Listando todos os conceitos do aluno com ID: {}", idAluno);
@@ -108,7 +117,7 @@ public class AlunoController {
     }
 
     // Rota para buscar conceito de um aluno em uma disciplina específica
-    @Operation(summary = "Buscar conceito de um aluno em uma disciplina específica", description = "Retorna os conceitos de um aluno em uma disciplina")
+    @Operation(summary = "Buscar conceito de um aluno em uma disciplina específica", description = "Retorna os conceitos de um aluno em uma disciplina", tags = { "Conceitos" })
     @GetMapping("/{idAluno}/conceitos/disciplina/{idDisciplina}")
     public ResponseEntity<List<ConceitoDTO>> listarConceitosPorAlunoEDisciplina(
             @PathVariable Long idAluno, @PathVariable Long idDisciplina) {
@@ -119,4 +128,5 @@ public class AlunoController {
         }
         return ResponseEntity.ok(conceitos);
     }
+
 }

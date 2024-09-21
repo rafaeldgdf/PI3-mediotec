@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 @Service
 public class CoordenacaoService {
 
+    // ============================= INJEÇÃO DE DEPENDÊNCIAS =============================
     @Autowired
     private CoordenacaoRepository coordenacaoRepository;
 
@@ -48,26 +49,29 @@ public class CoordenacaoService {
     @Autowired
     private ProfessorRepository professorRepository;
 
-    // Lista todas as coordenacoes
+    // ============================= MÉTODOS CRUD =============================
+
+    // Lista todas as coordenações e converte para DTO
     public List<CoordenacaoDTO> getAllCoordenacoes() {
         return coordenacaoRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(this::convertToDto) // Método auxiliar para converter entidade em DTO
                 .collect(Collectors.toList());
     }
 
-    // Busca coordenacao pelo id
+    // Busca uma coordenação pelo ID e converte para DTO
     public Optional<CoordenacaoDTO> getCoordenacaoById(Long id) {
         return coordenacaoRepository.findById(id)
-                .map(this::convertToDto);
+                .map(this::convertToDto);  // Conversão para DTO
     }
 
+    // Salva uma nova coordenação
     @Transactional
     public CoordenacaoDTO saveCoordenacao(CoordenacaoCadastroDTO coordenacaoDTO) {
         Coordenacao coordenacao = new Coordenacao();
         coordenacao.setNome(coordenacaoDTO.getNome());
         coordenacao.setDescricao(coordenacaoDTO.getDescricao());
 
-        // Adiciona e associa endereços à coordenacao
+        // Adiciona e associa endereços à coordenação
         if (coordenacaoDTO.getEnderecos() != null && !coordenacaoDTO.getEnderecos().isEmpty()) {
             coordenacao.getEnderecos().clear();
             coordenacaoDTO.getEnderecos().forEach(enderecoDTO -> {
@@ -84,7 +88,7 @@ public class CoordenacaoService {
             });
         }
 
-        // Adiciona e associa telefones à coordenacao
+        // Adiciona e associa telefones à coordenação
         if (coordenacaoDTO.getTelefones() != null && !coordenacaoDTO.getTelefones().isEmpty()) {
             coordenacao.getTelefones().clear();
             coordenacaoDTO.getTelefones().forEach(telefoneDTO -> {
@@ -104,11 +108,11 @@ public class CoordenacaoService {
                     .orElseThrow(() -> new RuntimeException("Coordenador com CPF " + cpf + " não encontrado")))
                 .collect(Collectors.toSet());
 
-            // Faz a associação bidirecional
+            // Associação bidirecional com coordenadores
             coordenadores.forEach(coordenador -> coordenador.setCoordenacao(coordenacao));
             coordenacao.setCoordenadores(coordenadores);
 
-            // Salva os coordenadores com a nova associação
+            // Salva os coordenadores
             coordenadorRepository.saveAll(coordenadores);
         }
 
@@ -119,11 +123,11 @@ public class CoordenacaoService {
                     .orElseThrow(() -> new RuntimeException("Turma com ID " + id + " não encontrada")))
                 .collect(Collectors.toSet());
 
-            // Faz a associação bidirecional
+            // Associação bidirecional com turmas
             turmas.forEach(turma -> turma.setCoordenacao(coordenacao));
             coordenacao.setTurmas(turmas);
 
-            // Salva as turmas com a nova associação
+            // Salva as turmas
             turmaRepository.saveAll(turmas);
         }
 
@@ -134,19 +138,20 @@ public class CoordenacaoService {
                     .orElseThrow(() -> new RuntimeException("Professor com CPF " + cpf + " não encontrado")))
                 .collect(Collectors.toSet());
 
-            // Faz a associação bidirecional
+            // Associação bidirecional com professores
             professores.forEach(professor -> professor.setCoordenacao(coordenacao));
             coordenacao.setProfessores(professores);
 
-            // Salva os professores com a nova associação
+            // Salva os professores
             professorRepository.saveAll(professores);
         }
 
-        // Salva a coordenacao e retorna o DTO
+        // Salva a coordenação e retorna o DTO correspondente
         Coordenacao savedCoordenacao = coordenacaoRepository.save(coordenacao);
         return convertToDto(savedCoordenacao);
     }
 
+    // Atualiza uma coordenação existente
     @Transactional
     public CoordenacaoDTO updateCoordenacao(Long id, CoordenacaoCadastroDTO coordenacaoDTO) {
         Coordenacao coordenacao = coordenacaoRepository.findById(id)
@@ -155,7 +160,7 @@ public class CoordenacaoService {
         coordenacao.setNome(coordenacaoDTO.getNome());
         coordenacao.setDescricao(coordenacaoDTO.getDescricao());
 
-        // Atualiza endereços
+        // Atualiza os endereços
         coordenacao.getEnderecos().clear();
         if (coordenacaoDTO.getEnderecos() != null && !coordenacaoDTO.getEnderecos().isEmpty()) {
             coordenacaoDTO.getEnderecos().forEach(enderecoDTO -> {
@@ -172,7 +177,7 @@ public class CoordenacaoService {
             });
         }
 
-        // Atualiza telefones
+        // Atualiza os telefones
         coordenacao.getTelefones().clear();
         if (coordenacaoDTO.getTelefones() != null && !coordenacaoDTO.getTelefones().isEmpty()) {
             coordenacaoDTO.getTelefones().forEach(telefoneDTO -> {
@@ -192,41 +197,41 @@ public class CoordenacaoService {
                     .orElseThrow(() -> new RuntimeException("Coordenador com CPF " + cpf + " não encontrado")))
                 .collect(Collectors.toSet());
 
-            // Faz a associação bidirecional
+            // Associação bidirecional com coordenadores
             coordenadores.forEach(coordenador -> coordenador.setCoordenacao(coordenacao));
             coordenacao.setCoordenadores(coordenadores);
 
-            // Salva os coordenadores com a nova associação
+            // Salva os coordenadores
             coordenadorRepository.saveAll(coordenadores);
         }
 
-        // Atualiza turmas
+        // Atualiza as turmas
         if (coordenacaoDTO.getTurmasIds() != null && !coordenacaoDTO.getTurmasIds().isEmpty()) {
             Set<Turma> turmas = coordenacaoDTO.getTurmasIds().stream()
                 .map(turmaId -> turmaRepository.findById(turmaId)
                     .orElseThrow(() -> new RuntimeException("Turma com ID " + turmaId + " não encontrada")))
                 .collect(Collectors.toSet());
 
-            // Faz a associação bidirecional
+            // Associação bidirecional com turmas
             turmas.forEach(turma -> turma.setCoordenacao(coordenacao));
             coordenacao.setTurmas(turmas);
 
-            // Salva as turmas com a nova associação
+            // Salva as turmas
             turmaRepository.saveAll(turmas);
         }
 
-        // Atualiza professores
+        // Atualiza os professores
         if (coordenacaoDTO.getProfessoresIds() != null && !coordenacaoDTO.getProfessoresIds().isEmpty()) {
             Set<Professor> professores = coordenacaoDTO.getProfessoresIds().stream()
                 .map(cpf -> professorRepository.findById(cpf)
                     .orElseThrow(() -> new RuntimeException("Professor com CPF " + cpf + " não encontrado")))
                 .collect(Collectors.toSet());
 
-            // Faz a associação bidirecional
+            // Associação bidirecional com professores
             professores.forEach(professor -> professor.setCoordenacao(coordenacao));
             coordenacao.setProfessores(professores);
 
-            // Salva os professores com a nova associação
+            // Salva os professores
             professorRepository.saveAll(professores);
         }
 
@@ -234,15 +239,18 @@ public class CoordenacaoService {
         return convertToDto(updatedCoordenacao);
     }
 
-
-    // Deleta coordenacao
+    // Deleta uma coordenação pelo ID
     public void deleteCoordenacao(Long id) {
         Coordenacao coordenacao = coordenacaoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Coordenacao não encontrada"));
         coordenacaoRepository.delete(coordenacao);
     }
 
+    // ============================ MÉTODOS AUXILIARES ============================
+
+    // Converte uma entidade Coordenacao para o DTO correspondente
     private CoordenacaoDTO convertToDto(Coordenacao coordenacao) {
+        // Converte os endereços
         Set<EnderecoDTO> enderecosDTO = (coordenacao.getEnderecos() != null) ?
                 coordenacao.getEnderecos().stream()
                         .map(endereco -> EnderecoDTO.builder()
@@ -255,6 +263,7 @@ public class CoordenacaoService {
                                 .build())
                         .collect(Collectors.toSet()) : new HashSet<>();
 
+        // Converte os telefones
         Set<TelefoneDTO> telefonesDTO = (coordenacao.getTelefones() != null) ?
                 coordenacao.getTelefones().stream()
                         .map(telefone -> TelefoneDTO.builder()
@@ -263,6 +272,7 @@ public class CoordenacaoService {
                                 .build())
                         .collect(Collectors.toSet()) : new HashSet<>();
 
+        // Converte os coordenadores
         List<CoordenadorResumido2DTO> coordenadoresDTO = (coordenacao.getCoordenadores() != null) ?
                 coordenacao.getCoordenadores().stream()
                         .map(coordenador -> CoordenadorResumido2DTO.builder()
@@ -273,6 +283,7 @@ public class CoordenacaoService {
                                 .build())
                         .collect(Collectors.toList()) : List.of();
 
+        // Converte as turmas
         Set<TurmaResumida2DTO> turmasDTO = (coordenacao.getTurmas() != null) ?
                 coordenacao.getTurmas().stream()
                         .map(turma -> TurmaResumida2DTO.builder()
@@ -283,6 +294,7 @@ public class CoordenacaoService {
                                 .build())
                         .collect(Collectors.toSet()) : new HashSet<>();
 
+        // Converte os professores
         Set<ProfessorResumido2DTO> professoresDTO = (coordenacao.getProfessores() != null) ?
                 coordenacao.getProfessores().stream()
                         .map(professor -> ProfessorResumido2DTO.builder()
@@ -293,6 +305,7 @@ public class CoordenacaoService {
                                 .build())
                         .collect(Collectors.toSet()) : new HashSet<>();
 
+        // Retorna o DTO final com todos os dados convertidos
         return CoordenacaoDTO.builder()
                 .nome(coordenacao.getNome())
                 .descricao(coordenacao.getDescricao())

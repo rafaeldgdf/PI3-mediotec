@@ -24,26 +24,31 @@ public class CoordenadorService {
     @Autowired
     private CoordenacaoRepository coordenacaoRepository; // Para associar a Coordenacao
 
+    // ================== MÉTODOS DE BUSCA ==================
+
     // Lista todos os coordenadores e retorna uma lista de CoordenadorDTO
     public List<CoordenadorDTO> getAllCoordenadores() {
         return coordenadorRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(this::convertToDto) // Converte cada coordenador para DTO
                 .collect(Collectors.toList());
     }
 
     // Busca coordenador por ID (CPF) e retorna CoordenadorDTO
     public Optional<CoordenadorDTO> getCoordenadorById(String id) {
         return coordenadorRepository.findById(id)
-                .map(this::convertToDto);
+                .map(this::convertToDto); // Converte para DTO se encontrado
     }
 
+    // ================== MÉTODOS DE CRIAÇÃO/ATUALIZAÇÃO ==================
+
+    // Cria um novo coordenador
     public CoordenadorDTO saveCoordenador(CoordenadorDTO coordenadorDTO) {
         // Verifica se o CPF já existe
         if (coordenadorRepository.existsByCpf(coordenadorDTO.getCpf())) {
             throw new RuntimeException("Coordenador com CPF " + coordenadorDTO.getCpf() + " já existe");
         }
 
-        // Converte DTO diretamente para entidade dentro do método
+        // Converte DTO diretamente para entidade
         Coordenador coordenador = new Coordenador();
         coordenador.setCpf(coordenadorDTO.getCpf());
         coordenador.setNome(coordenadorDTO.getNome());
@@ -53,19 +58,17 @@ public class CoordenadorService {
         coordenador.setEmail(coordenadorDTO.getEmail());
         coordenador.setStatus(true); // Define o status inicial como ativo
 
-        // Adiciona a coordenação, se o idCoordenacao estiver presente no DTO
+        // Associa a coordenação, se o idCoordenacao estiver presente no DTO
         if (coordenadorDTO.getIdCoordenacao() != null) {
             Coordenacao coordenacao = coordenacaoRepository.findById(coordenadorDTO.getIdCoordenacao())
                     .orElseThrow(() -> new RuntimeException("Coordenação com ID " + coordenadorDTO.getIdCoordenacao() + " não encontrada"));
-            
+
             // Associa a coordenação ao coordenador
             coordenador.setCoordenacao(coordenacao);
-            
-            // Também é possível garantir que o coordenador seja adicionado à coleção de coordenadores da coordenação
-            coordenacao.getCoordenadores().add(coordenador);
-            
-            // Salva a coordenação caso haja necessidade
-            coordenacaoRepository.save(coordenacao); // Isso garante que a associação seja persistida
+            coordenacao.getCoordenadores().add(coordenador); // Atualiza a relação bidirecional
+
+            // Salva a coordenação com a nova associação
+            coordenacaoRepository.save(coordenacao);
         }
 
         // Adiciona e associa endereços ao coordenador
@@ -103,7 +106,7 @@ public class CoordenadorService {
         return convertToDto(savedCoordenador);
     }
 
-
+    // Atualiza um coordenador existente
     public CoordenadorDTO updateCoordenador(String id, CoordenadorDTO coordenadorDTO) {
         // Busca o coordenador existente no banco
         Coordenador coordenador = coordenadorRepository.findById(id)
@@ -121,9 +124,9 @@ public class CoordenadorService {
         if (coordenadorDTO.getIdCoordenacao() != null) {
             Coordenacao coordenacao = coordenacaoRepository.findById(coordenadorDTO.getIdCoordenacao())
                     .orElseThrow(() -> new RuntimeException("Coordenação com ID " + coordenadorDTO.getIdCoordenacao() + " não encontrada"));
-            coordenador.setCoordenacao(coordenacao);
+            coordenador.setCoordenacao(coordenacao); // Atualiza a relação com coordenação
         } else {
-            coordenador.setCoordenacao(null);  // Se idCoordenacao for null, remove a associação
+            coordenador.setCoordenacao(null); // Se idCoordenacao for null, remove a associação
         }
 
         // Atualiza os endereços do coordenador
@@ -161,12 +164,16 @@ public class CoordenadorService {
         return convertToDto(updatedCoordenador);
     }
 
+    // ================== MÉTODO DE REMOÇÃO ==================
+
     // Deleta um coordenador por ID (CPF)
     public void deleteCoordenador(String id) {
         Coordenador coordenador = coordenadorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Coordenador não encontrado"));
         coordenadorRepository.delete(coordenador);
     }
+
+    // ================== MÉTODOS AUXILIARES ==================
 
     // Converte Coordenador para CoordenadorDTO
     private CoordenadorDTO convertToDto(Coordenador coordenador) {
@@ -184,7 +191,7 @@ public class CoordenadorService {
                 .telefones(coordenador.getTelefones().stream()
                         .map(this::convertTelefoneToDto)
                         .collect(Collectors.toSet()))
-                .idCoordenacao(coordenador.getCoordenacao() != null ? coordenador.getCoordenacao().getId() : null) // Converte a coordenação
+                .idCoordenacao(coordenador.getCoordenacao() != null ? coordenador.getCoordenacao().getId() : null) // Converte a coordenação para o DTO
                 .build();
     }
 

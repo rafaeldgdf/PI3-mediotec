@@ -18,8 +18,9 @@ public class ComunicadoController {
     @Autowired
     private ComunicadoService comunicadoService;
 
-    // ------------------- POST ROUTES -------------------
+    // ============================= POST ROUTES =============================
 
+    // Criação de comunicado por coordenador
     @Operation(summary = "Criar comunicado por coordenador", description = "Cria um comunicado emitido por um coordenador específico para alunos e/ou turmas.")
     @PostMapping("/coordenacao/{coordenacaoId}/coordenador/{coordenadorId}")
     public ResponseEntity<ComunicadoSimplesDTO> criarComunicadoPorCoordenador(
@@ -32,6 +33,7 @@ public class ComunicadoController {
         }
     }
 
+    // Criação de comunicado para todos os alunos e turmas
     @Operation(summary = "Criar comunicado para todos os alunos e turmas", description = "Cria um comunicado enviado para todos os alunos e todas as turmas.")
     @PostMapping("/coordenacao/{coordenacaoId}/coordenador/{coordenadorId}/todos")
     public ResponseEntity<ComunicadoSimplesDTO> criarComunicadoParaTodos(
@@ -44,7 +46,7 @@ public class ComunicadoController {
         }
     }
 
-
+    // Criação de comunicado por professor
     @Operation(summary = "Criar comunicado por professor", description = "Cria um comunicado emitido por um professor.")
     @PostMapping("/professor/{professorId}")
     public ResponseEntity<ComunicadoSimplesDTO> criarComunicadoPorProfessor(
@@ -57,8 +59,9 @@ public class ComunicadoController {
         }
     }
 
-    // ------------------- PUT ROUTES -------------------
+    // ============================= PUT ROUTES =============================
 
+    // Atualização de comunicado por coordenador
     @Operation(summary = "Atualizar comunicado por coordenador", description = "Atualiza um comunicado emitido por um coordenador específico.")
     @PutMapping("/coordenacao/{coordenacaoId}/coordenador/{coordenadorId}/{comunicadoId}")
     public ResponseEntity<ComunicadoSimplesDTO> atualizarComunicadoPorCoordenador(
@@ -71,6 +74,7 @@ public class ComunicadoController {
         }
     }
 
+    // Atualização de comunicado por professor
     @Operation(summary = "Atualizar comunicado por professor", description = "Atualiza um comunicado emitido por um professor.")
     @PutMapping("/professor/{professorId}/{comunicadoId}")
     public ResponseEntity<ComunicadoSimplesDTO> atualizarComunicadoPorProfessor(
@@ -83,8 +87,9 @@ public class ComunicadoController {
         }
     }
 
-    // ------------------- DELETE ROUTES -------------------
+    // ============================= DELETE ROUTES =============================
 
+    // Deleção de comunicado por coordenador
     @Operation(summary = "Deletar comunicado por coordenador", description = "Deleta um comunicado emitido por um coordenador.")
     @DeleteMapping("/coordenacao/{coordenacaoId}/coordenador/{coordenadorId}/{comunicadoId}")
     public ResponseEntity<Void> deletarComunicadoPorCoordenador(
@@ -97,6 +102,7 @@ public class ComunicadoController {
         }
     }
 
+    // Deleção de comunicado por professor
     @Operation(summary = "Deletar comunicado por professor", description = "Deleta um comunicado emitido por um professor.")
     @DeleteMapping("/professor/{professorId}/{comunicadoId}")
     public ResponseEntity<Void> deletarComunicadoPorProfessor(
@@ -109,8 +115,9 @@ public class ComunicadoController {
         }
     }
 
-    // ------------------- GET ROUTES -------------------
+    // ============================= GET ROUTES =============================
 
+    // Listar todos os comunicados
     @Operation(summary = "Listar todos os comunicados", description = "Lista todos os comunicados.")
     @GetMapping
     public ResponseEntity<List<ComunicadoDetalhadoDTO>> listarTodos() {
@@ -122,6 +129,7 @@ public class ComunicadoController {
         }
     }
 
+    // Listar comunicados enviados para alunos
     @Operation(summary = "Listar comunicados para alunos", description = "Lista todos os comunicados enviados para alunos.")
     @GetMapping("/alunos")
     public ResponseEntity<List<ComunicadoDetalhadoDTO>> listarComunicadosParaAlunos() {
@@ -133,6 +141,7 @@ public class ComunicadoController {
         }
     }
 
+    // Listar comunicados por aluno
     @Operation(summary = "Buscar comunicados por aluno", description = "Busca os comunicados enviados para um aluno específico.")
     @GetMapping("/aluno/{alunoId}")
     public ResponseEntity<List<ComunicadoDetalhadoDTO>> listarComunicadosPorAluno(@PathVariable Long alunoId) {
@@ -144,6 +153,7 @@ public class ComunicadoController {
         }
     }
 
+    // Listar comunicados enviados para turmas
     @Operation(summary = "Listar comunicados para turmas", description = "Lista todos os comunicados enviados para turmas.")
     @GetMapping("/turmas")
     public ResponseEntity<List<ComunicadoDetalhadoDTO>> listarComunicadosParaTurmas() {
@@ -155,15 +165,27 @@ public class ComunicadoController {
         }
     }
 
+    // Listar - Buscar comunicados por turma
+    @Operation(summary = "Buscar comunicados por turma", description = "Busca os comunicados enviados para uma turma específica.")
+    @GetMapping("/turma/{turmaId}")
+    public ResponseEntity<List<ComunicadoDetalhadoDTO>> listarComunicadosPorTurma(@PathVariable Long turmaId) {
+        try {
+            List<ComunicadoDetalhadoDTO> comunicados = comunicadoService.listarComunicadosPorTurma(turmaId);
+            return ResponseEntity.ok(comunicados);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Erro ao listar comunicados por turma: " + e.getMessage(), e);
+        }
+    }
 
-    // GET - Listar comunicados por coordenador
+    
+    // Listar comunicados enviados por coordenador
     @GetMapping("/coordenador/{coordenadorId}")
     public ResponseEntity<List<ComunicadoDetalhadoDTO>> listarComunicadosPorCoordenador(@PathVariable Long coordenadorId) {
         List<ComunicadoDetalhadoDTO> comunicados = comunicadoService.listarComunicadosPorCoordenador(coordenadorId);
         return ResponseEntity.ok(comunicados);
     }
 
-    // GET - Listar comunicados por professor
+    // Listar comunicados enviados por professor
     @GetMapping("/professor/{professorId}")
     public ResponseEntity<List<ComunicadoDetalhadoDTO>> listarComunicadosPorProfessor(@PathVariable String professorId) {
         List<ComunicadoDetalhadoDTO> comunicados = comunicadoService.listarComunicadosPorProfessor(professorId);

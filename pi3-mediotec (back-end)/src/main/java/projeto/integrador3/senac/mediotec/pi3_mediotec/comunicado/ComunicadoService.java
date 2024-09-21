@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @Service
 public class ComunicadoService {
 
+    // ============================= INJEÇÕES DE DEPENDÊNCIA =============================
+
     @Autowired
     private ComunicadoRepository comunicadoRepository;
 
@@ -34,9 +36,9 @@ public class ComunicadoService {
     @Autowired
     private CoordenacaoRepository coordenacaoRepository;
 
-    // ------------------- CRIAÇÃO DE COMUNICADO -------------------
+    // ============================= CRIAÇÃO DE COMUNICADO =============================
 
-    // Comunicado enviado por um coordenador
+    // Cria um comunicado enviado por um coordenador
     public ComunicadoSimplesDTO criarComunicadoPorCoordenador(Long coordenacaoId, String coordenadorId, ComunicadoDTO comunicadoDTO) {
         validarCoordenador(coordenacaoId, coordenadorId);
         Comunicado comunicado = Comunicado.builder()
@@ -50,7 +52,7 @@ public class ComunicadoService {
         return convertToSimplesDTO(comunicadoRepository.save(comunicado));
     }
 
-    // Comunicado enviado por um professor
+    // Cria um comunicado enviado por um professor
     public ComunicadoSimplesDTO criarComunicadoPorProfessor(String professorId, ComunicadoDTO comunicadoDTO) {
         Professor professor = professorRepository.findById(professorId)
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
@@ -64,25 +66,19 @@ public class ComunicadoService {
         return convertToSimplesDTO(comunicadoRepository.save(comunicado));
     }
 
-    // Comunicado enviado para todos os alunos e turmas
+    // Cria um comunicado enviado para todos os alunos e turmas
     public ComunicadoSimplesDTO criarComunicadoParaTodos(Long coordenacaoId, String coordenadorId, ComunicadoDTO comunicadoDTO) {
-        // Valida se o coordenador está vinculado à coordenacão especificada
         validarCoordenador(coordenacaoId, coordenadorId);
-
-        // Obtém todos os IDs de alunos e turmas diretamente dos repositórios
         List<Long> todosAlunos = alunoRepository.findAllIds();
         List<Long> todasTurmas = turmaRepository.findAllIds();
-
-        // Define os IDs dos alunos e turmas no DTO, para que sejam incluídos no comunicado
         comunicadoDTO.setAlunoIds(todosAlunos);
         comunicadoDTO.setTurmaIds(todasTurmas);
-
-        // Chama o método para criar o comunicado, agora com a lista completa de alunos e turmas
         return criarComunicadoPorCoordenador(coordenacaoId, coordenadorId, comunicadoDTO);
     }
-    
-    // ------------------- ATUALIZAÇÃO DE COMUNICADO -------------------
 
+    // ============================= ATUALIZAÇÃO DE COMUNICADO =============================
+
+    // Atualiza um comunicado enviado por um coordenador
     public ComunicadoSimplesDTO atualizarComunicadoPorCoordenador(Long coordenacaoId, String coordenadorId, Long comunicadoId, ComunicadoDTO comunicadoDTO) {
         validarCoordenador(coordenacaoId, coordenadorId);
         Comunicado comunicado = buscarComunicadoPorId(comunicadoId);
@@ -90,25 +86,29 @@ public class ComunicadoService {
         return convertToSimplesDTO(comunicadoRepository.save(comunicado));
     }
 
+    // Atualiza um comunicado enviado por um professor
     public ComunicadoSimplesDTO atualizarComunicadoPorProfessor(String professorId, Long comunicadoId, ComunicadoDTO comunicadoDTO) {
         Comunicado comunicado = buscarComunicadoPorId(comunicadoId);
         atualizarDadosComunicado(comunicado, comunicadoDTO);
         return convertToSimplesDTO(comunicadoRepository.save(comunicado));
     }
 
-    // ------------------- DELEÇÃO DE COMUNICADO -------------------
+    // ============================= DELEÇÃO DE COMUNICADO =============================
 
+    // Deleta um comunicado enviado por um coordenador
     public void deletarComunicadoPorCoordenador(Long coordenacaoId, String coordenadorId, Long comunicadoId) {
         validarCoordenador(coordenacaoId, coordenadorId);
         comunicadoRepository.deleteById(comunicadoId);
     }
 
+    // Deleta um comunicado enviado por um professor
     public void deletarComunicadoPorProfessor(String professorId, Long comunicadoId) {
         comunicadoRepository.deleteById(comunicadoId);
     }
 
-    // ------------------- LISTAGEM DE COMUNICADO -------------------
+    // ============================= LISTAGEM DE COMUNICADO =============================
 
+    // Lista comunicados enviados por um coordenador
     public List<ComunicadoDetalhadoDTO> listarComunicadosPorCoordenador(Long coordenadorId) {
         return comunicadoRepository.findByRemetenteCoordenacao_Id(coordenadorId)
                 .stream()
@@ -116,6 +116,7 @@ public class ComunicadoService {
                 .collect(Collectors.toList());
     }
 
+    // Lista comunicados enviados por um professor
     public List<ComunicadoDetalhadoDTO> listarComunicadosPorProfessor(String professorId) {
         return comunicadoRepository.findByRemetenteProfessor_Cpf(professorId)
                 .stream()
@@ -123,6 +124,7 @@ public class ComunicadoService {
                 .collect(Collectors.toList());
     }
 
+    // Lista todos os comunicados
     public List<ComunicadoDetalhadoDTO> listarTodos() {
         return comunicadoRepository.findAll()
                 .stream()
@@ -130,50 +132,54 @@ public class ComunicadoService {
                 .collect(Collectors.toList());
     }
 
+    // Lista comunicados específicos para um aluno
     public List<ComunicadoDetalhadoDTO> listarComunicadosPorAluno(Long alunoId) {
         return comunicadoRepository.findByReceptorAlunosContaining(alunoId)
-                .stream()	
+                .stream()
                 .map(this::convertToDetalhadoDTO)
                 .collect(Collectors.toList());
     }
-    
+
+    // Lista comunicados enviados para alunos
     public List<ComunicadoDetalhadoDTO> listarComunicadosParaAlunos() {
         return comunicadoRepository.findAll().stream()
-                .filter(comunicado -> !comunicado.getReceptorAlunos().isEmpty()) // Filtra comunicados que têm alunos como destinatários
+                .filter(comunicado -> !comunicado.getReceptorAlunos().isEmpty())
                 .map(this::convertToDetalhadoDTO)
                 .collect(Collectors.toList());
     }
 
-
+    // Lista comunicados específicos para uma turma
     public List<ComunicadoDetalhadoDTO> listarComunicadosPorTurma(Long turmaId) {
         return comunicadoRepository.findByReceptorTurmasContaining(turmaId)
                 .stream()
                 .map(this::convertToDetalhadoDTO)
                 .collect(Collectors.toList());
     }
-    
+
+    // Lista comunicados enviados para turmas
     public List<ComunicadoDetalhadoDTO> listarComunicadosParaTurmas() {
         return comunicadoRepository.findAll().stream()
-                .filter(comunicado -> !comunicado.getReceptorTurmas().isEmpty()) // Filtra comunicados que têm turmas como destinatários
+                .filter(comunicado -> !comunicado.getReceptorTurmas().isEmpty())
                 .map(this::convertToDetalhadoDTO)
                 .collect(Collectors.toList());
     }
-    
 
+    // ============================= MÉTODOS AUXILIARES =============================
 
-    // ------------------- MÉTODOS AUXILIARES -------------------
-
+    // Valida se o coordenador está vinculado à coordenação especificada
     private void validarCoordenador(Long coordenacaoId, String coordenadorId) {
         if (!coordenacaoRepository.existsByIdAndCoordenadores_Cpf(coordenacaoId, coordenadorId)) {
             throw new RuntimeException("Coordenador não vinculado à coordenação");
         }
     }
 
+    // Busca um comunicado por ID
     private Comunicado buscarComunicadoPorId(Long comunicadoId) {
         return comunicadoRepository.findById(comunicadoId)
             .orElseThrow(() -> new RuntimeException("Comunicado não encontrado com ID: " + comunicadoId));
     }
 
+    // Atualiza os dados de um comunicado
     private void atualizarDadosComunicado(Comunicado comunicado, ComunicadoDTO comunicadoDTO) {
         comunicado.setConteudo(comunicadoDTO.getConteudo());
         comunicado.setDataEnvio(comunicadoDTO.getDataEnvio());
@@ -181,6 +187,7 @@ public class ComunicadoService {
         comunicado.setReceptorTurmas(comunicadoDTO.getTurmaIds());
     }
 
+    // Converte para DTO simples
     private ComunicadoSimplesDTO convertToSimplesDTO(Comunicado comunicado) {
         return ComunicadoSimplesDTO.builder()
                 .id(comunicado.getId())
@@ -189,6 +196,7 @@ public class ComunicadoService {
                 .build();
     }
 
+    // Converte para DTO detalhado
     private ComunicadoDetalhadoDTO convertToDetalhadoDTO(Comunicado comunicado) {
         // Processa a lista de alunos receptores
         List<AlunoResumidoDTO> alunos = comunicado.getReceptorAlunos().stream()
@@ -204,23 +212,22 @@ public class ComunicadoService {
                         .orElseThrow(() -> new RuntimeException("Turma não encontrada com ID: " + turmaId)))
                 .collect(Collectors.toList());
 
-        // Utilize o método obterRemetenteResumido para obter o remetente
+        // Obtem o remetente do comunicado (professor ou coordenação)
         RemetenteResumidoDTO remetente = obterRemetenteResumido(comunicado);
 
-        // Monta o DTO detalhado com as informações de remetente, alunos e turmas
+        // Retorna o DTO detalhado
         return ComunicadoDetalhadoDTO.builder()
                 .id(comunicado.getId())
                 .conteudo(comunicado.getConteudo())
                 .dataEnvio(comunicado.getDataEnvio())
-                .remetenteProfessor(remetente.getProfessor())  // Popula o professor se aplicável
-                .remetenteCoordenacao(remetente.getCoordenacao())  // Popula a coordenação se aplicável
+                .remetenteProfessor(remetente.getProfessor())  // Se remetente for professor
+                .remetenteCoordenacao(remetente.getCoordenacao())  // Se remetente for coordenação
                 .alunos(alunos)
                 .turmas(turmas)
                 .build();
     }
 
-
-
+    // Obtém o remetente do comunicado (pode ser professor ou coordenação)
     private RemetenteResumidoDTO obterRemetenteResumido(Comunicado comunicado) {
         if (comunicado.getRemetenteProfessor() != null) {
             return RemetenteResumidoDTO.builder()

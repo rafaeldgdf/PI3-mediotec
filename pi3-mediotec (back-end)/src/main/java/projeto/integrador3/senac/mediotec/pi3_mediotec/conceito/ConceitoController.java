@@ -16,11 +16,14 @@ import java.util.Optional;
 @Tag(name = "Conceitos", description = "Operações relacionadas aos conceitos dos alunos")  // Nome para o Swagger
 public class ConceitoController {
 
+    // ============================= INJEÇÕES DE DEPENDÊNCIA =============================
+
     private static final Logger logger = LoggerFactory.getLogger(ConceitoController.class);
 
     @Autowired
     private ConceitoService conceitoService;
 
+    // ============================= GET METHOD =============================
 
     // Rota para buscar conceito por ID (GET) - retorna o DTO completo
     @Operation(summary = "Buscar conceito por ID", description = "Retorna um conceito com base no seu ID")
@@ -34,6 +37,8 @@ public class ConceitoController {
                            return ResponseEntity.notFound().build();
                        });
     }
+
+    // ============================= POST METHOD =============================
 
     // Rota para criar um novo conceito (POST) - usa ConceitoResumidoDTO
     @Operation(summary = "Criar um novo conceito", description = "Cria um novo conceito com base nos dados fornecidos")
@@ -49,6 +54,8 @@ public class ConceitoController {
         }
     }
 
+    // ============================= PUT METHOD =============================
+
     // Rota para atualizar um conceito existente (PUT) - usa ConceitoResumidoDTO
     @Operation(summary = "Atualizar conceito", description = "Atualiza um conceito existente com base no seu ID")
     @PutMapping("/{id}")
@@ -62,6 +69,8 @@ public class ConceitoController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // ============================= DELETE METHOD =============================
 
     // Rota para deletar um conceito (DELETE)
     @Operation(summary = "Deletar conceito", description = "Deleta um conceito com base no seu ID")
