@@ -1,1686 +1,3628 @@
-# Documentação Técnica - Package `projeto.integrador3.senac.mediotec.pi3_mediotec`
+# Sistema de Gerenciamento Escolar (SGE) - Back-end
 
-O package `projeto.integrador3.senac.mediotec.pi3_mediotec` é o ponto central de inicialização e configuração do projeto. Ele contém a classe principal que inicializa a aplicação Spring Boot, a configuração do Swagger para a documentação da API, e as configurações de CORS para permitir o acesso ao backend por diferentes origens. Abaixo, está a explicação técnica de cada arquivo presente no package, seguindo a ordem: **Classe Principal > Configuração Swagger > Configuração CORS**.
-
----
-
-## `Pi3MediotecApplication.java` (Classe Principal)
-
-### Descrição
-A classe `Pi3MediotecApplication` é a **classe principal** da aplicação Spring Boot. Ela serve como o ponto de entrada para a inicialização da aplicação.
-
-### Anotações
-- `@SpringBootApplication`: É uma anotação composta que inclui várias outras anotações do Spring Boot:
-  - `@Configuration`: Permite que a classe seja usada como fonte de definições de bean do Spring.
-  - `@EnableAutoConfiguration`: Habilita a configuração automática do Spring Boot com base nas dependências adicionadas no projeto.
-  - `@ComponentScan`: Permite a varredura de componentes, serviços e repositórios na aplicação.
-
-### Método Principal
-- `public static void main(String[] args)`: Método que inicia a aplicação, invocando `SpringApplication.run(Pi3MediotecApplication.class, args);`, o que inicializa o contexto do Spring e as configurações definidas.
+**Autor:**  
+**Rafael Vitor de Oliveira** **-** *Desenvolvedor de Software*  
+- [LinkedIn](https://www.linkedin.com/in/rafaelvitor2/)  
+- [GitHub](https://github.com/rafaeldgdf)  
+- **E-mail:** [rafaelvd2@hotmail.com](mailto:rafaelvd2@hotmail.com)  
 
 ---
 
-## `SwaggerConfig.java` (Configuração do Swagger)
+## Autor
 
-### Descrição
-A classe `SwaggerConfig` é responsável por configurar o Swagger para a documentação da API REST da aplicação, usando a especificação OpenAPI 3.
+Eu, **Rafael Vitor de Oliveira**, fui responsável por todo o desenvolvimento do **back-end** deste projeto, incluindo a **lógica de negócios** e a implementação do **banco de dados**. As futuras implementações, principalmente relacionadas à **interface gráfica** e **testes de integração**, serão realizadas pelos meus colegas de equipe, utilizando esta base como ponto de partida.
 
-### Anotações
-- `@Configuration`: Indica que a classe contém definições de beans Spring e pode ser usada pelo contêiner de IoC (Inversão de Controle) do Spring.
 
-### Método Principal
-- `@Bean public OpenAPI customOpenAPI()`: Configura o Swagger com informações sobre o sistema, como título, descrição, versão, contato e links externos.
+## Introdução
 
-### Configurações
-- **`title`**: Define o título da API como "SGE - Sistema de Gerenciamento Escolar".
-- **`version`**: Define a versão da API como "1.0.0".
-- **`description`**: Descreve o projeto como "Faculdade Senac Pernambuco - Projeto Integrador III".
-- **`contact`**: Adiciona as informações de contato do desenvolvedor responsável (nome, URL do LinkedIn e e-mail).
-- **`externalDocs`**: Adiciona um link para o repositório do projeto no GitHub.
+O **Sistema de Gerenciamento Escolar (SGE)** foi desenvolvido como parte do **Projeto Integrador III** do curso de **Análise e Desenvolvimento de Sistemas** da **Faculdade Senac Pernambuco**. Esse projeto tem como objetivo suprir as necessidades de gerenciamento do **Mediotec**, uma escola técnica de ensino médio do **Senac**, que atualmente não conta com um sistema de gestão escolar.
 
-### Regras de Negócio
-- O Swagger é usado para documentar e expor os endpoints da API, facilitando a integração e testes das funcionalidades do sistema.
+Com o **SGE**, espera-se facilitar o gerenciamento das atividades acadêmicas, incluindo o controle de turmas, disciplinas, professores e alunos, além de melhorar a comunicação entre os coordenadores e os demais envolvidos na escola. A solução propõe uma gestão centralizada de todas as operações escolares, trazendo mais eficiência e agilidade.
+
+## Objetivo do Projeto
+
+A principal finalidade do SGE é oferecer um sistema integrado para o **Mediotec**, focado em:
+
+- **Gestão de alunos, professores, turmas e disciplinas**.
+- **Controle acadêmico eficiente** com funcionalidades que permitem o registro de notas e conceitos.
+- **Melhoria da comunicação interna**, facilitando a troca de informações entre os diferentes papéis administrativos e acadêmicos.
+
+## Tecnologias Utilizadas
+
+A parte de back-end foi construída com foco em alta performance e escalabilidade, utilizando tecnologias robustas como:
+
+- **Spring Boot**: Framework Java para construção de aplicações web.
+- **MySQL**: Banco de dados relacional para armazenamento de informações.
+- **JPA/Hibernate**: Ferramenta de mapeamento objeto-relacional (ORM).
+- **Swagger/OpenAPI**: Documentação automática da API, permitindo uma melhor comunicação entre os desenvolvedores e a API.
+
+Essas tecnologias garantem que o SGE possa ser facilmente mantido e expandido para atender às necessidades futuras do sistema.
+
+## Estrutura do Back-end e Banco de Dados
+
+Nesta fase do desenvolvimento, o foco foi construir uma **base sólida** que garante o correto funcionamento do sistema, incluindo a implementação da **lógica de negócios** e da **estruturação do banco de dados**:
+
+- **Entidades robustas** foram criadas, cada uma seguindo **regras de negócio** específicas para garantir a integridade dos dados.
+- A integração com o banco de dados **MySQL** foi estruturada para assegurar a **persistência e segurança** das informações.
+- Todo o sistema foi projetado para futuras integrações com outras camadas, como a interface do usuário e o front-end.
+
+# Colaboração e Futuras Integrações
+
+O projeto **SGE** foi concebido como parte de uma solução mais ampla. A próxima fase será conduzida por colegas de grupo que estarão responsáveis pelo desenvolvimento de um **front-end** moderno e a implementação de uma **Progressive Web App (PWA)**, garantindo uma experiência otimizada tanto em desktops quanto em dispositivos móveis. Além disso, eles realizarão **testes funcionais e de integração** para assegurar que as interfaces gráficas atendam às necessidades dos usuários e funcionem corretamente com o back-end.
+
+Futuramente, serão implementados mecanismos de segurança, como **Spring Security**, bem como melhorias no tratamento de erros e validações de entrada e saída, resultando em um sistema mais robusto, seguro e confiável.
+
 
 ---
 
-## `WebConfig.java` (Configuração de CORS)
 
-### Descrição
-A classe `WebConfig` configura o **Cross-Origin Resource Sharing (CORS)** para a aplicação, permitindo que diferentes origens (URLs de frontend) acessem os endpoints do backend.
+# Capítulo 1 - Estrutura Geral dos Pacotes no Sistema SGE
 
-### Anotações
-- `@Configuration`: Indica que a classe define beans de configuração do Spring.
+O Sistema de Gerenciamento Escolar (SGE) foi desenvolvido utilizando o framework Spring Boot e segue uma estrutura de pacotes bem organizada, onde cada um representa uma funcionalidade específica do sistema. Essa organização promove um código limpo, que facilita o desenvolvimento, manutenção e escalabilidade, além de garantir a separação clara das responsabilidades.
 
-### Implementação
-- `public void addCorsMappings(CorsRegistry registry)`: Método que configura os mapeamentos de CORS.
-  - `registry.addMapping("/**")`: Aplica a configuração a todos os endpoints da API.
-  - `.allowedOrigins("http://localhost:3000")`: Permite que o frontend hospedado em `http://localhost:3000` acesse os endpoints do backend.
-  - `.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")`: Define os métodos HTTP permitidos.
-  - `.allowedHeaders("*")`: Permite que todos os cabeçalhos sejam enviados nas requisições.
-  - `.allowCredentials(true)`: Permite o envio de credenciais (cookies, cabeçalhos de autenticação).
+Os pacotes do projeto são estruturados como módulos, cada um responsável por uma entidade e suas operações correspondentes. Essa abordagem modular permite a separação das camadas de entidade, controle, serviço, repositório e DTOs (Data Transfer Objects), garantindo um código bem estruturado, de fácil compreensão e manutenção.
 
-### Regras de Negócio
-- Permite o acesso do frontend (React, Angular, etc.) em `http://localhost:3000` aos endpoints da API.
-- Define explicitamente os métodos HTTP que podem ser utilizados nas requisições ao backend.
+## Estrutura dos Pacotes
+
+Abaixo está a estrutura hierárquica dos pacotes e arquivos de classes, que reflete a organização do sistema. Cada entidade tem suas próprias camadas de lógica de negócio, persistência e controle:
+
+```
+projeto.integrador3.senac.mediotec.pi3_mediotec
+│
+├── aluno
+│   ├── Aluno.java
+│   ├── AlunoController.java
+│   ├── AlunoDTO.java
+│   ├── AlunoRepository.java
+│   ├── AlunoService.java
+│   └── ...
+├── comunicado
+│   ├── Comunicado.java
+│   ├── ComunicadoController.java
+│   ├── ComunicadoDTO.java
+│   └── ...
+├── conceito
+│   ├── Conceito.java
+│   ├── ConceitoController.java
+│   ├── ConceitoDTO.java
+│   ├── ConceitoService.java
+│   └── ...
+├── coordenacao
+│   ├── Coordenacao.java
+│   ├── CoordenacaoController.java
+│   ├── CoordenacaoService.java
+│   └── ...
+├── coordenador
+│   ├── Coordenador.java
+│   ├── CoordenadorController.java
+│   └── ...
+├── disciplina
+│   ├── Disciplina.java
+│   ├── DisciplinaController.java
+│   └── ...
+├── endereco
+│   ├── Endereco.java
+│   ├── EnderecoController.java
+│   └── ...
+├── horario
+│   ├── Horario.java
+│   ├── HorarioController.java
+│   └── ...
+├── presenca
+│   ├── Presenca.java
+│   ├── PresencaController.java
+│   └── ...
+├── professor
+│   ├── Professor.java
+│   ├── ProfessorController.java
+│   └── ...
+├── responsavel
+│   ├── Responsavel.java
+│   ├── ResponsavelController.java
+│   └── ...
+├── telefone
+│   ├── Telefone.java
+│   ├── TelefoneController.java
+│   └── ...
+├── turma
+│   ├── Turma.java
+│   ├── TurmaController.java
+│   └── ...
+├── turmaDisciplinaProfessor
+│   ├── TurmaDisciplinaProfessor.java
+│   ├── TurmaDisciplinaProfessorController.java
+│   └── ...
+└── usuario
+    └── Usuario.java
+```
+
+## Explicação da Estrutura
+
+A arquitetura do sistema foi desenvolvida seguindo o princípio da **separação de responsabilidades** (*Separation of Concerns*), no qual cada componente ou camada do sistema desempenha um papel específico. Esse princípio foi aplicado de maneira rigorosa para garantir que as operações de cada entidade (como Aluno, Professor, Disciplina, etc.) sejam gerenciadas por suas respectivas classes. Isso resulta em um código mais organizado, modular e fácil de manter.
+
+- **Entidades**: Representam os dados que serão persistidos no banco (exemplo: `Aluno.java`, `Professor.java`).
+- **Controladores**: Exponibilizam endpoints REST para a comunicação com o front-end e outros serviços (exemplo: `AlunoController.java`, `DisciplinaController.java`).
+- **Serviços**: Contêm a lógica de negócio, processando e validando dados antes de salvar ou consultar as informações no repositório (exemplo: `AlunoService.java`, `ConceitoService.java`).
+- **Repositórios**: Lidam com a persistência dos dados, realizando operações de CRUD (Create, Read, Update, Delete) diretamente no banco de dados (exemplo: `AlunoRepository.java`, `ProfessorRepository.java`).
+- **DTOs**: Objetos para transferência de dados entre as camadas de serviço e controle, garantindo que apenas as informações necessárias sejam expostas e transmitidas (exemplo: `AlunoDTO.java`, `ComunicadoDTO.java`).  
+
+## Modularidade
+
+A modularidade é um ponto central nesta arquitetura. Cada módulo (ou pacote) está isolado das demais funcionalidades, o que permite a modificação ou adição de novas entidades sem impactar outras partes do sistema. Isso torna o código mais sustentável a longo prazo e facilita a incorporação de novos recursos.
+
+Por exemplo, se for necessário adicionar um novo módulo, como uma entidade de "Avaliação", isso pode ser feito de forma simples, seguindo o padrão já estabelecido:
+
+```
+├── avaliacao
+│   ├── Avaliacao.java
+│   ├── AvaliacaoController.java
+│   ├── AvaliacaoDTO.java
+│   ├── AvaliacaoRepository.java
+│   └── AvaliacaoService.java
+```
+
+Esse modelo oferece não apenas flexibilidade, mas também segurança, pois cada parte do sistema trabalha de maneira independente, com responsabilidades bem definidas. Isso minimiza erros e facilita o teste de cada módulo isoladamente, garantindo que novas funcionalidades ou correções sejam implementadas de maneira eficiente e segura.
+
 
 ---
 
-## Conclusão
 
-O package `projeto.integrador3.senac.mediotec.pi3_mediotec` é fundamental para a inicialização e configuração da aplicação. Ele inclui a classe principal `Pi3MediotecApplication` que inicializa o projeto Spring Boot, `SwaggerConfig` que documenta e expõe a API, e `WebConfig` que define as políticas de CORS para permitir a comunicação segura e controlada entre o frontend e backend.
+# Entidades no Sistema SGE
 
-Essas configurações garantem que o sistema seja inicializado corretamente, documentado de forma clara e acessível para desenvolvedores e clientes, e que as requisições sejam permitidas apenas de origens autorizadas, mantendo a segurança e integridade do projeto.
+## O que são Entidades?
+
+As Entidades no SGE (Sistema de Gerenciamento Escolar) representam as tabelas no banco de dados. Cada entidade é uma classe que reflete os dados armazenados em tabelas e utiliza as anotações do JPA (Java Persistence API) para mapear seus atributos e relacionamentos entre outras entidades. As entidades no SGE são usadas para manipular dados essenciais como alunos, professores, turmas e presenças.
+
+## Estrutura e Funcionalidades no Java, Spring e SGE
+
+No contexto de Java e Spring, as entidades são classes Java simples (POJOs) que representam registros de banco de dados. O JPA fornece o mapeamento objeto-relacional, permitindo que o desenvolvedor interaja com os dados usando objetos Java, sem necessidade de escrever SQL manualmente. Além disso, o Lombok facilita a redução do código "boilerplate" nas entidades.
+
+## O que é JPA?
+
+JPA (Java Persistence API) é uma especificação Java que simplifica o processo de mapeamento objeto-relacional (ORM). Ele permite que os desenvolvedores interajam com bancos de dados relacionais usando objetos Java, facilitando a persistência de dados sem a necessidade de escrever queries SQL diretamente.
+
+### Funcionalidades da JPA
+
+- **Mapeamento Objeto-Relacional (ORM)**: A JPA mapeia automaticamente classes e seus atributos para tabelas e colunas no banco de dados.
+- **Gerenciamento de Transações**: A JPA gerencia transações para garantir que operações de leitura e escrita sejam realizadas de forma consistente.
+- **Consultas JPQL**: A JPA oferece uma linguagem de consulta específica (JPQL) que permite realizar buscas e manipulações diretamente nos objetos Java.
+- **Caching**: A JPA implementa cache para melhorar a performance ao buscar entidades previamente consultadas.
+
+## Uso do Lombok nas Entidades
+
+O Lombok é uma biblioteca que ajuda a reduzir a quantidade de código repetitivo nas entidades, como getters, setters, construtores, entre outros. Usamos o Lombok para gerar automaticamente esses métodos com o uso de anotações simples.
+
+### Principais Anotações do Lombok
+
+- **@Getter** e **@Setter**: Geram automaticamente os métodos get() e set() para todos os atributos.
+- **@NoArgsConstructor**: Gera um construtor sem argumentos.
+- **@AllArgsConstructor**: Gera um construtor com todos os atributos da classe.
+- **@Builder**: Facilita a criação de objetos utilizando o padrão Builder.
+- **@EqualsAndHashCode**: Gera os métodos equals() e hashCode(), essenciais para comparar objetos.
+- **@ToString**: Gera automaticamente o método toString().
+
+## Anotações Comuns da JPA
+
+As entidades no SGE usam várias anotações para garantir o mapeamento correto entre as classes Java e o banco de dados:
+
+- **@Entity**: Define a classe como uma entidade JPA que será gerenciada pelo banco de dados.
+- **@Table(name = "nome_da_tabela")**: Especifica o nome da tabela no banco de dados.
+- **@Id**: Define o campo como chave primária da tabela.
+- **@GeneratedValue(strategy = GenerationType.IDENTITY)**: Configura a estratégia de geração automática do identificador primário, onde o banco de dados é responsável por gerar o valor.
+- **@Column**: Define características específicas para colunas no banco, como unicidade e obrigatoriedade.
+- **@ManyToOne, @OneToMany, @ManyToMany, @OneToOne**: Definem os relacionamentos entre as entidades.
+
+## Exemplo de Entidade com JPA e Lombok: `Aluno.java`
+
+A seguir está o exemplo de uma entidade **Aluno**, que representa a tabela aluno no banco de dados. Ela usa tanto anotações do JPA para mapeamento objeto-relacional quanto anotações do Lombok para reduzir o código repetitivo.
+
+```java
+@Entity
+@Table(name = "aluno")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Aluno {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "matricula_aluno")
+    private Long id;
+
+    @NotNull
+    @Column(unique = true, nullable = false)
+    private String cpf;
+
+    @NotNull
+    @Column(nullable = false)
+    private String nome;
+
+    private boolean status;
+
+    // Relacionamento um-para-muitos com Endereco
+    @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Endereco> enderecos = new HashSet<>();
+
+    // Relacionamento muitos-para-muitos com Turma
+    @ManyToMany(mappedBy = "alunos", cascade = CascadeType.ALL)
+    private Set<Turma> turmas = new HashSet<>();
+}
+```
+
+## Relacionamentos Entre Entidades
+
+No SGE, as entidades possuem relacionamentos entre si que refletem as conexões entre as tabelas do banco de dados. A JPA gerencia automaticamente esses relacionamentos, garantindo a persistência correta dos dados.
+
+### Exemplo de Relacionamento
+
+- Na entidade **Aluno**, podemos observar dois tipos de relacionamentos:
+    - **Um-para-muitos**: Um aluno pode ter vários endereços, mas um endereço pertence a apenas um aluno.
+    - **Muitos-para-muitos**: Um aluno pode estar matriculado em várias turmas, e uma turma pode conter vários alunos.
+
+```java
+// Um aluno pode ter vários endereços
+@OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
+private Set<Endereco> enderecos = new HashSet<>();
+
+// Um aluno pode estar em várias turmas, e uma turma pode conter vários alunos
+@ManyToMany(mappedBy = "alunos", cascade = CascadeType.ALL)
+private Set<Turma> turmas = new HashSet<>();
+```
+
+Esses relacionamentos são geridos automaticamente pelo JPA. Ao adicionar ou remover um endereço ou uma turma, o Spring garante que as informações sejam sincronizadas corretamente no banco de dados.
+
+## Anotações para Validação
+
+Para garantir a integridade dos dados, utilizamos o **Bean Validation** e anotações de validação do JPA. Elas ajudam a aplicar restrições em atributos específicos das entidades, como por exemplo:
+
+- **@NotNull**: Garante que o campo não será nulo.
+- **@Size(min = 5, max = 100)**: Limita o tamanho do campo, útil para strings como nomes.
+- **@Column(nullable = false, unique = true)**: Impede que o campo seja nulo ou contenha valores duplicados.
+
+### Exemplo de validação em atributos da entidade `Aluno`:
+
+```java
+@NotNull
+@Column(unique = true, nullable = false)
+private String cpf;
+
+@NotNull
+@Column(nullable = false)
+private String nome;
+```
+
+## Métodos Auxiliares
+
+É comum nas entidades criar métodos auxiliares para facilitar o gerenciamento de relacionamentos. Por exemplo, ao adicionar um endereço ou uma turma, é importante garantir que a relação bidirecional entre as entidades seja mantida. Aqui estão exemplos de métodos auxiliares para a entidade **Aluno**:
+
+```java
+// Método auxiliar para adicionar um endereço
+public void addEndereco(Endereco endereco) {
+    endereco.setAluno(this);  // Define o aluno no endereço
+    this.enderecos.add(endereco);  // Adiciona o endereço ao conjunto de endereços do aluno
+}
+
+// Método auxiliar para adicionar uma turma
+public void addTurma(Turma turma) {
+    this.turmas.add(turma);  // Adiciona a turma ao conjunto de turmas do aluno
+    turma.getAlunos().add(this);  // Adiciona o aluno ao conjunto de alunos da turma
+}
+```
+
+Esses métodos garantem que a relação entre **Aluno** e suas entidades relacionadas (como **Endereco** e **Turma**) seja sempre consistente e que ambas as direções do relacionamento estejam atualizadas corretamente.
+
+## Resumo: Importância das Entidades, JPA e Lombok no SGE
+
+As entidades no SGE são a espinha dorsal do sistema, representando os dados no banco de dados. O uso da JPA facilita o mapeamento objeto-relacional, permitindo que o sistema manipule dados de forma eficiente e segura. O Lombok simplifica o código, reduzindo a quantidade de getters, setters e outros métodos repetitivos.
+
+### Benefícios
+
+- **JPA**: Fornece um mapeamento simples e direto entre classes Java e tabelas de banco de dados, além de gerenciar relacionamentos e transações de forma automatizada.
+- **Lombok**: Elimina código repetitivo e facilita a manutenção das entidades.
+- **Validação**: Garante que os dados estejam sempre no formato correto e evita problemas de inconsistência no banco.
+
+Esse conjunto de práticas e tecnologias garante que o sistema seja robusto, fácil de manter e escalável.
+
+
+---
+
+
+# Repositórios no Sistema SGE
+
+## O que são Repositórios?
+
+Os Repositórios no SGE (Sistema de Gerenciamento Escolar) são interfaces que gerenciam o acesso e a persistência de dados no banco de dados. Eles atuam como a camada de acesso a dados, fornecendo uma abstração sobre a lógica de armazenamento, permitindo que as operações CRUD (Create, Read, Update, Delete) sejam realizadas de forma simples e eficiente. O Spring Data JPA é usado para facilitar a implementação desses repositórios, eliminando a necessidade de escrever SQL manual.
+
+## Estrutura e Funcionalidade no Java, Spring e SGE
+
+No Spring, os repositórios são interfaces que herdam de interfaces prontas fornecidas pelo Spring Data JPA, como a `JpaRepository`, o que simplifica a criação de operações básicas de banco de dados. O Spring Data JPA cuida da implementação, permitindo que os desenvolvedores concentrem-se na lógica de negócios.
+
+## Principais Anotações e Funcionalidades
+
+Os repositórios no SGE seguem uma estrutura padronizada, aproveitando a funcionalidade do Spring Data JPA. Algumas anotações e funcionalidades importantes incluem:
+
+- **@Repository**: Marca a interface como um componente de repositório, tornando-a disponível para injeção de dependências pelo Spring.
+- **JpaRepository<T, ID>**: Interface fornecida pelo Spring Data JPA que já contém métodos CRUD prontos. Ela é parametrizada com o tipo da entidade (T) e o tipo do identificador (ID).
+- **Consultas personalizadas**: Além dos métodos padrão do Spring Data, como `findAll()`, `save()`, `deleteById()`, é possível criar consultas personalizadas apenas declarando o método no repositório com base em convenções de nomes (ex.: `findByNome()`).
+
+## Exemplo de Interface de Repositório
+
+No exemplo abaixo, o repositório `AlunoRepository` é responsável por gerenciar as operações de persistência da entidade Aluno. Ele herda de `JpaRepository`, o que fornece os métodos CRUD padrão, e também define uma consulta personalizada para buscar alunos pelo CPF.
+
+```java
+@Repository
+public interface AlunoRepository extends JpaRepository<Aluno, Long> {
+
+    // Método para buscar aluno pelo CPF
+    Optional<Aluno> findByCpf(String cpf);
+    
+    // Verifica se existe um aluno com determinado CPF
+    boolean existsByCpf(String cpf);
+}
+```
+
+## Métodos Comuns Herdados de JpaRepository
+
+A interface `JpaRepository` fornece uma série de métodos prontos para realizar operações CRUD e consultas no banco de dados. Alguns métodos comuns incluem:
+
+- `findAll()`: Retorna todos os registros da entidade no banco de dados.
+- `findById(ID id)`: Retorna um registro pela chave primária.
+- `save(T entity)`: Salva ou atualiza um registro da entidade.
+- `deleteById(ID id)`: Remove um registro pela chave primária.
+
+Esses métodos permitem realizar as operações básicas de forma rápida e eficiente, sem a necessidade de implementar lógica de acesso a dados.
+
+## Consultas Personalizadas
+
+O Spring Data JPA permite criar consultas personalizadas apenas declarando os métodos na interface do repositório. O Spring constrói automaticamente a implementação dessas consultas com base nos nomes dos métodos.
+
+### Exemplo de Consulta Personalizada
+
+No repositório `AlunoRepository`, temos um método `findByCpf`, que permite buscar um aluno pelo CPF. O Spring Data JPA entende que deve construir uma consulta SQL com base no nome do método.
+
+```java
+Optional<Aluno> findByCpf(String cpf);
+```
+
+Além disso, é possível criar consultas mais complexas utilizando a anotação `@Query`. Esta abordagem é útil quando as convenções de nomes não são suficientes para expressar a consulta desejada.
+
+### Exemplo de Consulta com @Query
+
+```java
+@Query("SELECT a FROM Aluno a WHERE a.nome LIKE %:nome%")
+List<Aluno> findByNomeContains(@Param("nome") String nome);
+```
+
+Esse exemplo cria uma consulta personalizada que busca alunos cujo nome contenha o valor passado no parâmetro.
+
+## Injeção de Dependências
+
+No Spring, os repositórios são injetados nos Serviços ou Controladores para que possam ser utilizados para acessar os dados. Isso é feito por meio da anotação `@Autowired`, que permite ao Spring resolver as dependências automaticamente.
+
+### Exemplo de Injeção de Dependências
+
+A injeção de dependências em um serviço é feita da seguinte maneira:
+
+```java
+@Service
+public class AlunoService {
+
+    @Autowired
+    private AlunoRepository alunoRepository;
+
+    public AlunoDTO getAlunoByCpf(String cpf) {
+        Aluno aluno = alunoRepository.findByCpf(cpf)
+            .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+        return convertToDTO(aluno);
+    }
+}
+```
+
+Neste exemplo, o `AlunoRepository` é injetado no `AlunoService`, permitindo que o serviço faça consultas no banco de dados.
+
+## Resumo: Importância dos Repositórios no SGE
+
+Os repositórios são a camada de acesso a dados no SGE, permitindo que as operações CRUD sejam realizadas de maneira eficiente e desacoplada da lógica de negócios. O uso de Spring Data JPA simplifica a implementação dos repositórios, permitindo que os desenvolvedores se concentrem nas regras de negócio, enquanto o Spring cuida da persistência de dados.
+
+### Benefícios
+
+- **Abstração do Banco de Dados**: A interface `JpaRepository` fornece uma abstração de alto nível, eliminando a necessidade de código SQL manual.
+- **Consultas Personalizadas**: O Spring Data JPA permite criar consultas customizadas de forma simples, sem a necessidade de escrever queries SQL.
+- **Injeção de Dependências**: A integração com o Spring Framework facilita a injeção de repositórios em serviços e controladores, promovendo um código mais limpo e modular.
+
+Os repositórios são essenciais para garantir que o acesso a dados seja feito de maneira eficiente, segura e organizada dentro do SGE.
+
+---
+
+# Serviços no Sistema SGE
+
+## O que são Serviços?
+
+Os Serviços (Services) no SGE (Sistema de Gerenciamento Escolar) implementam a lógica de negócios do sistema. Eles são a camada intermediária entre os Repositórios (que interagem diretamente com o banco de dados) e os Controladores (que processam as requisições HTTP). Nos serviços, são aplicadas validações, regras de negócio e manipulação de dados antes de interagir com o banco de dados.
+
+No Spring Framework, as classes de serviço são anotadas com `@Service`, o que permite ao Spring gerenciar a criação e injeção de dependências, além de facilitar o fluxo de transações e operações.
+
+## Estrutura e Funcionalidades no Java, Spring e SGE
+
+Os serviços no SGE seguem um padrão de injeção de dependências, onde os Repositórios e outros componentes são injetados nos serviços para permitir o acesso aos dados e a execução de regras de negócios. Cada serviço trata das regras de negócios específicas de uma ou mais entidades, garantindo que as operações sejam feitas de maneira consistente e eficiente.
+
+## Principais Anotações e Funcionalidades
+
+- **@Service**: Define a classe como um serviço gerenciado pelo Spring, permitindo que o Spring crie instâncias e injete dependências automaticamente.
+- **@Autowired**: Realiza a injeção de dependências de outros componentes, como repositórios ou outros serviços.
+- **@Transactional**: Em serviços que manipulam múltiplas operações de banco de dados, essa anotação garante que todas as operações sejam executadas de forma atômica, ou seja, ou todas são concluídas com sucesso ou nenhuma é executada.
+
+## Métodos Comuns em Serviços
+
+Os serviços no SGE geralmente seguem um padrão de métodos comuns que manipulam as operações CRUD (Create, Read, Update, Delete), realizam validações e aplicam regras de negócio. Além disso, eles também incluem métodos específicos que tratam da conversão de dados entre entidades e DTOs (Data Transfer Objects).
+
+### 1. Métodos CRUD (Create, Read, Update, Delete)
+
+Os métodos CRUD são fundamentais para a gestão de dados de qualquer sistema. Eles permitem criar, buscar, atualizar e deletar entidades no banco de dados. Aqui, explico como funciona cada um desses métodos no contexto de um serviço.
+
+#### Criação de uma Entidade (Create)
+
+O método `criarAluno()` é responsável por criar uma nova entidade no banco de dados. Ele recebe um DTO contendo os dados do aluno, converte-o em uma entidade e, em seguida, o repositório persiste essa entidade no banco de dados.
+
+##### Exemplo:
+
+```java
+public AlunoDTO criarAluno(AlunoDTO alunoDTO) {
+    // Conversão do DTO para entidade
+    Aluno aluno = convertToEntity(alunoDTO);
+    
+    // Salvando a entidade no banco de dados
+    aluno = alunoRepository.save(aluno);
+    
+    // Convertendo a entidade de volta para DTO para retorno
+    return convertToDTO(aluno);
+}
+```
+
+#### Busca de Dados (Read)
+
+O método `buscarAlunoPorId()` faz uma consulta no banco de dados para encontrar um aluno com base no seu ID. Se o aluno não for encontrado, é lançada uma exceção apropriada.
+
+##### Exemplo:
+
+```java
+public AlunoDTO buscarAlunoPorId(Long id) {
+    Aluno aluno = alunoRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+    return convertToDTO(aluno);
+}
+```
+
+#### Atualização de uma Entidade (Update)
+
+O método `atualizarAluno()` é usado para modificar os dados de um aluno existente. Ele primeiro busca o aluno pelo ID e, em seguida, atualiza seus campos com base nos dados fornecidos no DTO.
+
+##### Exemplo:
+
+```java
+public AlunoDTO atualizarAluno(Long id, AlunoDTO alunoDTO) {
+    Aluno aluno = alunoRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+    
+    // Atualizando os dados da entidade
+    aluno.setNome(alunoDTO.getNome());
+    aluno.setCpf(alunoDTO.getCpf());
+
+    // Salvando as alterações
+    alunoRepository.save(aluno);
+    
+    return convertToDTO(aluno);
+}
+```
+
+#### Deleção de uma Entidade (Delete)
+
+O método `deletarAluno()` remove uma entidade do banco de dados com base no seu ID. Ele primeiro verifica se o aluno existe antes de tentar removê-lo.
+
+##### Exemplo:
+
+```java
+public void deletarAluno(Long id) {
+    Aluno aluno = alunoRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+    
+    // Removendo o aluno
+    alunoRepository.delete(aluno);
+}
+```
+
+### 2. Validações e Regras de Negócio
+
+Os serviços não apenas executam operações de banco de dados, mas também garantem que as regras de negócio sejam aplicadas corretamente. Antes de realizar qualquer operação, verificações e validações são executadas.
+
+#### Exemplo de Regra de Negócio:
+
+No exemplo abaixo, ao matricular um aluno em uma turma, o serviço verifica se a turma já atingiu sua capacidade máxima antes de realizar a matrícula.
+
+```java
+public AlunoDTO matricularAlunoEmTurma(Long alunoId, Long turmaId) {
+    Aluno aluno = alunoRepository.findById(alunoId)
+        .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+
+    Turma turma = turmaRepository.findById(turmaId)
+        .orElseThrow(() -> new EntityNotFoundException("Turma não encontrada"));
+
+    // Validação da capacidade da turma
+    if (turma.getAlunos().size() >= turma.getCapacidadeMaxima()) {
+        throw new IllegalStateException("A turma já está cheia.");
+    }
+
+    // Adiciona o aluno à turma
+    aluno.getTurmas().add(turma);
+    alunoRepository.save(aluno);
+
+    return convertToDTO(aluno);
+}
+```
+
+### 3. Métodos Específicos
+
+Os serviços também podem conter métodos que encapsulam lógicas de negócios mais complexas. Por exemplo, calcular a média de notas de um aluno ou gerar relatórios.
+
+#### Exemplo:
+
+```java
+public double calcularMediaNotas(Long alunoId) {
+    Aluno aluno = alunoRepository.findById(alunoId)
+        .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+
+    return aluno.getNotas().stream()
+        .mapToDouble(Nota::getValor)
+        .average()
+        .orElse(0.0);
+}
+```
+
+### 4. Métodos de Conversão (DTOs)
+
+Os serviços também são responsáveis por converter as entidades em DTOs e vice-versa. Isso garante que a camada de apresentação manipule apenas os dados necessários.
+
+#### Exemplo:
+
+```java
+private AlunoDTO convertToDTO(Aluno aluno) {
+    AlunoDTO alunoDTO = new AlunoDTO();
+    alunoDTO.setId(aluno.getId());
+    alunoDTO.setNome(aluno.getNome());
+    alunoDTO.setCpf(aluno.getCpf());
+    return alunoDTO;
+}
+
+private Aluno convertToEntity(AlunoDTO alunoDTO) {
+    Aluno aluno = new Aluno();
+    aluno.setNome(alunoDTO.getNome());
+    aluno.setCpf(alunoDTO.getCpf());
+    return aluno;
+}
+```
+
+## Resumo: Importância dos Serviços no SGE
+
+Os Serviços no SGE desempenham um papel central na aplicação da lógica de negócios. Eles garantem que os dados sejam manipulados de forma correta antes de serem salvos no banco de dados, aplicando validações e regras específicas do sistema.
+
+### Benefícios:
+
+- **Aplicação das Regras de Negócio**: Os serviços garantem que todas as regras de negócio sejam aplicadas corretamente.
+- **Abstração do Banco de Dados**: Eles fornecem uma camada de abstração entre o banco de dados e os controladores.
+- **Conversão de DTOs**: Garantem que apenas os dados necessários sejam transferidos entre as camadas do sistema.
+- **Centralização da Lógica de Negócios**: Mantêm a lógica centralizada, o que facilita a manutenção e a escalabilidade do sistema.
+
+Os serviços são essenciais para garantir a integridade dos dados e o funcionamento correto do sistema, proporcionando uma arquitetura limpa e modular.
+
+
+---
+
+
+# DTOs no Sistema SGE
+
+## O que são DTOs?
+
+Os DTOs (Data Transfer Objects) são objetos simples que transportam dados entre as camadas do sistema, como entre o Controller e o Service ou entre o Service e o Repository. Eles são usados para garantir que apenas os dados necessários sejam expostos ou recebidos, evitando o tráfego desnecessário de informações e aumentando a segurança da aplicação.
+
+No SGE (Sistema de Gerenciamento Escolar), os DTOs são usados para encapsular dados de entidades como Aluno, Turma ou Curso, limitando os atributos visíveis e manipulados pelas diferentes camadas do sistema. Ao utilizar DTOs, também garantimos uma maior separação entre as camadas de negócios e de apresentação, tornando o sistema mais modular e seguro.
+
+## Estrutura e Funcionalidade no Java, Spring e SGE
+
+No contexto do Spring Framework, os DTOs são simples classes POJOs (Plain Old Java Objects), sem nenhuma lógica de negócios, que contêm apenas atributos e, geralmente, getters e setters. Além disso, eles podem ser anotados com validações para garantir que os dados recebidos pelas requisições estejam no formato correto antes de serem processados pelos serviços.
+
+### Quando Utilizar DTOs
+
+- **Transferência de dados**: DTOs são usados para transferir dados entre as camadas sem expor toda a entidade.
+- **Segurança**: Ao não expor diretamente as entidades, evitamos o risco de manipulações indevidas de dados sensíveis.
+- **Validação**: DTOs permitem validar os dados que chegam pela API antes que eles sejam manipulados pelo sistema.
+
+## Criação de DTOs no Sistema
+
+### Estrutura Simples de um DTO
+
+Um DTO é, essencialmente, uma classe que contém atributos com seus respectivos getters e setters. Não há lógica de negócios dentro do DTO; ele serve apenas como um contêiner de dados. Além disso, podemos usar anotações para validações, como `@NotNull` e `@Size`, para garantir que os dados estejam corretos antes de serem processados.
+
+### Exemplo de DTO para a Entidade Aluno
+
+```java
+public class AlunoDTO {
+
+    private Long id;
+
+    @NotNull(message = "O nome é obrigatório")
+    @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres")
+    private String nome;
+
+    @NotNull(message = "O CPF é obrigatório")
+    private String cpf;
+
+    // Getters e Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+}
+```
+
+### Como o DTO Funciona:
+
+- **Encapsulamento dos Dados**: O `AlunoDTO` contém apenas os campos essenciais para a transferência de dados entre o sistema e a interface. Aqui, por exemplo, apenas o ID, nome e CPF do aluno são expostos.
+- **Validações**: O uso das anotações `@NotNull` e `@Size` garante que os dados estejam no formato correto e não vazios. Caso essas validações falhem, uma mensagem de erro personalizada será retornada.
+
+## Conversão Entre DTOs e Entidades
+
+Em muitos casos, é necessário converter os DTOs recebidos em Entidades para que sejam persistidos no banco de dados. Da mesma forma, é necessário converter Entidades em DTOs antes de retornar os dados ao cliente. Essa conversão geralmente é feita na camada de Serviços.
+
+### Exemplo de Conversão Entre DTO e Entidade
+
+No serviço, criamos métodos auxiliares para realizar a conversão entre DTO e Entidade. Isso garante que a lógica de conversão esteja centralizada e fácil de manter.
+
+### Conversão de DTO para Entidade
+
+Quando um `AlunoDTO` é recebido, ele precisa ser convertido para a entidade Aluno para ser salvo no banco.
+
+```java
+public Aluno convertToEntity(AlunoDTO alunoDTO) {
+    Aluno aluno = new Aluno();
+    aluno.setId(alunoDTO.getId());
+    aluno.setNome(alunoDTO.getNome());
+    aluno.setCpf(alunoDTO.getCpf());
+    return aluno;
+}
+```
+
+### Conversão de Entidade para DTO
+
+Da mesma forma, ao buscar um aluno no banco de dados, a entidade `Aluno` precisa ser convertida em `AlunoDTO` antes de ser retornada ao cliente.
+
+```java
+public AlunoDTO convertToDTO(Aluno aluno) {
+    AlunoDTO alunoDTO = new AlunoDTO();
+    alunoDTO.setId(aluno.getId());
+    alunoDTO.setNome(aluno.getNome());
+    alunoDTO.setCpf(aluno.getCpf());
+    return alunoDTO;
+}
+```
+
+## Vantagens do Uso de DTOs
+
+- **Segurança dos Dados**: Ao usar DTOs, garantimos que apenas os dados necessários sejam expostos e manipulados. Dados sensíveis da entidade podem ser ocultados.
+- **Validação Simplificada**: DTOs permitem que as validações sejam aplicadas na camada de entrada, antes mesmo que os serviços sejam acionados. Isso previne dados inválidos no banco de dados.
+- **Separação de Responsabilidades**: Com a separação entre DTOs e Entidades, o sistema ganha modularidade, permitindo mudanças nas entidades sem impactar diretamente a camada de apresentação.
+- **Desempenho**: Como DTOs contêm apenas os dados essenciais, eles são leves e rápidos para serem transferidos, o que melhora a performance de requisições e respostas na API.
+
+## Resumo: Importância dos DTOs no SGE
+
+Os DTOs são essenciais no SGE para garantir que os dados sejam manipulados e transferidos de forma segura e eficiente entre as camadas do sistema. Eles evitam o tráfego de dados desnecessários e expõem apenas o que é necessário para cada operação.
+
+### Benefícios:
+
+- **Segurança**: Protegem a integridade dos dados, evitando que informações sensíveis sejam expostas.
+- **Validações**: Garantem que apenas dados válidos sejam processados e salvos no sistema.
+- **Modularidade**: A separação entre DTOs e Entidades facilita a manutenção e evolução do sistema sem causar quebras na lógica de negócios.
+
+No contexto do SGE, os DTOs desempenham um papel importante ao oferecer uma estrutura clara e eficiente para manipular dados entre as diferentes camadas da aplicação.
+
+---
+
+
+# Controladores (Controllers) no Sistema SGE
+
+## O que são Controladores?
+
+Os Controladores (Controllers) no SGE (Sistema de Gerenciamento Escolar) são responsáveis por gerenciar as requisições HTTP que chegam à aplicação. Eles servem como ponto de entrada para as APIs, processando as requisições recebidas e delegando a execução das operações para os Serviços (Services). Os controladores também cuidam das respostas enviadas de volta para o cliente, garantindo que os dados retornem de forma adequada e no formato correto.
+
+No Spring, os controladores são classes anotadas com `@RestController` e `@RequestMapping`, o que define as rotas HTTP e permite que o Spring gerencie as requisições HTTP como GET, POST, PUT e DELETE.
+
+## Estrutura e Funcionalidade no Java, Spring e SGE
+
+Os Controladores seguem o padrão MVC (Model-View-Controller). Eles atuam como a interface entre o cliente e os serviços do sistema. Cada endpoint (ou rota) no controlador é associado a uma funcionalidade específica do sistema, como criar um aluno, buscar uma turma ou atualizar um curso.
+
+## Principais Anotações e Funcionalidades
+
+- **@RestController**: Define a classe como um controlador REST, que gerencia as requisições HTTP e retorna dados no formato JSON ou XML.
+- **@RequestMapping**: Define o caminho base de todas as rotas do controlador. Por exemplo, `@RequestMapping("/alunos")` define que todas as rotas relacionadas ao controlador de alunos começarão com `/alunos`.
+- **@GetMapping, @PostMapping, @PutMapping, @DeleteMapping**: Definem os métodos HTTP que a rota aceita. Cada um corresponde a uma operação CRUD:
+    - **@GetMapping**: Usado para consultas (GET).
+    - **@PostMapping**: Usado para criação de novos recursos (POST).
+    - **@PutMapping**: Usado para atualização de recursos (PUT).
+    - **@DeleteMapping**: Usado para remoção de recursos (DELETE).
+- **@PathVariable** e **@RequestBody**: Usadas para capturar parâmetros da URL e do corpo da requisição, respectivamente.
+
+## Exemplos de Métodos Comuns em Controladores
+
+Os controladores no SGE geralmente contêm rotas para CRUD (Criar, Ler, Atualizar, Deletar) de entidades, como Aluno, Turma, Curso, entre outros. Aqui estão exemplos de controladores comumente utilizados no SGE, explicando a lógica por trás de cada método.
+
+### 1. Buscar Todos os Alunos (GET)
+
+O método `listarTodosAlunos()` é responsável por retornar uma lista de todos os alunos cadastrados. Ele utiliza o `AlunoService` para buscar os dados e retorna uma lista de `AlunoDTOs`.
+
+```java
+@RestController
+@RequestMapping("/alunos")
+public class AlunoController {
+
+    @Autowired
+    private AlunoService alunoService;
+
+    @GetMapping
+    public ResponseEntity<List<AlunoDTO>> listarTodosAlunos() {
+        List<AlunoDTO> alunos = alunoService.listarTodosAlunos();
+        return ResponseEntity.ok(alunos);  // Retorna HTTP 200 OK com a lista de alunos
+    }
+}
+```
+
+### 2. Buscar Aluno por ID (GET)
+
+O método `buscarAlunoPorId()` é usado para buscar um aluno específico pelo seu ID. Ele recebe o ID na URL e delega a busca para o serviço.
+
+```java
+@GetMapping("/{id}")
+public ResponseEntity<AlunoDTO> buscarAlunoPorId(@PathVariable Long id) {
+    try {
+        AlunoDTO aluno = alunoService.buscarAlunoPorId(id);
+        return ResponseEntity.ok(aluno);  // HTTP 200 OK se o aluno for encontrado
+    } catch (EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);  // HTTP 404 Not Found
+    }
+}
+```
+
+### 3. Criar Novo Aluno (POST)
+
+O método `criarAluno()` é responsável por receber os dados de um novo aluno e delegar a criação ao serviço correspondente.
+
+```java
+@PostMapping
+public ResponseEntity<AlunoDTO> criarAluno(@RequestBody AlunoDTO alunoDTO) {
+    try {
+        AlunoDTO novoAluno = alunoService.criarAluno(alunoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoAluno);  // HTTP 201 Created
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // HTTP 400 Bad Request
+    }
+}
+```
+
+### 4. Atualizar Aluno (PUT)
+
+O método `atualizarAluno()` recebe o ID de um aluno e os dados atualizados no corpo da requisição. Ele delega ao serviço a responsabilidade de buscar o aluno, atualizar os dados e persistir as alterações.
+
+```java
+@PutMapping("/{id}")
+public ResponseEntity<AlunoDTO> atualizarAluno(@PathVariable Long id, @RequestBody AlunoDTO alunoDTO) {
+    try {
+        AlunoDTO alunoAtualizado = alunoService.atualizarAluno(id, alunoDTO);
+        return ResponseEntity.ok(alunoAtualizado);  // HTTP 200 OK com o aluno atualizado
+    } catch (EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);  // HTTP 404 Not Found
+    }
+}
+```
+
+### 5. Deletar Aluno (DELETE)
+
+O método `deletarAluno()` remove um aluno do banco de dados pelo seu ID.
+
+```java
+@DeleteMapping("/{id}")
+public ResponseEntity<Void> deletarAluno(@PathVariable Long id) {
+    try {
+        alunoService.deletarAluno(id);
+        return ResponseEntity.noContent().build();  // HTTP 204 No Content
+    } catch (EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // HTTP 404 Not Found
+    }
+}
+```
+
+## Tratamento de Erros nos Controladores
+
+Os controladores também são responsáveis por tratar erros e exceções. Eles utilizam blocos `try-catch` para capturar exceções como `EntityNotFoundException` (quando um recurso não é encontrado) e retornar códigos HTTP adequados, como 404 Not Found ou 400 Bad Request.
+
+```java
+@GetMapping("/{id}")
+public ResponseEntity<AlunoDTO> buscarAlunoPorId(@PathVariable Long id) {
+    try {
+        AlunoDTO aluno = alunoService.buscarAlunoPorId(id);
+        return ResponseEntity.ok(aluno);  // HTTP 200 OK se o aluno for encontrado
+    } catch (EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);  // HTTP 404 Not Found
+    }
+}
+```
+
+## Resumo: Importância dos Controladores no SGE
+
+Os Controladores no SGE são a porta de entrada para as requisições HTTP e servem como intermediários entre o cliente e os serviços do sistema. Eles lidam com a lógica de roteamento, delegando as operações para os serviços e garantindo que as respostas sejam retornadas no formato correto.
+
+### Benefícios:
+
+- **Facilidade de Rotas**: Os controladores facilitam o mapeamento das rotas e gerenciam as requisições de forma eficiente.
+- **Intermediário entre o Cliente e os Serviços**: Eles garantem que as requisições cheguem aos serviços corretamente e que as respostas sejam enviadas com status apropriados.
+- **Tratamento de Exceções**: Capturam e tratam erros e exceções para garantir uma experiência robusta e consistente para o usuário.
+
+Os controladores são fundamentais para conectar os clientes aos serviços e fornecer uma interface clara e organizada para interagir com a aplicação.
+
 
 --- 
 
-# Documentação Técnica - Package `aluno`
+# Capítulo 2 - Explicação dos Pacotes
 
-O package `aluno` é responsável pelo gerenciamento das entidades e operações relacionadas ao aluno no sistema. Ele lida com persistência de dados, regras de negócio, comunicação com o banco de dados e a exposição de APIs REST. Abaixo está a explicação técnica de cada arquivo presente no package, seguindo a ordem **Entidade > Repositório > Serviço > DTOs > Controlador**.
+Este capítulo é dedicado à explicação detalhada de cada pacote presente no **SGE (Sistema de Gerenciamento Escolar)**. Cada pacote foi projetado para representar uma funcionalidade específica do sistema, com uma estrutura clara e organizada que abrange as camadas de entidade, repositório, serviço, controlador e DTOs (Data Transfer Objects). 
 
----
+Cada pacote será explicado de maneira individual, com foco nas suas particularidades. Componentes que são comuns a todos os pacotes, como a utilização de anotações e métodos CRUD (Create, Read, Update, Delete), serão brevemente mencionados. O foco estará nos detalhes específicos que cada pacote implementa, as regras de negócio aplicadas e como as diferentes classes se conectam para garantir o funcionamento correto de cada funcionalidade.
 
-## `Aluno.java` (Entidade)
+## Estrutura Geral
 
-### Descrição:
-A classe `Aluno` representa a **entidade** aluno que será persistida no banco de dados. Ela herda de `Usuario`, contendo atributos e relacionamentos específicos do aluno. É a base para todos os dados do aluno e suas interações com outras entidades.
+Para cada pacote, seguiremos a ordem:
 
-### Anotações:
-- `@Entity`: Define que a classe será uma entidade JPA (mapeada para uma tabela no banco de dados).
-- `@Table(name = "aluno")`: Especifica o nome da tabela no banco de dados como "aluno".
-- `@Id`: Define o campo `id` como a chave primária.
-- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Gera automaticamente o valor da chave primária com a estratégia `IDENTITY`.
-- `@OneToMany`, `@ManyToMany`, `@ManyToOne`: Indicam os relacionamentos com outras entidades, como endereços, telefones, turmas, coordenação, presenças e responsáveis.
-- `@JsonIgnore`: Evita a serialização de certas propriedades para evitar loops ou retornos excessivos de dados.
+1. **Entidade (Entity)**: Representa os dados que serão persistidos no banco de dados. A entidade é mapeada para uma tabela e define os atributos e relacionamentos essenciais.
+2. **Repositório (Repository)**: Interface que gerencia a comunicação com o banco de dados, permitindo a realização de operações de CRUD e consultas personalizadas.
+3. **Serviço (Service)**: Contém a lógica de negócios aplicada sobre os dados, validando informações e processando operações antes da interação com o banco de dados.
+4. **DTO (Data Transfer Object)**: Objetos usados para transferir dados entre as camadas de serviço e controle, garantindo que apenas as informações necessárias sejam expostas.
+5. **Controlador (Controller)**: Define os endpoints REST que expõem a API para comunicação com o cliente. O controlador gerencia as requisições HTTP, delegando as operações ao serviço correspondente.
 
-### Relacionamentos:
-- **Endereços** (`OneToMany`): Um aluno pode ter vários endereços.
-- **Telefones** (`OneToMany`): Um aluno pode ter vários telefones.
-- **Turmas** (`ManyToMany`): Um aluno pode estar matriculado em várias turmas.
-- **Responsáveis** (`OneToMany`): Um aluno pode ter vários responsáveis.
-- **Presenças** (`OneToMany`): Um aluno pode ter múltiplas presenças, mas isso é ignorado na serialização via `@JsonIgnore`.
-- **Coordenação** (`ManyToOne`): Um aluno pode estar vinculado a uma coordenação.
-
-### Regras de Negócio:
-- O campo **CPF** é único e obrigatório.
-- O status (`boolean`) indica se o aluno está **ativo** ou **inativo**. Ao cadastrar um aluno, o **status é automaticamente definido como `true`**, ou seja, o aluno é cadastrado como ativo no sistema.
-- Um aluno precisa de ao menos um **responsável** no momento do cadastro, especialmente se for menor de idade.
-
-### Métodos Auxiliares:
-- `addEndereco(Endereco endereco)`: Adiciona um endereço ao aluno e configura a relação bidirecional.
-- `addTelefone(Telefone telefone)`: Adiciona um telefone ao aluno e configura a relação bidirecional.
-- `addTurma(Turma turma)`: Adiciona uma turma ao aluno e garante a bidirecionalidade.
-- `addResponsavel(Responsavel responsavel)`: Adiciona um responsável ao aluno.
+Cada parte será explicada com exemplos de código e detalhes sobre o funcionamento interno, priorizando a clareza para que a arquitetura do sistema seja fácil de entender e manter.
 
 ---
 
-## `AlunoRepository.java` (Repositório)
 
-### Descrição:
-Essa interface define a camada de **persistência** dos dados do aluno, estendendo o **`JpaRepository`**. Ela permite a execução de operações de CRUD diretamente com o banco de dados, como buscar, salvar e deletar alunos.
+# Package aluno
 
-### Anotações:
-- `@Repository`: Não é obrigatório especificar aqui, pois o `JpaRepository` automaticamente configura a interface como um repositório do Spring Data.
+### Aluno.java (Entidade)
+ 
+A classe Aluno representa a entidade aluno, contendo atributos e relacionamentos específicos com outras entidades no sistema. Ela é a base de todas as interações relacionadas aos alunos no sistema, herda de Usuario, e é mapeada para a tabela `aluno` no banco de dados.
 
-### Métodos Principais:
-- `findAll()`: Retorna uma lista de todos os alunos.
-- `findById(Long id)`: Busca um aluno por seu ID.
-- `existsByCpf(String cpf)`: Verifica se um aluno com o CPF fornecido já existe no banco.
+**Anotações**:
+- `@Entity`: Define a classe como uma entidade JPA.
+- `@Table(name = "aluno")`: Nome da tabela no banco de dados.
+- `@Id`: Define o campo id como chave primária.
+- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Utiliza a estratégia de geração automática de IDs.
+- `@OneToMany`, `@ManyToMany`, `@ManyToOne`: Relacionamentos com outras entidades.
+- `@JsonIgnore`: Ignora certos campos na serialização JSON para evitar loops e dados desnecessários.
 
-### Regras de Negócio:
-- **CPF único**: Antes de criar ou atualizar um aluno, é verificado se o CPF já existe no banco de dados, garantindo a unicidade.
+**Relacionamentos**:
+- **Endereços** (`@OneToMany`): Um aluno pode ter vários endereços.
+- **Telefones** (`@OneToMany`): Um aluno pode ter vários telefones.
+- **Turmas** (`@ManyToMany`): Um aluno pode estar em várias turmas.
+- **Responsáveis** (`@OneToMany`): Um aluno pode ter vários responsáveis.
+- **Coordenação** (`@ManyToOne`): Relacionamento de coordenação com o aluno.
 
----
+**Regras de Negócio**:
+- O CPF é obrigatório e único.
+- O status do aluno é `true` (ativo) por padrão ao ser cadastrado.
+- O aluno deve ter ao menos um responsável no momento do cadastro.
 
-## `AlunoService.java` (Serviço)
+**Métodos Auxiliares**:
+- `addEndereco(Endereco endereco)`: Relaciona um endereço ao aluno.
+- `addTelefone(Telefone telefone)`: Relaciona um telefone ao aluno.
+- `addTurma(Turma turma)`: Relaciona uma turma ao aluno.
+- `addResponsavel(Responsavel responsavel)`: Relaciona um responsável ao aluno.
 
-### Descrição:
-A classe `AlunoService` contém a lógica de **negócio** relacionada ao aluno. Ela intermedia a comunicação entre o `AlunoRepository` e o `AlunoController`, aplicando as regras de negócio antes de persistir ou retornar dados.
-
-### Anotações:
-- `@Service`: Define que a classe é um serviço do Spring, gerenciada pelo framework e contendo a lógica de negócio.
-
-### Métodos:
-
-#### `getAllAlunos()`
-- Retorna uma lista de todos os alunos cadastrados no banco de dados.
-- Validações:
-  - Nenhuma validação adicional, retorna todos os registros de alunos.
-
-#### `getAlunoById(Long idAluno)`
-- Busca um aluno por seu ID e retorna suas informações detalhadas.
-- Validações:
-  - Verifica se o aluno existe. Caso contrário, lança uma exceção.
-
-#### `saveAluno(AlunoResumidoDTO2 alunoResumidoDTO)`
-- Persiste um novo aluno no banco de dados.
-- Regras de Negócio:
-  - O **CPF** do aluno deve ser único.
-  - O aluno deve ser criado com um status **true** automaticamente, indicando que ele está ativo.
-  - O aluno precisa de **ao menos um responsável** para ser cadastrado.
-  
-#### `updateAluno(Long idAluno, AlunoResumidoDTO2 alunoResumidoDTO)`
-- Atualiza um aluno existente no banco.
-- Regras de Negócio:
-  - O CPF não pode ser duplicado.
-  - O ID e o CPF precisam ser consistentes com os registros existentes.
-  - O aluno deve continuar com pelo menos um responsável.
-
-#### `deleteAluno(Long idAluno)`
-- Remove um aluno do banco pelo ID.
-- Regras de Negócio:
-  - Verifica se o aluno não possui vínculos obrigatórios, como presenças ou registros em turmas, que podem impedir a exclusão.
-
-### Regras de Negócio:
-
-#### Cadastro de Alunos (Mínimo e Máximo):
-- **Mínimo**:
-  - O aluno deve ter um **CPF único** e ao menos um **responsável**.
-  - O aluno deve ser criado com um **status ativo** (true) automaticamente.
-  
-- **Máximo**:
-  - O aluno pode ter múltiplos **endereços** e **telefones**.
-  - O aluno pode estar vinculado a várias **turmas**.
-
-#### Atualização:
-- O CPF deve ser único e inalterado após o cadastro inicial.
-
-#### Exclusão:
-- Um aluno só pode ser excluído se não houver dependências bloqueantes, como vínculos obrigatórios.
 
 ---
 
-## `AlunoDTO.java` (DTO)
 
-### Descrição:
-Essa classe é o **Data Transfer Object (DTO)** que representa os dados completos de um aluno. Ela é usada para enviar/receber dados entre a aplicação e os clientes via API.
+### AlunoRepository.java (Repositório)
 
-### Atributos:
-- Contém todos os dados do aluno, incluindo listas de endereços, telefones, turmas e responsáveis.
-- É o DTO principal para as operações de **leitura** de dados detalhados sobre o aluno.
 
----
+Interface que gerencia a persistência dos dados do aluno. Estende `JpaRepository`, o que permite realizar operações CRUD e consultas adicionais no banco de dados sem a necessidade de implementar manualmente as queries.
 
-## `AlunoResumidoDTO.java` (DTO)
+**Métodos**:
+- `findAll()`: Retorna todos os alunos.
+- `findById(Long id)`: Busca um aluno pelo ID.
+- `existsByCpf(String cpf)`: Verifica se um aluno com determinado CPF já existe no banco.
 
-### Descrição:
-Esse DTO contém dados resumidos do aluno e é utilizado principalmente para **criação** ou **atualização** de registros, oferecendo apenas os dados necessários.
-
-### Atributos:
-- Contém informações básicas como nome, CPF, data de nascimento, além de listas simplificadas de endereços, telefones, etc.
+**Regras de Negócio**:
+- **CPF único**: Garante que não seja possível cadastrar dois alunos com o mesmo CPF.
 
 ---
 
-## `AlunoResumidoDTO2.java` (DTO)
+### AlunoService.java (Serviço)
 
-### Descrição:
-Um segundo tipo de **DTO resumido** que pode ser utilizado para operações de criação e atualização, similar ao `AlunoResumidoDTO`, mas com pequenas variações de atributos dependendo do contexto de uso.
+A classe AlunoService contém a lógica de negócios relacionada ao aluno, sendo responsável pela interação com o `AlunoRepository`, aplicação das regras de negócio e validações, além de fornecer os dados ao controlador.
+
+**Métodos**:
+- `getAllAlunos()`: Retorna todos os alunos cadastrados.
+- `getAlunoById(Long idAluno)`: Retorna um aluno específico pelo ID. Se o aluno não for encontrado, lança uma `EntityNotFoundException`.
+- `saveAluno(AlunoResumidoDTO2 alunoResumidoDTO)`: Persiste um novo aluno no banco.
+
+**Regras de Negócio**:
+- O CPF deve ser único.
+- O aluno deve ser criado com status ativo (`true`).
+- Pelo menos um responsável é necessário.
+
+- `updateAluno(Long idAluno, AlunoResumidoDTO2 alunoResumidoDTO)`: Atualiza um aluno existente, mantendo a unicidade do CPF e as regras relacionadas a responsáveis.
+- `deleteAluno(Long idAluno)`: Remove um aluno pelo ID. Verifica dependências como presença ou matrícula em turmas antes de permitir a exclusão.
 
 ---
 
-## `AlunoReduzidoDTO.java` (DTO)
-
-### Descrição:
-Esse DTO é usado para representar um aluno de forma mais resumida, evitando o carregamento de dados complexos ou detalhados em cenários onde esses dados não são necessários.
-
-### Atributos:
-- Inclui apenas os campos essenciais, como nome, CPF, e status.
-- Usado principalmente para exibições mais simples ou listas de alunos onde não se exige detalhamento.
+### AlunoDTO.java (DTO)
+ 
+DTO utilizado para transferir os dados completos do aluno entre a aplicação e o cliente via API. Contém todos os atributos do aluno, incluindo relacionamentos com endereços, telefones, turmas e responsáveis.
 
 ---
 
-## `AlunoController.java` (Controlador)
+### AlunoResumidoDTO.java (DTO)
 
-### Descrição:
-A classe `AlunoController` expõe os endpoints REST para operações relacionadas ao aluno. Ela usa o **Spring Framework** para facilitar o gerenciamento de requisições HTTP e interage com o `AlunoService`.
+Esse DTO contém apenas as informações básicas do aluno, utilizado principalmente para operações de criação e atualização, evitando o tráfego de dados desnecessários.
 
-### Anotações:
-- `@RestController`: Indica que a classe é um controlador REST, permitindo retornar dados JSON.
-- `@RequestMapping("/alunos")`: Define que todas as rotas desse controlador começam com `/alunos`.
-- `@Tag(name = "Aluno", description = "Operações relacionadas a Alunos")`: Anotação para a documentação Swagger, que agrupa as operações desse controlador.
+---
 
-### Rotas (Endpoints):
+### AlunoResumidoDTO2.java (DTO)
+ 
+Um DTO similar ao AlunoResumidoDTO, utilizado em diferentes contextos de criação ou atualização de aluno, com pequenas variações nos atributos.
+
+---
+
+### AlunoReduzidoDTO.java (DTO)
+
+Esse DTO é utilizado para representar um aluno de maneira mais simples, com apenas os atributos essenciais como nome, CPF e status. Usado em listas ou exibições onde dados detalhados não são necessários.
+
+---
+
+### AlunoController.java (Controlador)
+
+O `AlunoController` expõe os endpoints REST para as operações de CRUD relacionadas ao aluno. Ele interage com o `AlunoService` para realizar operações e aplicar as regras de negócio.
+
+**Endpoints**:
 
 #### GET
-
-- **GET `/alunos`**: Lista todos os alunos.
-- **GET `/alunos/{id}`**: Busca um aluno pelo ID.
-- **GET `/alunos/{idAluno}/conceitos`**: Lista todos os conceitos de um aluno.
-- **GET `/alunos/{idAluno}/conceitos/disciplina/{idDisciplina}`**: Busca os conceitos de um aluno para uma disciplina específica.
+- `/alunos`: Retorna a lista de todos os alunos.
+- `/alunos/{id}`: Retorna os detalhes de um aluno específico.
+- `/alunos/{idAluno}/conceitos`: Retorna os conceitos de um aluno.
 
 #### POST
+- `/alunos`: Cria um novo aluno.
 
-- **POST `/alunos`**: Cria um novo aluno com base nos dados fornecidos.
-  - Regras de Negócio:
-    - O CPF deve ser único.
-    - O aluno deve ser criado com status `true` automaticamente.
+**Validações**:
+- CPF deve ser único.
+- O aluno deve ser cadastrado como ativo.
 
 #### PUT
-
-- **PUT `/alunos/{id}`**: Atualiza as informações de um aluno existente.
-  - Regras de Negócio:
-    - O CPF não pode ser duplicado.
-    - O aluno deve ter ao menos um responsável.
+- `/alunos/{id}`: Atualiza os dados de um aluno existente.
 
 #### DELETE
-
-- **DELETE `/alunos/{id}`**: Remove um aluno pelo ID.
-  - Regras de Negócio:
-    - O aluno só pode ser deletado se não houver vínculos obrigatórios, como presença ou turmas ativas.
+- `/alunos/{id}`: Remove um aluno pelo ID, verificando se não existem dependências bloqueantes.
 
 ---
 
 ## Conclusão
 
-O package `aluno` é central para o gerenciamento de alunos no sistema, abrangendo desde a camada de persistência de dados até a exposição de APIs REST. As classes estão estruturadas de maneira modular, separando claramente a lógica de negócio (via `AlunoService`), a comunicação com o banco de dados (via `AlunoRepository`) e a definição de rotas REST (via `AlunoController`).
-
-Os **DTOs** desempenham um papel importante na separação de responsabilidades, garantindo que apenas os dados necessários sejam trafegados nas requisições e respostas. O status do aluno, ao ser cadastrado, é definido automaticamente como `true` (ativo).
+O package `aluno` é uma parte fundamental do sistema, gerenciando o ciclo de vida dos alunos, desde o cadastro até a exclusão. As camadas de entidade, repositório, serviço e controlador estão bem definidas, garantindo que a lógica de negócio, persistência e exposição de APIs estejam separadas e organizadas de forma modular. O uso de DTOs permite trafegar apenas os dados necessários, mantendo a segurança e performance do sistema.
 
 
+--- 
 
-# Documentação Técnica - Package `comunicado`
 
-O package `comunicado` é responsável pelo gerenciamento das operações e dados relacionados aos **comunicados** no sistema. O package inclui as classes de entidade, repositório, serviço, DTOs e o controlador. Abaixo está a explicação técnica de cada arquivo presente no package, seguindo a ordem **Entidade > Repositório > Serviço > DTOs > Controlador**.
+# Package comunicado
 
----
+O package comunicado é responsável pelo gerenciamento das entidades e operações relacionadas aos comunicados no sistema. Este pacote lida com o envio de comunicados, persistência de dados, regras de negócio específicas para professores e coordenadores, além da exposição de APIs REST. Abaixo está a explicação técnica de cada arquivo presente no package, seguindo a ordem Entidade > Repositório > Serviço > DTOs > Controlador.
 
-## `Comunicado.java` (Entidade)
+### Comunicado.java (Entidade)
+  
+A classe Comunicado representa a entidade comunicado, que é enviada para alunos ou turmas por coordenadores ou professores. Cada comunicado contém informações como conteúdo, remetente e data de envio.
 
-### Descrição:
-A classe `Comunicado` é a **entidade** que representa um comunicado no sistema. Um comunicado pode ser enviado por um professor ou coordenador e pode ser destinado a vários alunos e turmas. Os dados incluem o conteúdo, data de envio, remetente e destinatários.
+**Anotações**:
+- `@Entity`: Define a classe como uma entidade JPA.
+- `@Table(name = "comunicado")`: Define o nome da tabela como comunicado.
+- `@Id`: Define o campo id como chave primária.
+- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Gera automaticamente o valor do ID com a estratégia IDENTITY.
+- `@ManyToOne`: Indica o relacionamento entre o comunicado e o remetente (professor ou coordenador).
 
-### Anotações:
-- `@Entity`: Define que a classe será uma entidade JPA (mapeada para uma tabela no banco de dados).
-- `@Id`: Define o campo `id` como a chave primária.
-- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Gera automaticamente o valor da chave primária.
-- `@Column`: Especifica o nome da coluna no banco de dados e define que alguns campos não podem ser nulos (`nullable = false`).
-- `@ManyToOne`: Define o relacionamento de muitos para um entre a entidade `Comunicado` e o remetente (professor ou coordenador).
-- `@ElementCollection`: Define coleções de elementos simples como listas de IDs, representando os destinatários (alunos e turmas) do comunicado.
+**Relacionamentos**:
+- **Remetente (Professor ou Coordenador)** (`@ManyToOne`): Define que um comunicado pode ser enviado por um professor ou coordenador.
+- **Turma** (`@ManyToOne`): Um comunicado pode ser destinado a uma turma específica.
 
-### Atributos:
-- **`id`** (`Long`): Chave primária, gerada automaticamente.
-- **`conteudo`** (`String`): Conteúdo textual do comunicado.
-- **`dataEnvio`** (`LocalDateTime`): Data e hora em que o comunicado foi enviado.
-- **`remetenteProfessor`** (`Professor`): Professor que enviou o comunicado (opcional).
-- **`remetenteCoordenacao`** (`Coordenacao`): Coordenação que enviou o comunicado (opcional).
-- **`receptorAlunos`** (`List<Long>`): Lista de IDs dos alunos que receberam o comunicado.
-- **`receptorTurmas`** (`List<Long>`): Lista de IDs das turmas que receberam o comunicado.
-
-### Relacionamentos:
-- **Professor** (`ManyToOne`): Um professor pode enviar vários comunicados, mas um comunicado só pode ter um remetente professor.
-- **Coordenação** (`ManyToOne`): Uma coordenação pode enviar vários comunicados, mas um comunicado só pode ter uma coordenação como remetente.
-- **Alunos e Turmas** (`ElementCollection`): Um comunicado pode ser enviado para vários alunos e turmas.
+**Regras de Negócio**:
+- O conteúdo do comunicado é obrigatório.
+- O remetente deve ser um professor ou coordenador ativo no sistema.
+- A data de envio é automaticamente definida no momento da criação do comunicado.
 
 ---
 
-## `ComunicadoRepository.java` (Repositório)
+### ComunicadoRepository.java (Repositório)
+  
+Interface que gerencia a persistência de comunicados. Herda de `JpaRepository`, permitindo operações CRUD e consultas personalizadas relacionadas a comunicados.
 
-### Descrição:
-A interface `ComunicadoRepository` é responsável pela camada de persistência dos comunicados no banco de dados. Ela estende o `JpaRepository` do Spring Data JPA, fornecendo métodos prontos para operações CRUD (Create, Read, Update, Delete).
+**Métodos**:
+- `findAll()`: Retorna todos os comunicados.
+- `findByRemetenteProfessor_Cpf(String cpf)`: Busca comunicados enviados por um professor específico, utilizando o CPF como parâmetro.
+- `findByTurma_Id(Long id)`: Retorna todos os comunicados destinados a uma turma específica.
 
-### Métodos Principais:
-- **`findByRemetenteProfessor_Cpf(String cpf)`**: Retorna todos os comunicados enviados por um professor específico, identificado pelo CPF.
-- **`findByReceptorAlunosContaining(Long alunoId)`**: Retorna todos os comunicados que tenham um determinado aluno como destinatário.
-- **`findByReceptorTurmasContaining(Long turmaId)`**: Retorna todos os comunicados que tenham uma determinada turma como destinatária.
-
----
-
-## `ComunicadoService.java` (Serviço)
-
-### Descrição:
-A classe `ComunicadoService` contém a lógica de negócio associada aos comunicados. Ela é responsável por validar as operações e chamar os métodos do repositório para manipular os dados no banco.
-
-### Métodos
-
-#### Criação de Comunicados
-- **`criarComunicadoPorCoordenador(Long coordenacaoId, String coordenadorId, ComunicadoDTO comunicadoDTO)`**: Cria um comunicado emitido por um coordenador. Valida se o coordenador está vinculado à coordenação.
-- **`criarComunicadoPorProfessor(String professorId, ComunicadoDTO comunicadoDTO)`**: Cria um comunicado emitido por um professor. Valida o professor pelo CPF.
-- **`criarComunicadoParaTodos(Long coordenacaoId, String coordenadorId, ComunicadoDTO comunicadoDTO)`**: Cria um comunicado destinado a todos os alunos e turmas do sistema.
-
-#### Atualização de Comunicados
-- **`atualizarComunicadoPorCoordenador(Long coordenacaoId, String coordenadorId, Long comunicadoId, ComunicadoDTO comunicadoDTO)`**: Atualiza um comunicado enviado por um coordenador.
-- **`atualizarComunicadoPorProfessor(String professorId, Long comunicadoId, ComunicadoDTO comunicadoDTO)`**: Atualiza um comunicado enviado por um professor.
-
-#### Remoção de Comunicados
-- **`deletarComunicadoPorCoordenador(Long coordenacaoId, String coordenadorId, Long comunicadoId)`**: Remove um comunicado enviado por um coordenador.
-- **`deletarComunicadoPorProfessor(String professorId, Long comunicadoId)`**: Remove um comunicado enviado por um professor.
-
-#### Listagem de Comunicados
-- **`listarComunicadosPorCoordenador(Long coordenadorId)`**: Lista todos os comunicados enviados por um coordenador.
-- **`listarComunicadosPorProfessor(String professorId)`**: Lista todos os comunicados enviados por um professor.
-- **`listarComunicadosPorAluno(Long alunoId)`**: Lista todos os comunicados que foram enviados para um aluno específico.
-- **`listarComunicadosPorTurma(Long turmaId)`**: Lista todos os comunicados que foram enviados para uma turma específica.
-- **`listarComunicadosParaAlunos()`**: Lista todos os comunicados que tenham alunos como destinatários.
-- **`listarComunicadosParaTurmas()`**: Lista todos os comunicados que tenham turmas como destinatárias.
+**Regras de Negócio**:
+- Comunicados podem ser filtrados por remetente (professor ou coordenador) ou turma específica.
 
 ---
 
-## `ComunicadoDTO.java` (DTO)
+### ComunicadoService.java (Serviço)
+  
+O ComunicadoService é responsável por implementar a lógica de negócios referente aos comunicados. Ele interage com o `ComunicadoRepository` para manipular os dados e aplica as validações necessárias antes de persistir ou buscar dados.
 
-### Descrição:
-A classe `ComunicadoDTO` é um **Data Transfer Object (DTO)** utilizado para transferir dados de um comunicado entre o frontend e o backend. Ele contém os dados necessários para criar ou atualizar um comunicado.
+**Métodos**:
+- `getAllComunicados()`: Retorna todos os comunicados cadastrados no sistema.
+- `getComunicadosPorProfessor(String cpfProfessor)`: Busca comunicados enviados por um professor, utilizando o CPF do professor como filtro.
 
-### Atributos:
-- **`conteudo`** (`String`): O conteúdo textual do comunicado.
-- **`dataEnvio`** (`LocalDateTime`): A data de envio do comunicado.
-- **`alunoIds`** (`List<Long>`): Lista de IDs de alunos destinatários do comunicado.
-- **`turmaIds`** (`List<Long>`): Lista de IDs de turmas destinatárias do comunicado.
+**Regras de Negócio**:
+- Verifica se o professor está ativo no sistema.
 
----
+- `getComunicadosPorTurma(Long idTurma)`: Retorna todos os comunicados de uma turma específica.
+- `criarComunicadoPorCoordenador(Long idCoordenador, ComunicadoDTO comunicadoDTO)`: Permite que um coordenador crie e envie um comunicado para uma turma.
 
-## `ComunicadoSimplesDTO.java` e `ComunicadoDetalhadoDTO.java` (DTOs)
+**Regras de Negócio**:
+- O coordenador deve estar vinculado a uma coordenação ativa.
+- O conteúdo do comunicado é obrigatório.
 
-### Descrição:
-- **`ComunicadoSimplesDTO`**: Um DTO básico que contém apenas as informações mais importantes do comunicado, como ID, conteúdo e data de envio.
-- **`ComunicadoDetalhadoDTO`**: Um DTO mais detalhado que inclui informações sobre o remetente, os destinatários (alunos e turmas), e outros detalhes.
+- `criarComunicadoPorProfessor(Long idProfessor, ComunicadoDTO comunicadoDTO)`: Permite que um professor envie comunicados.
 
-### Atributos (ComunicadoSimplesDTO):
-- **`id`** (`Long`): ID do comunicado.
-- **`conteudo`** (`String`): O conteúdo textual do comunicado.
-- **`dataEnvio`** (`LocalDateTime`): Data e hora de envio do comunicado.
-
-### Atributos (ComunicadoDetalhadoDTO):
-- **`id`** (`Long`): ID do comunicado.
-- **`conteudo`** (`String`): O conteúdo textual do comunicado.
-- **`dataEnvio`** (`LocalDateTime`): Data e hora de envio do comunicado.
-- **`remetenteProfessor`** (`ProfessorResumidoDTO`): Informações resumidas sobre o professor remetente (se aplicável).
-- **`remetenteCoordenacao`** (`CoordenacaoResumidaDTO`): Informações resumidas sobre a coordenação remetente (se aplicável).
-- **`alunos`** (`List<AlunoResumidoDTO>`): Lista de alunos destinatários.
-- **`turmas`** (`List<TurmaResumidaDTO>`): Lista de turmas destinatárias.
+**Regras de Negócio**:
+- O professor deve estar ativo e associado à turma.
+- O conteúdo do comunicado é obrigatório.
+- O remetente deve ser válido e ativo no sistema.
+- O comunicado pode ser destinado a uma turma específica ou a um grupo de alunos.
 
 ---
 
-## `ComunicadoController.java` (Controlador)
+### ComunicadoDTO.java (DTO)
+  
+O ComunicadoDTO é utilizado para transferir os dados relacionados ao comunicado entre o cliente e o sistema. Ele contém os dados essenciais do comunicado, como conteúdo, data de envio e destinatário (turma ou aluno).
 
-### Descrição:
-A classe `ComunicadoController` expõe as rotas REST que permitem a criação, atualização, remoção e listagem de comunicados. Ela utiliza os serviços fornecidos pela classe `ComunicadoService` e é responsável por responder às requisições HTTP.
+**Atributos**:
+- **Conteúdo**: Texto do comunicado.
+- **Data de Envio**: Data em que o comunicado foi criado.
+- **Remetente**: Dados do professor ou coordenador que enviou o comunicado.
+- **Destinatário**: Dados da turma ou aluno que recebeu o comunicado.
 
-### Anotações:
-- `@RestController`: Indica que a classe é um controlador REST.
-- `@RequestMapping("/comunicados")`: Define que todas as rotas dentro dessa classe começam com `/comunicados`.
-- `@Tag(name = "Comunicados", description = "Operações relacionadas aos comunicados")`: Anotação utilizada para documentação Swagger, agrupando todas as rotas sob a tag "Comunicados".
+**Validações**:
+- O campo conteúdo é obrigatório e deve ter um tamanho mínimo definido.
+
+---
+
+### ComunicadoController.java (Controlador)
+
+A classe ComunicadoController expõe os endpoints REST para operações relacionadas ao envio, listagem, atualização e exclusão de comunicados no sistema. O controlador interage com o `ComunicadoService` para aplicar as regras de negócio e persistir os dados de comunicados no banco.
+
+**Anotações**:
+- `@RestController`: Define a classe como um controlador REST, que processa e responde as requisições HTTP no formato JSON.
+- `@RequestMapping("/comunicados")`: Define a rota base para todas as operações relacionadas aos comunicados.
+- `@Tag(name = "Comunicados", description = "Operações relacionadas aos comunicados")`: Agrupa as operações relacionadas aos comunicados para fins de documentação via Swagger.
 
 ### Rotas (Endpoints):
 
 #### POST
-- **POST `/coordenacao/{coordenacaoId}/coordenador/{coordenadorId}`**: Cria um comunicado enviado por um coordenador.
-- **POST `/professor/{professorId}`**: Cria um comunicado enviado por um professor.
-- **POST `/coordenacao/{coordenacaoId}/coordenador/{coordenadorId}/todos`**: Cria um comunicado enviado para todos os alunos e turmas.
+- `/coordenacao/{coordenacaoId}/coordenador/{coordenadorId}`: Cria um comunicado emitido por um coordenador para alunos ou turmas específicos.
+
+**Validações**:
+- O coordenador deve estar vinculado a uma coordenação ativa.
+- O conteúdo do comunicado é obrigatório.
+
+- `/coordenacao/{coordenacaoId}/coordenador/{coordenadorId}/todos`: Cria um comunicado enviado para todos os alunos e todas as turmas.
+
+**Validações**:
+- O coordenador deve estar ativo.
+- O conteúdo do comunicado é obrigatório.
+
+- `/professor/{professorId}`: Cria um comunicado emitido por um professor.
+
+**Validações**:
+- O professor deve estar ativo no sistema.
 
 #### PUT
-- **PUT `/coordenacao/{coordenacaoId}/coordenador/{coordenadorId}/{comunicadoId}`**: Atualiza um comunicado enviado por um coordenador.
-- **PUT `/professor/{professorId}/{comunicadoId}`**: Atualiza um comunicado enviado por um professor.
+- `/coordenacao/{coordenacaoId}/coordenador/{coordenadorId}/{comunicadoId}`: Atualiza um comunicado enviado por um coordenador.
+
+**Validações**:
+- O coordenador deve estar ativo.
+- O comunicado deve existir no banco de dados.
+
+- `/professor/{professorId}/{comunicadoId}`: Atualiza um comunicado enviado por um professor.
+
+**Validações**:
+- O professor deve estar ativo.
+- O comunicado deve existir no banco de dados.
 
 #### DELETE
-- **DELETE `/coordenacao/{coordenacaoId}/coordenador/{coordenadorId}/{comunicadoId}`**: Remove um comunicado enviado por um coordenador.
-- **DELETE `/professor/{professorId}/{comunicadoId}`**: Remove um comunicado enviado por um professor.
+- `/coordenacao/{coordenacaoId}/coordenador/{coordenadorId}/{comunicadoId}`: Remove um comunicado emitido por um coordenador.
+
+**Validações**:
+- O coordenador deve estar ativo.
+- O comunicado deve existir no banco de dados.
+
+- `/professor/{professorId}/{comunicadoId}`: Remove um comunicado emitido por um professor.
+
+**Validações**:
+- O professor deve estar ativo.
+- O comunicado deve existir no banco de dados.
 
 #### GET
-- **`/`**: Lista todos os comunicados.
-- **`/alunos`**: Lista todos os comunicados enviados para alunos.
-- **`/aluno/{alunoId}`**: Lista comunicados enviados para um aluno específico.
-- **`/turmas`**: Lista todos os comunicados enviados para turmas.
-- **`/turma/{turmaId}`**: Busca comunicados enviados para uma turma específica.
-- **`/coordenador/{coordenadorId}`**: Lista todos os comunicados enviados por um coordenador.
-- **`/professor/{professorId}`**: Lista todos os comunicados enviados por um professor.
+- `/comunicados`: Lista todos os comunicados do sistema.
+- `/alunos`: Lista todos os comunicados enviados para alunos.
+- `/aluno/{alunoId}`: Busca todos os comunicados enviados para um aluno específico.
+- `/turmas`: Lista todos os comunicados enviados para turmas.
+- `/turma/{turmaId}`: Busca todos os comunicados enviados para uma turma específica.
+- `/coordenador/{coordenadorId}`: Lista todos os comunicados enviados por um coordenador específico.
+- `/professor/{professorId}`: Lista todos os comunicados enviados por um professor específico.
+
+### Tratamento de Erros:
+
+- **400 Bad Request**: Utilizado para erros de validação ou falhas ao processar a requisição.
+- **404 Not Found**: Utilizado quando o comunicado, coordenador, ou professor não é encontrado no banco de dados.
+- **409 Conflict**: Pode ser utilizado em casos de conflitos, como a tentativa de criação de um comunicado com dados inválidos ou duplicados.
 
 ---
 
 ## Conclusão
 
-O package `comunicado` é responsável pelo gerenciamento completo dos comunicados no sistema, permitindo que professores e coordenadores enviem notificações para alunos e turmas. Através de uma estrutura modular, o package engloba desde a camada de persistência com `ComunicadoRepository`, a lógica de negócio com `ComunicadoService`, até a exposição de APIs REST com `ComunicadoController`. A integração dos DTOs simplifica a transferência de dados entre o backend e o frontend, garantindo que apenas as informações necessárias sejam manipuladas. Essa abordagem modular facilita o gerenciamento eficiente e seguro dos comunicados, mantendo a flexibilidade de destinatários (alunos e turmas) e remetentes (professores e coordenadores).
+O package comunicado é essencial para a comunicação entre coordenadores, professores e alunos no sistema. Ele oferece uma estrutura organizada para a criação e envio de comunicados, garantindo que as informações sejam filtradas por turma ou remetente. As camadas de entidade, repositório, serviço e controlador estão bem definidas e permitem a correta manipulação dos dados de forma modular e eficiente. O uso de DTOs garante que apenas os dados necessários sejam trafegados nas requisições, mantendo a performance e a segurança do sistema.
 
-
-
-
-# Documentação Técnica - Package `conceito`
-
-O package `conceito` é responsável pela gestão e cálculo dos **conceitos** (notas) dos alunos em relação às disciplinas em que estão matriculados. Este package lida com a persistência das notas, o cálculo dos conceitos (como Excelente, Ótimo, Bom, etc.), e o status de aprovação dos alunos com base nas suas notas finais. Além disso, ele implementa uma **regra de recuperação** chamada **Nova Oportunidade de Aprendizado (NOA)**, permitindo que alunos melhorem suas notas com avaliações adicionais.
-
-O fluxo de cálculo e as regras de negócio são fundamentais para garantir que os alunos sejam avaliados corretamente, levando em conta tanto as notas ao longo do ano quanto possíveis oportunidades de recuperação.
-
-Abaixo está a explicação detalhada das classes e componentes do package, seguindo a ordem **Entidade > Repositório > Serviço > DTOs > Controlador**, com foco especial nos **serviços** e **regras de negócio**.
 
 ---
 
-## `Conceito.java` (Entidade)
 
-### Descrição:
-A classe `Conceito` armazena todas as **notas** e **conceitos** atribuídos aos alunos para cada disciplina ao longo do ano letivo. Ela registra as notas das quatro unidades, além das notas de recuperação (NOA) e o status de aprovação baseado nas médias calculadas.
+# Package conceito
 
-### Anotações:
-- `@Entity`: Define que esta classe será uma entidade JPA, persistida em uma tabela do banco de dados.
-- `@Table(name = "conceito")`: Especifica que os dados dessa classe serão armazenados na tabela `conceito`.
-- `@Id`: Define o campo `id_conceito` como a chave primária.
-- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Define que o campo será auto-gerado pela estratégia `IDENTITY`.
+O package conceito é responsável por gerenciar os conceitos e notas dos alunos no sistema. Ele lida com o armazenamento, cálculo e consulta de conceitos por disciplina, além de permitir a visualização das médias dos alunos. O pacote expõe APIs REST que possibilitam a interação com esses dados e é composto pelas camadas de entidade, repositório, serviço e controlador.
 
-### Relacionamentos:
-- **Aluno** (`ManyToOne`): Um conceito é atribuído a um único aluno.
-- **TurmaDisciplinaProfessor** (`ManyToOne`): O conceito está associado a uma combinação específica de **turma**, **disciplina**, e **professor**.
+### Conceito.java (Entidade)
 
-### Campos:
-- **Notas e Conceitos**:
-  - `notaUnidade1`, `notaUnidade2`, `notaUnidade3`, `notaUnidade4`: Representam as notas numéricas das quatro unidades.
-  - `noa1`, `noa2`, `noaFinal`: Notas de recuperação (NOA), dadas quando o aluno tem oportunidade de melhorar suas notas.
-  - `conceitoNota1`, `conceitoNota2`, etc.: Conceitos descritivos baseados nas notas numéricas, como "Excelente", "Ótimo", "Bom".
-  - `mediaFinal`: Média das notas após o cálculo das quatro unidades e aplicação das regras de recuperação.
-  - `aprovado`: Status de aprovação, definido com base na média final (média >= 7 significa aprovação).
+A classe Conceito representa a entidade conceito, que armazena as notas dos alunos associadas às disciplinas e turmas. Ela reflete a avaliação acadêmica dos alunos em uma determinada disciplina.
 
----
+**Anotações**:
+- `@Entity`: Define a classe como uma entidade JPA.
+- `@Table(name = "conceito")`: Define o nome da tabela como conceito.
+- `@Id`: Define o campo id como chave primária.
+- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Gera automaticamente o ID do conceito.
+- `@ManyToOne`: Relacionamento entre conceitos, alunos e disciplinas.
 
-## `ConceitoRepository.java` (Repositório)
+**Relacionamentos**:
+- **Aluno** (`@ManyToOne`): Cada conceito está relacionado a um aluno específico.
+- **Disciplina** (`@ManyToOne`): O conceito está vinculado a uma disciplina, representando a nota do aluno nessa disciplina.
 
-### Descrição:
-O repositório `ConceitoRepository` é responsável por interagir diretamente com o banco de dados para **persistência** e **consulta** dos conceitos. Ele estende o `JpaRepository`, o que permite realizar operações de CRUD (Create, Read, Update, Delete) facilmente.
+**Atributos Principais**:
+- **Nota**: Armazena a nota obtida pelo aluno em uma disciplina.
+- **Média**: Pode ser calculada com base em várias notas, como avaliações parciais.
+- **Conceito**: Um conceito descritivo (por exemplo, Excelente, Bom, Regular) gerado a partir da média.
 
-### Métodos Principais:
-- `findById(Long id)`: Busca um conceito específico pelo seu ID.
-- `findByAluno_Id(Long idAluno)`: Busca todos os conceitos de um aluno específico.
-- `findByAluno_IdAndTurmaDisciplinaProfessor_Disciplina_Id(Long idAluno, Long idDisciplina)`: Busca os conceitos de um aluno para uma disciplina específica.
-- `findByTurmaDisciplinaProfessor_Id(TurmaDisciplinaProfessorId id)`: Retorna todos os conceitos de uma turma específica em uma disciplina.
+**Regras de Negócio**:
+- A nota deve ser um valor numérico válido.
+- Cada conceito deve estar vinculado a um aluno e a uma disciplina.
+- O conceito descritivo é gerado automaticamente com base na média.
 
 ---
 
-## `ConceitoService.java` (Serviço)
+### ConceitoRepository.java (Repositório)
+  
+O ConceitoRepository é responsável por realizar as operações de persistência e consulta dos conceitos no banco de dados. Ele estende `JpaRepository`, o que permite realizar operações CRUD e consultas personalizadas para buscar conceitos de alunos e disciplinas.
 
-### Descrição:
-A classe `ConceitoService` contém a **lógica de negócio** para gerenciar as operações dos conceitos dos alunos. Essa camada de serviço realiza operações de cálculo de notas, gerenciamento de recuperações (NOA), e garante a correta persistência dos dados de acordo com as regras de negócio.
+**Métodos**:
+- `findAll()`: Retorna todos os conceitos cadastrados.
+- `findByAluno_IdAndDisciplina_Id(Long alunoId, Long disciplinaId)`: Busca o conceito de um aluno em uma disciplina específica.
+- `findByAluno_Id(Long alunoId)`: Retorna todos os conceitos de um aluno.
 
-### Métodos e Regras de Negócio:
-
-#### 1. **`salvarConceito(ConceitoResumidoDTO conceitoResumidoDTO)`**
-- Este método salva um novo conceito no banco de dados. Ele vincula o conceito a um aluno e a uma combinação de turma, disciplina e professor.
-- **Regras de Negócio**:
-  - O conceito é criado com as notas fornecidas para as quatro unidades.
-  - A recuperação pode ser aplicada automaticamente ao salvar o conceito, recalculando as menores notas com base nos NOAs (caso estejam disponíveis).
-  - O conceito final é gerado com base nas notas numéricas.
-
-#### 2. **`atualizarConceito(Long id, ConceitoResumidoDTO conceitoResumidoDTO)`**
-- Atualiza um conceito existente no banco de dados. As notas fornecidas são atualizadas e o sistema recalcula a média e o status de aprovação.
-- **Regras de Negócio**:
-  - Após a atualização das notas, os conceitos descritivos (como "Excelente", "Ótimo", etc.) são recalculados.
-  - Caso o aluno tenha notas de recuperação, as regras de substituição de notas (descritas abaixo) são aplicadas novamente.
-
-#### 3. **`deletarConceito(Long id)`**
-- Remove um conceito existente.
-- **Regras de Negócio**:
-  - A exclusão é permitida apenas se o conceito estiver devidamente referenciado e não impactar outras relações no sistema.
+**Regras de Negócio**:
+- Cada conceito deve ser único por aluno e disciplina.
+- Consultas podem ser realizadas filtrando por aluno, disciplina ou turma.
 
 ---
 
-### **Cálculo de Conceitos e Regras de Negócio**
+### ConceitoService.java (Serviço)
+ 
+A classe ConceitoService é responsável por gerenciar toda a lógica de negócios referente ao conceito dos alunos. Ela lida com o cálculo de notas e conceitos, a atribuição de status de aprovação ou reprovação, além de realizar operações de CRUD relacionadas aos conceitos.
 
-#### 1. **Cálculo de Conceitos Descritivos**:
-O sistema converte notas numéricas em **conceitos descritivos** com base em faixas de valores. Os conceitos são:
-- **Excelente (E)**: Nota >= 9.5
-- **Ótimo (O)**: Nota >= 8.5
-- **Bom (B)**: Nota >= 7.0
-- **Ainda Não Suficiente (ANS)**: Nota >= 5.0
-- **Insuficiente (I)**: Nota < 5.0
+**Anotações**:
+- `@Service`: Define a classe como um serviço do Spring, gerenciada pelo framework e contendo a lógica de negócio.
+- `@Transactional`: Indica que as operações realizadas nos métodos de serviço são tratadas como transações atômicas.
 
-Este cálculo é aplicado para cada uma das quatro unidades, bem como para as notas de recuperação (NOA) e média final.
+**Métodos**:
+- `buscarConceitoPorId(Long id)`: Busca um conceito específico com base no seu ID.
 
-#### 2. **Regras de Recuperação (NOA)**:
-Os alunos têm a possibilidade de melhorar suas notas por meio de **NOA (Nova Oportunidade de Aprendizado)**. As **NOAs** são notas adicionais que podem substituir as menores notas do semestre, com o objetivo de aumentar a média final.
+**Validações**:
+- Verifica se o conceito existe. Caso contrário, lança uma exceção.
 
-**Funcionamento das NOAs**:
-- **NOA1**: Aplica-se às notas da 1ª e 2ª unidades. Se o aluno tirar uma nota de NOA1 superior à sua menor nota entre essas duas unidades, a nota mais baixa é substituída pela NOA1.
-- **NOA2**: Aplica-se às notas da 3ª e 4ª unidades. Mesma lógica de substituição, porém entre as notas da 3ª e 4ª unidades.
-- **NOA Final**: Caso a média final seja inferior a 7 e maior ou igual a 5, e o aluno tenha uma nota de NOA Final, essa nota é usada para recalcular a média final.
+- `salvarConceito(ConceitoResumidoDTO conceitoResumidoDTO)`: Persiste um novo conceito no banco de dados.
 
-**Exemplo**:
-- Se o aluno tirou **5.0** na 1ª unidade e **7.0** na 2ª unidade, e obteve **6.5** na NOA1, o sistema substituirá a nota **5.0** pela **6.5**, aumentando a média final.
+**Regras de Negócio**:
+- O conceito deve estar vinculado a um aluno e a uma disciplina.
+- O conceito deve ser atribuído com base nas notas fornecidas.
+- As notas de recuperação (NOA) podem substituir as menores notas.
 
-#### 3. **Cálculo da Média Final e Aprovação**:
-Após as substituições das notas pelas NOAs, a média final é calculada como a média aritmética das quatro unidades. A regra básica é:
-- **Aprovação**: Média final >= 7.
-- **Recuperação**: Média entre 5 e 6.9, e o aluno deve ter uma nota de recuperação (NOA Final).
+- **Cálculo da Média**: A média é calculada com base nas quatro notas principais e, caso a média seja inferior a 7, as notas de recuperação (NOA) são utilizadas para recalcular a média.
 
-Se, após a aplicação das NOAs, a média final ainda for inferior a 7, o status do aluno será marcado como **reprovado**.
+- `atualizarConceito(Long id, ConceitoResumidoDTO conceitoResumidoDTO)`: Atualiza um conceito existente no banco de dados.
+
+**Regras de Negócio**
+- As notas podem ser atualizadas conforme os dados fornecidos, e a média é recalculada após a atualização.
+- As regras de cálculo de média e utilização de notas de recuperação (NOA) também são aplicadas aqui.
+
+- `deletarConceito(Long id)`: Remove um conceito do banco de dados.
+
+**Regras de Negócio**:
+- Verifica se o conceito existe. Caso contrário, lança uma exceção.
+
+### Cálculo de Notas e Recuperação:
+
+- `calcularConceitos(Conceito conceito)`: Recalcula os conceitos com base nas notas fornecidas para cada unidade.
+
+**Conceitos Descritivos**:
+- Excelente (E): Nota ≥ 9.5
+- Ótimo (O): Nota ≥ 8.5 e < 9.5
+- Bom (B): Nota ≥ 7.0 e < 8.5
+- ANS (Ainda Não Suficiente): Nota ≥ 5.0 e < 7.0
+- Insuficiente (I): Nota < 5.0
+
+- `calcularMediaEStatus(Conceito conceito)`: Calcula a média das notas principais e substitui as menores notas pelas notas de recuperação (NOA), se aplicável.
+
+**Cálculo da Média**:
+- A média é a soma das notas das quatro unidades, dividida por 4.
+- Se a média for inferior a 7, mas maior ou igual a 5, e o aluno tiver notas de recuperação (NOA), a média é recalculada considerando a NOA.
+- Se a média final for ≥ 7, o aluno é considerado aprovado; caso contrário, o aluno está reprovado.
+
+**Regras de Negócio**:
+- As menores notas podem ser substituídas por notas de recuperação (NOA), garantindo que o aluno tenha chance de recuperação.
+- O conceito final do aluno é calculado com base na média das notas, utilizando a fórmula e as classificações descritas acima.
 
 ---
 
-## **Exemplo Completo de Cálculo**:
-1. **Notas originais**:
-   - 1ª unidade: 5.0
-   - 2ª unidade: 7.0
-   - 3ª unidade: 6.0
-   - 4ª unidade: 8.0
+### ConceitoController.java (Controlador)
 
-2. **Aplicação de NOAs**:
-   - NOA1: 6.5 (substitui a nota de 5.0 da 1ª unidade)
-   - NOA2: Não aplicado (pois as notas da 3ª e 4ª unidades são adequadas).
+O ConceitoController expõe os endpoints REST para gerenciar os conceitos dos alunos. Ele lida com operações de busca, criação, atualização e exclusão de conceitos. O controlador garante que as regras de negócio sejam aplicadas corretamente e utiliza o ConceitoService para realizar essas operações.
 
-3. **Média Final**:
-   - Média final = (6.5 + 7.0 + 6.0 + 8.0) / 4 = **6.875** (Aluno aprovado, caso tenha NOA Final para recalcular a média).
+**Anotações**:
+- `@RestController`: Define a classe como um controlador REST.
+- `@RequestMapping("/conceitos")`: Define a rota base para todas as operações relacionadas aos conceitos.
+- `@Tag(name = "Conceitos", description = "Operações relacionadas aos conceitos dos alunos")`: Agrupa as operações relacionadas aos conceitos na documentação do Swagger.
 
-4. **Conceito Final**:
-   - Com base na média de 6.875, o conceito final seria: **Bom (B)**.
+### Rotas (Endpoints):
 
----
+#### GET
+- `/conceitos/{id}`: Busca um conceito específico pelo ID.
 
-## DTOs (Data Transfer Objects)
+**Validações**:
+- Verifica se o conceito existe. Caso contrário, retorna 404 Not Found.
 
-# ConceitoResumidoDTO.java (DTO)
+#### POST
+- `/conceitos`: Cria um novo conceito no sistema.
 
-## Descrição:
-O `ConceitoResumidoDTO` é um DTO usado para **criação** e **atualização** de conceitos. Ele contém apenas os dados essenciais necessários para realizar essas operações, sem incluir informações mais detalhadas ou relacionamentos complexos.
+**Validações**:
+- O conceito deve estar vinculado a um aluno e a uma disciplina.
+- As notas fornecidas devem ser válidas e seguir as regras de negócio.
+- As notas de recuperação, se fornecidas, podem ser usadas para substituir as menores notas.
 
-## Atributos:
-- `alunoId`: O ID do aluno ao qual o conceito está sendo atribuído.
-- `turmaId`: O ID da turma em que o conceito foi registrado.
-- `disciplinaId`: O ID da disciplina relacionada ao conceito.
-- `professorId`: O ID do professor que registrou o conceito.
-- `notaUnidade1`, `notaUnidade2`, `notaUnidade3`, `notaUnidade4`: As notas das unidades fornecidas ao registrar ou atualizar um conceito.
-- `noa1`, `noa2`, `noaFinal`: As notas de recuperação (NOA) fornecidas, se aplicáveis.
+#### PUT
+- `/conceitos/{id}`: Atualiza um conceito existente.
 
-# ConceitoInputDTO.java (DTO)
+**Validações**:
+- O conceito deve existir no banco de dados.
+- As notas fornecidas devem ser válidas e seguir as regras de recalculação de média e status de aprovação.
 
-## Descrição:
-O `ConceitoInputDTO` é um DTO específico para entrada de dados, utilizado quando um professor está inserindo ou modificando as notas de um aluno em uma turma e disciplina específica. Ele permite que as notas de cada unidade e as notas de recuperação (NOA) sejam registradas ou atualizadas.
+#### DELETE
+- `/conceitos/{id}`: Deleta um conceito do sistema.
 
-## Atributos:
-- `notaUnidade1`, `notaUnidade2`, `notaUnidade3`, `notaUnidade4`: Notas das quatro unidades que podem ser atualizadas.
-- `noa1`, `noa2`, `noaFinal`: Notas de recuperação, fornecidas pelo professor para substituir notas mais baixas.
+**Validações**:
+- Verifica se o conceito existe. Caso contrário, retorna 404 Not Found.
 
-# ConceitoOutputDTO.java (DTO)
+### Tratamento de Erros:
 
-## Descrição:
-O `ConceitoOutputDTO` é um DTO usado para **exibir** os dados de saída relacionados aos conceitos, principalmente após a realização de uma operação de leitura ou atualização. Ele pode conter informações mais completas e formatadas, de forma que sejam apresentadas adequadamente para os usuários.
-
-## Atributos:
-- Contém todos os dados do `ConceitoDTO`, porém formatado e apresentado de forma mais organizada para exibição em relatórios ou interfaces de usuário.
-
-
-
-# ConceitoController.java (Controlador)
-
-## Descrição:
-O `ConceitoController` expõe os **endpoints REST** que permitem realizar operações relacionadas aos conceitos dos alunos, como criar, atualizar, deletar e consultar conceitos. Ele utiliza o **Spring Framework** para gerenciar as requisições HTTP e se comunica diretamente com o `ConceitoService` para aplicar as regras de negócio.
-
-## Anotações:
-- `@RestController`: Indica que a classe é um controlador REST, permitindo retornar dados em formato JSON.
-- `@RequestMapping("/conceitos")`: Define que todas as rotas deste controlador começam com `/conceitos`.
-- `@Tag(name = "Conceitos", description = "Operações relacionadas aos conceitos dos alunos")`: Define o nome e a descrição do grupo de rotas no Swagger.
-
-## Rotas (Endpoints):
-
-### **GET** `/conceitos/{id}`
-
-- **Objetivo**: Buscar um conceito pelo seu ID.
-- **Descrição**: Busca e retorna um conceito específico com base no seu identificador único.
-- **Retorno**: Um objeto `ConceitoDTO` contendo as informações detalhadas do conceito.
-- **Erros**:
-  - Retorna **404 (Not Found)** se o conceito com o ID fornecido não for encontrado.
-
-### **POST** `/conceitos`
-
-- **Objetivo**: Criar um novo conceito.
-- **Descrição**: Cria um novo conceito com base nos dados fornecidos via `ConceitoResumidoDTO`. O serviço calcula os conceitos descritivos e a média final automaticamente.
-- **Regras de Negócio**:
-  - As notas das unidades e NOAs fornecidas serão usadas para calcular a média final e o conceito final.
-  - O conceito é vinculado a um aluno, professor, turma e disciplina específicos.
-- **Erros**:
-  - Retorna **400 (Bad Request)** se houver algum erro na criação do conceito, como aluno, turma, ou professor não encontrados.
-
-### **PUT** `/conceitos/{id}`
-
-- **Objetivo**: Atualizar um conceito existente.
-- **Descrição**: Atualiza um conceito existente com base no ID fornecido e nos dados enviados via `ConceitoResumidoDTO`.
-- **Regras de Negócio**:
-  - Recalcula a média e conceitos após a atualização das notas.
-- **Erros**:
-  - Retorna **404 (Not Found)** se o conceito com o ID fornecido não for encontrado.
-
-### **DELETE** `/conceitos/{id}`
-
-- **Objetivo**: Deletar um conceito pelo seu ID.
-- **Descrição**: Remove um conceito existente com base no ID fornecido.
-- **Erros**:
-  - Retorna **404 (Not Found)** se o conceito com o ID fornecido não for encontrado.
-
+- **400 Bad Request**: Utilizado para erros de validação de dados ou quando a criação/atualização de um conceito falha.
+- **404 Not Found**: Utilizado quando o conceito ou o recurso solicitado não é encontrado no banco de dados.
+- **500 Internal Server Error**: Utilizado em casos de erros inesperados no servidor.
 
 ---
 
 ## Conclusão
 
-O package `conceito` lida com um dos aspectos mais complexos do sistema, sendo responsável pela **gestão das notas**, **recuperações** e **status de aprovação** dos alunos. Ele implementa regras robustas para garantir que os alunos sejam avaliados de forma justa, permitindo que eles melhorem suas notas por meio de **recuperações (NOAs)**. Além disso, as operações expostas via API oferecem flexibilidade para a criação, atualização e consulta de conceitos, garantindo transparência para professores e alunos.
+O package conceito lida com a lógica de avaliações e atribuição de conceitos para alunos. Através do controlador, os usuários podem criar, buscar, atualizar e remover conceitos, seguindo as regras de negócios relacionadas ao cálculo de notas e conceitos descritivos. O serviço aplica regras específicas, como a utilização de notas de recuperação (NOA) e o cálculo de médias, assegurando que os conceitos dos alunos sejam precisos e reflitam corretamente o desempenho acadêmico.
 
-Com o uso de **DTOs**, o sistema consegue trafegar dados de maneira eficiente, e as regras de negócio garantem que as notas sejam tratadas de acordo com as políticas de avaliação da instituição.
-
----
-
-# Documentação Técnica - Package `coordenacao`
-
-O package `coordenacao` é responsável pelo gerenciamento das operações relacionadas às **Coordenações** no sistema, incluindo CRUD de coordenações, e suas associações com **professores**, **coordenadores**, **turmas**, **endereços** e **telefones**. Abaixo está a explicação técnica de cada arquivo presente no package, seguindo a ordem **Entidade > Repositório > Serviço > DTOs > Controlador**.
 
 ---
 
-## `Coordenacao.java` (Entidade)
+# Package coordenacao
 
-### Descrição:
-A classe `Coordenacao` representa a **entidade** que será persistida no banco de dados, modelando uma Coordenação e suas associações com outras entidades, como coordenadores, professores e turmas.
+O package coordenacao é responsável pelo gerenciamento das coordenações no sistema, que envolvem associações com coordenadores, turmas, professores, endereços e telefones. A coordenação é uma entidade fundamental no contexto educacional, pois organiza a estrutura das turmas e o corpo docente. Este package segue a arquitetura de camadas, organizando suas responsabilidades em entidade, repositório, serviço, DTOs e controlador REST.
 
-### Anotações:
+### Coordenacao.java (Entidade)
+
+A classe Coordenacao é a entidade que representa a coordenação de uma instituição educacional. Ela define os atributos e relacionamentos que uma coordenação possui, como nome, descrição e associações com turmas, professores, endereços e coordenadores.
+
+**Anotações**:
 - `@Entity`: Define que a classe será uma entidade JPA.
-- `@Table(name = "coordenacao")`: Especifica o nome da tabela no banco de dados.
-- `@Id`: Define o campo `id` como a chave primária.
-- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Gera automaticamente o valor da chave primária.
-- `@OneToMany`: Especifica relações **Um-para-Muitos** entre Coordenação e outras entidades, como endereços, telefones, coordenadores, professores e turmas.
-- `@JsonIgnore`: Evita a serialização de relações potencialmente cíclicas, como com professores e turmas.
+- `@Table(name = "coordenacao")`: Especifica o nome da tabela como "coordenacao".
+- `@Id`: Define o campo id como a chave primária.
+- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Gera automaticamente o valor do ID.
 
-### Relacionamentos:
-- **Endereços** (`OneToMany`): Uma coordenação pode ter vários endereços.
-- **Telefones** (`OneToMany`): Uma coordenação pode ter vários telefones.
-- **Coordenadores** (`OneToMany`): Uma coordenação pode ter vários coordenadores.
-- **Turmas** (`OneToMany`): Uma coordenação pode ter várias turmas.
-- **Professores** (`OneToMany`): Uma coordenação pode ter vários professores.
+**Relacionamentos**:
+- **Endereços** (`@OneToMany`): Uma coordenação pode ter múltiplos endereços.
+- **Telefones** (`@OneToMany`): Uma coordenação pode ter múltiplos telefones.
+- **Coordenadores** (`@OneToMany`): Uma coordenação pode ter vários coordenadores.
+- **Turmas** (`@OneToMany`): Uma coordenação gerencia várias turmas.
+- **Professores** (`@OneToMany`): Uma coordenação pode estar associada a múltiplos professores.
 
-### Funções Bidirecionais:
-- `addEndereco()`: Adiciona um endereço à coordenação, configurando a relação bidirecional.
-- `addTelefone()`: Adiciona um telefone à coordenação, garantindo a relação bidirecional.
-- `addCoordenador()`: Associa um coordenador à coordenação, assegurando bidirecionalidade.
-
-### Regras de Negócio:
-- A **Coordenação** precisa ter pelo menos um **nome** (entre 3 e 50 caracteres) e pode ter uma **descrição** opcional.
-- Cada coordenação pode ter várias turmas, coordenadores, professores, telefones e endereços associados.
+**Atributos Principais**:
+- **Nome**: O nome da coordenação (obrigatório e com restrição de tamanho).
+- **Descrição**: Uma descrição opcional sobre a coordenação.
 
 ---
 
-## `CoordenacaoRepository.java` (Repositório)
+### Métodos Auxiliares
 
-### Descrição:
-A interface `CoordenacaoRepository` define a camada de **persistência** dos dados de uma coordenação, estendendo `JpaRepository`. Permite a execução de operações de CRUD diretamente com o banco de dados.
+Os métodos auxiliares na classe Coordenacao são responsáveis por facilitar o gerenciamento das associações entre a coordenação e outras entidades relacionadas, como endereços, telefones, coordenadores, turmas e professores. Estes métodos asseguram que os relacionamentos sejam bidirecionais e consistentes.
 
-### Métodos Principais:
-- `findAll()`: Retorna uma lista de todas as coordenações cadastradas no banco.
-- `findById(Long id)`: Busca uma coordenação específica pelo ID.
+#### addEndereco(Endereco endereco)
 
-### Regras de Negócio:
-- O **nome da coordenação** é obrigatório.
+**Função**:  
+Associa um endereço à coordenação, garantindo que ambos os lados do relacionamento sejam atualizados.
+
+```java
+public void addEndereco(Endereco endereco) {
+    endereco.setCoordenacao(this); 
+    this.enderecos.add(endereco);
+}
+```
+
+#### addTelefone(Telefone telefone)
+
+**Função**:  
+Associa um telefone à coordenação.
+
+```java
+public void addTelefone(Telefone telefone) {
+    telefone.setCoordenacao(this); 
+    this.telefones.add(telefone);
+}
+```
+
+#### addCoordenador(Coordenador coordenador)
+
+**Função**:  
+Adiciona um coordenador à coordenação.
+
+```java
+public void addCoordenador(Coordenador coordenador) {
+    coordenador.setCoordenacao(this); 
+    this.coordenadores.add(coordenador);
+}
+```
+
+#### addTurma(Turma turma)
+
+**Função**:  
+Associa uma turma à coordenação.
+
+```java
+public void addTurma(Turma turma) {
+    turma.setCoordenacao(this); 
+    this.turmas.add(turma);
+}
+```
+
+#### addProfessor(Professor professor)
+
+**Função**:  
+Adiciona um professor à coordenação.
+
+```java
+public void addProfessor(Professor professor) {
+    professor.setCoordenacao(this); 
+    this.professores.add(professor);
+}
+```
 
 ---
 
-## `CoordenacaoService.java` (Serviço)
-
-### Descrição:
-A classe `CoordenacaoService` contém a lógica de **negócio** relacionada às coordenações. Ela intermedia a comunicação entre o `CoordenacaoRepository` e o `CoordenacaoController`, aplicando as regras de negócio antes de persistir ou retornar dados.
-
-### Anotações:
-- `@Service`: Define que a classe é um serviço do Spring, gerenciada pelo framework.
-
-### Métodos:
-
-#### `getAllCoordenacoes()`
-- Retorna uma lista de todas as coordenações cadastradas no banco de dados.
-
-#### `getCoordenacaoById(Long id)`
-- Busca uma coordenação por seu ID e retorna suas informações detalhadas.
-
-#### `saveCoordenacao(CoordenacaoCadastroDTO coordenacaoDTO)`
-- Persiste uma nova coordenação no banco de dados.
-- Regras de Negócio:
-  - A coordenação deve ter **nome** e pode ter **descrição** opcional.
-  - Pode associar **endereços**, **telefones**, **coordenadores**, **professores** e **turmas** via seus IDs.
-  - As relações são configuradas de forma bidirecional.
-
-#### `updateCoordenacao(Long id, CoordenacaoCadastroDTO coordenacaoDTO)`
-- Atualiza uma coordenação existente no banco.
-- Regras de Negócio:
-  - Pode atualizar as associações com endereços, telefones, coordenadores, professores e turmas.
-
-#### `deleteCoordenacao(Long id)`
-- Remove uma coordenação do banco pelo ID.
+### CoordenacaoRepository.java (Repositório)
   
-### Regras de Negócio:
+A interface CoordenacaoRepository define a camada de persistência da entidade Coordenacao, permitindo operações de CRUD e consultas ao banco de dados.
 
-#### Cadastro e Atualização:
-- **Nome** é obrigatório, com no mínimo 3 caracteres e no máximo 50.
-- **Descrição** é opcional.
-- A coordenação pode associar vários coordenadores, professores, turmas, endereços e telefones.
-
----
-
-## DTOs (Data Transfer Objects)
-
-### `CoordenacaoDTO.java`
-- Este DTO é utilizado para **transferência de dados** completos da coordenação. Ele contém informações detalhadas sobre a coordenação, como nome, descrição, e suas associações com endereços, telefones, coordenadores, professores e turmas.
-
-### `CoordenacaoCadastroDTO.java`
-- Este DTO é utilizado para **criação** ou **atualização** de uma coordenação. Ele contém os atributos necessários para cadastrar ou atualizar uma coordenação, incluindo os IDs dos coordenadores, professores e turmas que serão associados.
+**Métodos**:
+- `findAll()`: Retorna uma lista de todas as coordenações cadastradas.
+- `findById(Long id)`: Busca uma coordenação pelo seu ID.
 
 ---
 
-## `CoordenacaoController.java` (Controlador)
+### CoordenacaoService.java (Serviço)
+  
+A classe CoordenacaoService contém a lógica de negócios da coordenação. Ela gerencia as operações de criação, leitura, atualização e exclusão, além de aplicar as regras associadas ao gerenciamento de coordenadores, turmas, professores, endereços e telefones.
 
-### Descrição:
-A classe `CoordenacaoController` expõe os endpoints REST para operações relacionadas às coordenações. Ela usa o **Spring Framework** para facilitar o gerenciamento de requisições HTTP e interage com o `CoordenacaoService`.
+**Anotações**:
+- `@Service`: Define que a classe é um serviço gerenciado pelo Spring.
+- `@Transactional`: Garante que as operações do serviço sejam executadas de forma transacional.
 
-### Anotações:
-- `@RestController`: Define que a classe é um controlador REST, permitindo retornar dados JSON.
-- `@RequestMapping("/coordenacoes")`: Define que todas as rotas desse controlador começam com `/coordenacoes`.
-- `@Tag(name = "Coordenação", description = "Gerenciamento das Coordenações")`: Anotação para a documentação Swagger, que agrupa as operações desse controlador.
+**Métodos**:
+- `getAllCoordenacoes()`: Retorna uma lista de todas as coordenações no sistema, convertidas para DTO.
+- `getCoordenacaoById(Long id)`: Busca uma coordenação específica pelo ID.
+- `saveCoordenacao(CoordenacaoCadastroDTO coordenacaoDTO)`: Persiste uma nova coordenação no banco de dados.
+- `updateCoordenacao(Long id, CoordenacaoCadastroDTO coordenacaoDTO)`: Atualiza uma coordenação existente.
+- `deleteCoordenacao(Long id)`: Remove uma coordenação do banco de dados.
+
+---
+
+### CoordenacaoDTO.java e CoordenacaoCadastroDTO.java (DTOs)
+  
+Os Data Transfer Objects (DTOs) são utilizados para transferir os dados de entrada e saída entre a API e o cliente. A coordenação possui dois tipos principais de DTOs: o CoordenacaoDTO e o CoordenacaoCadastroDTO.
+
+**Atributos**:
+- **CoordenacaoDTO**: Representa os dados completos da coordenação, incluindo suas associações com endereços, telefones, turmas, professores e coordenadores.
+- **CoordenacaoCadastroDTO**: Usado para criar ou atualizar uma coordenação.
+
+---
+
+### CoordenacaoController.java (Controlador)
+
+A classe CoordenacaoController expõe os endpoints REST para operações relacionadas à coordenação. Ela permite a criação, leitura, atualização e exclusão de coordenações, bem como o gerenciamento de suas associações com outras entidades.
+
+**Anotações**:
+- `@RestController`: Define que a classe é um controlador REST.
+- `@RequestMapping("/coordenacoes")`: Define a rota base para todas as operações relacionadas à coordenação.
+- `@Tag(name = "Coordenações", description = "Operações relacionadas às coordenações")`: Agrupa as operações para fins de documentação no Swagger.
 
 ### Rotas (Endpoints):
 
 #### GET
-
-- **GET `/coordenacoes`**: Lista todas as coordenações.
-- **GET `/coordenacoes/{id}`**: Busca uma coordenação pelo ID.
+- `/coordenacoes`: Retorna uma lista de todas as coordenações cadastradas.
+- `/coordenacoes/{id}`: Busca uma coordenação específica pelo ID.
 
 #### POST
-
-- **POST `/coordenacoes`**: Cria uma nova coordenação com base nos dados fornecidos.
+- `/coordenacoes`: Cria uma nova coordenação no sistema.
 
 #### PUT
-
-- **PUT `/coordenacoes/{id}`**: Atualiza as informações de uma coordenação existente.
+- `/coordenacoes/{id}`: Atualiza uma coordenação existente.
 
 #### DELETE
+- `/coordenacoes/{id}`: Exclui uma coordenação pelo ID.
 
-- **DELETE `/coordenacoes/{id}`**: Remove uma coordenação pelo ID.
+### Tratamento de Erros:
+- **404 Not Found**: Retornado quando uma coordenação ou entidade associada não é encontrada.
+- **400 Bad Request**: Utilizado para erros de validação nos dados fornecidos.
+- **500 Internal Server Error**: Retornado em casos de erros inesperados no servidor.
 
 ---
 
 ## Conclusão
 
-O package `coordenacao` é responsável pelo gerenciamento completo das **Coordenações** no sistema. Ele inclui funcionalidades para cadastrar, atualizar, buscar e deletar coordenações, além de associar coordenadores, professores, turmas, endereços e telefones à coordenação. O código está estruturado para garantir a bidirecionalidade das associações, utilizando o Spring para facilitar as operações e a JPA para persistência de dados no banco.
+O package coordenacao é responsável por todo o gerenciamento das coordenações no sistema. Através de suas entidades, serviços e controladores, ele permite criar, consultar, atualizar e excluir coordenações, assegurando que as associações com entidades relacionadas, como coordenadores, professores e turmas, sejam corretamente mantidas. Com uma arquitetura bem estruturada, o package facilita a administração das coordenações no ambiente educacional.
+
 
 ---
 
-# Documentação Técnica - Package `coordenador`
+# Package coordenador
 
-O package `coordenador` é responsável pelo gerenciamento das entidades e operações relacionadas aos coordenadores do sistema. Ele lida com persistência de dados, regras de negócio, comunicação com o banco de dados e a exposição de APIs REST. Abaixo está a explicação técnica de cada arquivo presente no package, seguindo a ordem **Entidade > Repositório > Serviço > DTOs > Controlador**.
+O package coordenador é responsável por gerenciar as operações relacionadas aos coordenadores no sistema. Um coordenador é uma entidade que supervisiona turmas, professores e outros aspectos organizacionais dentro de uma instituição educacional. Este pacote trata da persistência, lógica de negócios e da exposição de APIs REST para manipulação dos coordenadores. Ele segue uma arquitetura de camadas com as entidades, repositórios, serviços, DTOs e controladores.
 
----
+### Coordenador.java (Entidade)
+ 
+A classe Coordenador representa a entidade coordenador que será persistida no banco de dados. Ela armazena informações pessoais e de contato do coordenador, como nome, CPF, email, além de relacionamentos com telefones, endereços e coordenações.
 
-## `Coordenador.java` (Entidade)
+**Anotações**:
+- `@Entity`: Define que a classe será mapeada como uma entidade JPA.
+- `@Table(name = "coordenador")`: Define o nome da tabela no banco de dados como "coordenador".
+- `@Id`: Define o CPF do coordenador como chave primária.
+- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Gera automaticamente o ID.
+- `@OneToMany`: Relaciona o coordenador com outros objetos, como endereços e telefones.
 
-### Descrição:
-A classe `Coordenador` representa a **entidade coordenador** que herda da classe `Usuario`. Cada coordenador está associado a uma **Coordenação**, além de possuir **endereços** e **telefones**.
+**Relacionamentos**:
+- **Endereços** (`@OneToMany`): Um coordenador pode ter vários endereços.
+- **Telefones** (`@OneToMany`): Um coordenador pode ter vários telefones.
+- **Coordenação** (`@ManyToOne`): Um coordenador pode estar associado a uma coordenação, definindo sua área de supervisão.
 
-### Anotações:
-- `@Entity`: Define que a classe será uma entidade JPA, mapeada para uma tabela no banco de dados.
-- `@Table(name = "coordenador")`: Especifica que essa entidade será persistida na tabela `coordenador`.
-- `@Id`: Define o campo `cpf` como a chave primária.
-- `@NotNull`, `@Size`: Definem regras de validação para os campos como CPF.
+**Regras de Negócio**:
+- O campo CPF é obrigatório e deve ser único.
+- Um coordenador deve estar vinculado a pelo menos uma coordenação no momento da criação.
+- Um coordenador pode ser ativo ou inativo, e seu status padrão é "ativo" quando é criado.
 
-### Relacionamentos:
-- **Endereços** (`OneToMany`): Um coordenador pode ter vários endereços. O relacionamento é bidirecional.
-- **Telefones** (`OneToMany`): Um coordenador pode ter vários telefones. O relacionamento também é bidirecional.
-- **Coordenação** (`ManyToOne`): Um coordenador está vinculado a uma coordenação.
-
-### Métodos Auxiliares:
-- `addEndereco(Endereco endereco)`: Adiciona um endereço ao coordenador e configura a relação bidirecional.
+**Métodos Auxiliares**:
+- `addEndereco(Endereco endereco)`: Associa um endereço ao coordenador e define a relação bidirecional.
 - `addTelefone(Telefone telefone)`: Adiciona um telefone ao coordenador e configura a relação bidirecional.
 
 ---
 
-## `CoordenadorRepository.java` (Repositório)
+### CoordenadorRepository.java (Repositório)
 
-### Descrição:
-Essa interface define a camada de **persistência** dos dados do coordenador. Estende a interface `JpaRepository`, o que permite a execução de operações de CRUD diretamente com o banco de dados.
+O CoordenadorRepository é responsável por interagir diretamente com o banco de dados para a entidade Coordenador. Ele estende o `JpaRepository`, o que facilita a execução de operações de CRUD, além de consultas personalizadas para a busca de coordenadores.
 
-### Métodos Principais:
-- `findAll()`: Retorna uma lista de todos os coordenadores.
-- `findById(String cpf)`: Busca um coordenador pelo CPF.
-- `existsByCpf(String cpf)`: Verifica se um coordenador com o CPF fornecido já existe no banco.
+**Métodos**:
+- `findAll()`: Retorna todos os coordenadores cadastrados no banco de dados.
+- `findById(String id)`: Busca um coordenador pelo CPF.
+- `existsByCpf(String cpf)`: Verifica se um coordenador com determinado CPF já está registrado.
 
----
-
-## `CoordenadorService.java` (Serviço)
-
-### Descrição:
-A classe `CoordenadorService` contém a lógica de **negócio** relacionada ao coordenador. Ela realiza operações como buscar, salvar, atualizar e deletar coordenadores, interagindo com o `CoordenadorRepository` e, quando necessário, com outros repositórios como o de **Coordenação**.
-
-### Métodos:
-
-#### `getAllCoordenadores()`
-- Retorna uma lista de todos os coordenadores cadastrados no banco de dados.
-- Validações:
-  - Nenhuma validação adicional, retorna todos os registros de coordenadores.
-
-#### `getCoordenadorById(String cpf)`
-- Busca um coordenador pelo CPF e retorna seus detalhes.
-- Validações:
-  - Verifica se o coordenador existe. Caso contrário, lança uma exceção.
-
-#### `saveCoordenador(CoordenadorDTO coordenadorDTO)`
-- Persiste um novo coordenador no banco de dados.
-- Regras de Negócio:
-  - O CPF do coordenador deve ser **único**.
-  - Um coordenador pode ser associado a uma **coordenação**, além de possuir **endereços** e **telefones**.
-
-#### `updateCoordenador(String cpf, CoordenadorDTO coordenadorDTO)`
-- Atualiza um coordenador existente no banco de dados.
-- Regras de Negócio:
-  - O CPF não pode ser alterado.
-  - O coordenador pode ser atualizado com novos endereços, telefones e coordenação.
-
-#### `deleteCoordenador(String cpf)`
-- Remove um coordenador do banco pelo CPF.
-- Validações:
-  - Verifica se o coordenador existe antes de removê-lo.
+**Regras de Negócio**:
+- O CPF deve ser único, e a verificação é feita antes da criação de um coordenador.
+- As operações de exclusão e atualização são aplicadas apenas se o coordenador não estiver associado a recursos críticos que impeçam essas operações.
 
 ---
 
-## `CoordenadorDTO.java` (DTO)
+### CoordenadorService.java (Serviço)
 
-### Descrição:
-Essa classe é o **Data Transfer Object (DTO)** que representa os dados completos de um coordenador. Ela é usada para enviar/receber dados entre a aplicação e os clientes via API.
+A classe CoordenadorService contém a lógica de negócios relacionada ao coordenador, incluindo a criação, atualização, exclusão e consulta de coordenadores no sistema. Ele aplica regras de negócio e gerencia os relacionamentos com endereços, telefones e coordenações.
 
-### Atributos:
-- `cpf`: Identificador único do coordenador.
-- `nome`, `ultimoNome`: Nome e último nome do coordenador.
-- `genero`, `data_nascimento`, `email`: Informações pessoais do coordenador.
-- `enderecos`, `telefones`: Listas de endereços e telefones associados ao coordenador.
-- `idCoordenacao`: Identificador da coordenação associada ao coordenador.
+**Métodos**:
+- `getAllCoordenadores()`: Retorna uma lista de todos os coordenadores cadastrados no sistema.
+- `getCoordenadorById(String cpf)`: Busca um coordenador pelo seu CPF.
+- `saveCoordenador(CoordenadorDTO coordenadorDTO)`: Cria um novo coordenador com base nos dados fornecidos.
+- `updateCoordenador(String id, CoordenadorDTO coordenadorDTO)`: Atualiza as informações de um coordenador existente.
+- `deleteCoordenador(String id)`: Remove um coordenador do sistema.
 
----
-
-## `CoordenadorResumidoDTO.java` e `CoordenadorResumido2DTO.java` (DTOs)
-
-### Descrição:
-Esses DTOs representam dados mais resumidos do coordenador e são utilizados em cenários onde não são necessários todos os detalhes do coordenador. Contêm menos atributos em comparação com o `CoordenadorDTO`.
-
-### Atributos Principais:
-- **`CoordenadorResumidoDTO`**: Nome, último nome e e-mail do coordenador.
-- **`CoordenadorResumido2DTO`**: CPF, nome completo, e-mails e telefones do coordenador.
+**Regras de Negócio**:
+- O CPF deve ser único, e a verificação é feita antes da criação.
+- O coordenador precisa estar associado a uma coordenação no momento da criação.
+- O status do coordenador é definido como ativo no momento da criação.
+- Endereços e telefones são opcionalmente associados ao coordenador.
 
 ---
 
-## `CoordenadorController.java` (Controlador)
+### CoordenadorDTO.java (DTO)
 
-### Descrição:
-A classe `CoordenadorController` expõe os endpoints REST para operações relacionadas ao coordenador. Utiliza o **Spring Framework** para gerenciar requisições HTTP e interagir com o `CoordenadorService`.
+O CoordenadorDTO é um Data Transfer Object usado para enviar e receber dados de coordenadores através da API. Ele abstrai as informações mais complexas, como relacionamentos, e simplifica as operações de leitura e escrita.
 
-### Anotações:
-- `@RestController`: Indica que a classe é um controlador REST.
-- `@RequestMapping("/coordenadores")`: Define que todas as rotas desse controlador começam com `/coordenadores`.
-- `@Tag(name = "Coordenador", description = "Gerenciamento dos Coordenadores")`: Anotação para a documentação Swagger, que agrupa as operações desse controlador.
+**Atributos Principais**:
+- **CPF**: Identificação única do coordenador.
+- **Nome**: Nome completo do coordenador.
+- **Email**: Endereço de email do coordenador.
+- **Telefones**: Lista de números de telefone associados.
+- **Endereços**: Lista de endereços associados.
+- **Status**: Indica se o coordenador está ativo ou inativo.
+- **IdCoordenacao**: Identificação da coordenação a qual o coordenador está vinculado.
+
+---
+
+### CoordenadorController.java (Controlador)
+ 
+O CoordenadorController expõe os endpoints REST que permitem a interação com os dados de coordenadores. Ele facilita a criação, leitura, atualização e exclusão de coordenadores no sistema, aplicando as validações necessárias e chamando os métodos do CoordenadorService.
+
+**Anotações**:
+- `@RestController`: Define que a classe é um controlador REST.
+- `@RequestMapping("/coordenadores")`: Define a rota base para as operações relacionadas a coordenadores.
+- `@Tag(name = "Coordenador", description = "Gerenciamento dos Coordenadores")`: Agrupa as operações relacionadas a coordenadores na documentação Swagger.
 
 ### Rotas (Endpoints):
 
-#### **GET `/coordenadores`**
-- Lista todos os coordenadores.
-  
-#### **GET `/coordenadores/{cpf}`**
-- Busca um coordenador pelo CPF.
+#### GET
+- `/coordenadores`: Lista todos os coordenadores registrados no sistema.
+- `/coordenadores/{cpf}`: Retorna as informações detalhadas de um coordenador com base no CPF fornecido.
 
-#### **POST `/coordenadores`**
-- Cria um novo coordenador com base nos dados fornecidos no corpo da requisição.
-- Regras de Negócio:
-  - O CPF deve ser **único**.
+#### POST
+- `/coordenadores`: Cria um novo coordenador com base nos dados fornecidos no corpo da requisição.
 
-#### **PUT `/coordenadores/{cpf}`**
-- Atualiza as informações de um coordenador existente.
-  
-#### **DELETE `/coordenadores/{cpf}`**
-- Remove um coordenador pelo CPF.
+**Regras de Negócio**:
+- O CPF deve ser único.
+- O coordenador precisa estar associado a uma coordenação.
 
----
+#### PUT
+- `/coordenadores/{cpf}`: Atualiza as informações de um coordenador existente.
 
-## Conclusão
+**Regras de Negócio**:
+- Verifica se o coordenador existe e aplica as atualizações fornecidas.
 
-O package `coordenador` é responsável pelo gerenciamento de coordenadores no sistema. Através de uma estrutura modular e bem definida, ele oferece as funcionalidades de persistência de dados, lógica de negócio e exposição de APIs REST. A classe `CoordenadorService` desempenha um papel central na intermediação entre o repositório e o controlador, enquanto os DTOs garantem a transferência eficiente de dados entre as camadas do sistema. A associação dos coordenadores com **coordenações**, **endereços** e **telefones** é gerida de forma consistente, assegurando que todas as operações de CRUD funcionem corretamente.
+#### DELETE
+- `/coordenadores/{cpf}`: Remove um coordenador do sistema com base no CPF.
 
-
-# Documentação Técnica - Package `disciplina`
-
-O package `disciplina` é responsável pelo gerenciamento das entidades e operações relacionadas às **disciplinas** no sistema **Mediotec**. Ele inclui a criação, atualização, listagem e remoção de disciplinas, bem como a associação das disciplinas com turmas e professores. Abaixo está a explicação técnica de cada arquivo presente no package, seguindo a ordem **Entidade > Repositório > Serviço > DTOs > Controlador**.
-
----
-
-## `Disciplina.java` (Entidade)
-
-### Descrição:
-A classe `Disciplina` representa a **entidade** disciplina no sistema. Cada disciplina tem um nome, uma carga horária e pode estar associada a várias turmas e professores através da relação com a entidade `TurmaDisciplinaProfessor`.
-
-### Anotações:
-- `@Entity`: Define que a classe será uma entidade JPA (mapeada para uma tabela no banco de dados).
-- `@Table(name = "disciplina")`: Especifica o nome da tabela como `disciplina`.
-- `@Id`: Define o campo `id_disciplina` como a chave primária.
-- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Gera automaticamente o valor da chave primária.
-- `@NotNull`, `@Size`: Definem regras de validação para os campos como **nome** e **carga horária**.
-- `@OneToMany(mappedBy = "disciplina")`: Relaciona a disciplina com a entidade `TurmaDisciplinaProfessor`.
-
-### Relacionamentos:
-- **TurmaDisciplinaProfessor** (`OneToMany`): A disciplina pode estar associada a várias combinações de turmas e professores.
-
-### Atributos:
-- **`id`** (`Long`): Chave primária da disciplina.
-- **`nome`** (`String`): Nome da disciplina (mínimo de 3 e máximo de 100 caracteres).
-- **`carga_horaria`** (`int`): Carga horária da disciplina.
-
-### Regras de Negócio:
-- A disciplina deve ter um **nome** único e uma **carga horária** definida.
-- A disciplina pode estar associada a uma ou várias turmas e professores através da relação `TurmaDisciplinaProfessor`.
-
----
-
-## `DisciplinaRepository.java` (Repositório)
-
-### Descrição:
-A interface `DisciplinaRepository` é responsável pela persistência dos dados da disciplina, estendendo o `JpaRepository`. Ela oferece os métodos padrão para operações de CRUD (Create, Read, Update, Delete) no banco de dados.
-
-### Métodos:
-- **`findAll()`**: Retorna uma lista de todas as disciplinas.
-- **`findById(Long id)`**: Busca uma disciplina específica pelo seu ID.
-
----
-
-## `DisciplinaService.java` (Serviço)
-
-### Descrição:
-A classe `DisciplinaService` contém a **lógica de negócio** associada às disciplinas, como a criação, atualização, listagem e remoção. Além disso, ela lida com as associações entre disciplinas, turmas e professores.
-
-### Métodos Principais:
-
-#### `getAllDisciplinas()`
-- Retorna uma lista de todas as disciplinas cadastradas no banco de dados.
-- Converte as disciplinas para o DTO `DisciplinaGetDTO` antes de retorná-las.
-
-#### `getDisciplinaById(Long id)`
-- Busca uma disciplina por seu ID e retorna seus detalhes no formato `DisciplinaGetDTO`.
-- Lança uma exceção se a disciplina não for encontrada.
-
-#### `saveDisciplina(DisciplinaDTO disciplinaDTO)`
-- Persiste uma nova disciplina no banco de dados.
-- Associa a disciplina a uma turma e (opcionalmente) a um professor, se os IDs forem fornecidos no DTO.
-- Retorna um `DisciplinaResumidaDTO` contendo os dados resumidos da disciplina criada.
-
-#### `updateDisciplina(Long id, DisciplinaDTO disciplinaDTO)`
-- Atualiza uma disciplina existente no banco de dados.
-- Remove as associações anteriores com turmas e professores e cria novas associações com base nos dados fornecidos.
-- Retorna um `DisciplinaResumidaDTO` contendo os dados resumidos da disciplina atualizada.
-
-#### `deleteDisciplina(Long id)`
-- Remove uma disciplina existente com base no ID fornecido.
-
----
-
-## **Regras de Negócio Implementadas:**
-
-- **Associações**: A disciplina pode ser associada a várias turmas e professores. Se uma turma ou professor for fornecido no DTO, a associação será feita automaticamente ao salvar ou atualizar a disciplina.
-- **Validações**: Validações como nome obrigatório e carga horária obrigatória são aplicadas antes de salvar a disciplina no banco de dados.
-- **Atualizações**: Quando uma disciplina é atualizada, todas as associações anteriores com turmas e professores são removidas, e novas associações são criadas com base nos dados fornecidos.
-
----
-
-## DTOs (Data Transfer Objects)
-
-### 1. **DisciplinaDTO**
-- Utilizado para a **criação** e **atualização** de disciplinas. Contém informações como nome, carga horária, e os IDs de turma e professor.
-
-### 2. **DisciplinaGetDTO**
-- Utilizado para exibir as informações de uma disciplina ao cliente nas operações **GET**. Contém o nome da disciplina, carga horária, e, se aplicável, o nome da turma e do professor associados.
-
-### 3. **DisciplinaResumidaDTO**
-- Usado para representar uma visão simplificada da disciplina, geralmente retornado após as operações **POST** e **PUT**.
-
----
-
-## `DisciplinaController.java` (Controlador)
-
-### Descrição:
-A classe `DisciplinaController` expõe os endpoints REST para operações relacionadas às disciplinas. Utiliza o **Spring Framework** para gerenciar requisições HTTP e interage com o `DisciplinaService` para aplicar as regras de negócio.
-
-### Anotações:
-- `@RestController`: Indica que a classe é um controlador REST, permitindo retornar dados JSON.
-- `@RequestMapping("/disciplinas")`: Define que todas as rotas desse controlador começam com `/disciplinas`.
-- `@Tag(name = "Disciplina", description = "Operações relacionadas às disciplinas")`: Anotação para a documentação Swagger, que agrupa as operações desse controlador.
-
-### Endpoints (Rotas):
-
-#### **GET `/disciplinas`**
-- Lista todas as disciplinas cadastradas no sistema.
-  
-#### **GET `/disciplinas/{id}`**
-- Busca uma disciplina pelo ID e retorna suas informações detalhadas no formato `DisciplinaGetDTO`.
-
-#### **POST `/disciplinas`**
-- Cria uma nova disciplina com base nos dados fornecidos no corpo da requisição.
-- Associa a disciplina a uma turma e (opcionalmente) a um professor.
-
-#### **PUT `/disciplinas/{id}`**
-- Atualiza uma disciplina existente no sistema com base no ID e nos dados fornecidos no corpo da requisição.
-
-#### **DELETE `/disciplinas/{id}`**
-- Remove uma disciplina existente com base no ID fornecido.
+**Regras de Negócio**:
+- Verifica se o coordenador existe e se pode ser excluído, removendo-o do banco de dados.
 
 ---
 
 ## Conclusão
 
-O package `disciplina` gerencia a criação, leitura, atualização e remoção de disciplinas no sistema **Mediotec**. Ele também lida com as associações entre disciplinas, turmas e professores, garantindo que as operações de CRUD sejam realizadas de forma eficiente e segura. As validações de negócio, como nome e carga horária obrigatórios, estão implementadas, e os DTOs asseguram uma comunicação eficiente entre o backend e o frontend, transferindo apenas os dados necessários em cada operação. O **DisciplinaService** realiza as operações de lógica de negócio, enquanto o **DisciplinaController** expõe as APIs para interações externas.
+O package coordenador é responsável por todas as operações relacionadas aos coordenadores no sistema. A entidade Coordenador reflete suas informações no banco de dados, enquanto o CoordenadorService aplica a lógica de negócio e garante que as regras sejam respeitadas. O CoordenadorController expõe as APIs REST para facilitar a interação com os dados, permitindo a criação, consulta, atualização e remoção de coordenadores.
 
---- 
-
-# Documentação Técnica - Package `endereco`
-
-O package `endereco` é responsável pelo gerenciamento dos dados de endereço associados a várias entidades no sistema, como **Aluno**, **Professor**, **Coordenador**, e **Coordenação**. Ele lida com o armazenamento, validação e transferência de informações de localização, como CEP, rua, número, bairro, cidade, e estado.
-
-Abaixo estão as explicações detalhadas dos componentes principais deste package: a **Entidade `Endereco`** e o **`EnderecoDTO`**.
 
 ---
 
-## Entidade `Endereco`
 
-### Descrição
-A entidade `Endereco` modela os dados de localização dos usuários no sistema. Cada `Endereco` é persistido em uma tabela no banco de dados e pode estar associado a um **Aluno**, **Professor**, **Coordenador**, ou **Coordenação**. As informações básicas incluem CEP, rua, número, bairro, cidade e estado, todas devidamente validadas quanto ao formato e tamanho.
+# Package Disciplina
 
-### Atributos:
-- **`id_endereco`** (`Long`): Identificador único do endereço, gerado automaticamente pelo banco de dados.
-  - Anotações: `@Id`, `@GeneratedValue(strategy = GenerationType.IDENTITY)`
-  
-- **`cep`** (`String`): Código de Endereçamento Postal (CEP) do endereço.
-  - Validação: Deve conter entre 8 e 9 caracteres. Não pode ser nulo.
-  - Anotações: `@NotNull`, `@Size(min = 8, max = 9)`
+## Entidade Disciplina.java
 
-- **`rua`** (`String`): Nome da rua ou logradouro.
-  - Validação: Deve conter entre 3 e 100 caracteres. Não pode ser nulo.
-  - Anotações: `@NotNull`, `@Size(min = 3, max = 100)`
+A entidade Disciplina representa a disciplina acadêmica no sistema. Cada disciplina é vinculada a turmas e, opcionalmente, a professores.
 
-- **`numero`** (`String`): Número da residência ou estabelecimento.
-  - Validação: Deve conter entre 1 e 10 caracteres. Não pode ser nulo.
-  - Anotações: `@NotNull`, `@Size(min = 1, max = 10)`
+### Anotações
+- `@Entity`: Define a classe como uma entidade JPA.
+- `@Table(name = "disciplina")`: Define o nome da tabela como "disciplina".
+- `@Id`: Define o campo id como chave primária.
+- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Gera automaticamente o ID da disciplina.
 
-- **`bairro`** (`String`): Bairro onde o endereço está localizado.
-  - Validação: Deve conter entre 3 e 50 caracteres. Não pode ser nulo.
-  - Anotações: `@NotNull`, `@Size(min = 3, max = 50)`
-
-- **`cidade`** (`String`): Cidade onde o endereço está localizado.
-  - Validação: Deve conter entre 3 e 50 caracteres. Não pode ser nulo.
-  - Anotações: `@NotNull`, `@Size(min = 3, max = 50)`
-
-- **`estado`** (`String`): Estado (UF) onde o endereço está localizado.
-  - Validação: Deve conter entre 2 e 20 caracteres. Não pode ser nulo.
-  - Anotações: `@NotNull`, `@Size(min = 2, max = 20)`
+### Atributos Principais
+- **Nome**: Nome da disciplina.
+- **Carga Horária**: Representa o total de horas que uma disciplina terá ao longo do período letivo.
 
 ### Relacionamentos
-A entidade `Endereco` pode estar associada a várias outras entidades do sistema, como **Aluno**, **Professor**, **Coordenador**, e **Coordenação**. Esses relacionamentos são geridos de forma bidirecional, permitindo que tanto o endereço quanto a entidade relacionada tenham referências entre si.
-
-- **Aluno** (`ManyToOne`): Um aluno pode ter vários endereços, mas cada endereço está associado a apenas um aluno.
-  - Anotações: `@ManyToOne`, `@JoinColumn(name = "aluno_id")`, `@JsonIgnore`
-  
-- **Professor** (`ManyToOne`): Um professor pode ter vários endereços, mas cada endereço está associado a apenas um professor.
-  - Anotações: `@ManyToOne`, `@JoinColumn(name = "professor_id")`, `@JsonIgnore`
-
-- **Coordenador** (`ManyToOne`): Um coordenador pode ter vários endereços, mas cada endereço está associado a apenas um coordenador.
-  - Anotações: `@ManyToOne`, `@JoinColumn(name = "coordenador_id")`, `@JsonIgnore`
-
-- **Coordenação** (`ManyToOne`): Uma coordenação pode ter vários endereços, mas cada endereço está associado a apenas uma coordenação.
-  - Anotações: `@ManyToOne`, `@JoinColumn(name = "coordenacao_id")`, `@JsonIgnore`
+- **TurmaDisciplinaProfessor** (`OneToMany`): A disciplina pode estar associada a várias turmas e professores, por meio da entidade intermediária TurmaDisciplinaProfessor.
 
 ### Regras de Negócio
-- Todos os campos do endereço (CEP, rua, número, bairro, cidade, estado) são obrigatórios e validados para garantir que as informações estejam no formato correto.
-- Os relacionamentos com **Aluno**, **Professor**, **Coordenador**, e **Coordenação** são geridos de maneira bidirecional para garantir que ambos os lados da associação sejam corretamente atualizados no banco de dados.
-- As associações são ignoradas durante a serialização JSON (`@JsonIgnore`), evitando problemas como loops infinitos ou grandes volumes de dados desnecessários sendo trafegados pela API.
-
-### Métodos Sobrescritos
-- **`hashCode()`**: Retorna um código de hash baseado no `id_endereco` para evitar ciclos e garantir a consistência durante comparações.
-- **`equals(Object o)`**: Compara duas instâncias de `Endereco` pelo `id_endereco`, garantindo que a comparação seja feita corretamente.
+- O nome da disciplina é obrigatório e deve ser único.
+- A carga horária deve ser positiva e válida para os cursos.
 
 ---
 
-## DTO `EnderecoDTO`
+## DisciplinaRepository.java (Repositório)
 
-### Descrição
-O **`EnderecoDTO`** é um **Data Transfer Object (DTO)** utilizado para transferir dados de um endereço entre o sistema e os clientes (como o frontend ou APIs REST). Ele é utilizado em operações de criação, atualização e leitura de endereços, facilitando o tráfego de dados de forma simplificada e segura.
+O repositório DisciplinaRepository é responsável pela persistência de dados e consultas da entidade Disciplina no banco de dados. Ele herda da interface JpaRepository, permitindo operações de CRUD (criação, leitura, atualização e exclusão).
 
-### Atributos:
-- **`cep`** (`String`): CEP do endereço.
-  - Regras de Negócio: Deve conter entre 8 e 9 caracteres, sendo validado na entrada de dados.
-
-- **`rua`** (`String`): Nome da rua ou logradouro.
-  - Regras de Negócio: Deve conter entre 3 e 100 caracteres.
-
-- **`numero`** (`String`): Número da residência ou estabelecimento.
-  - Regras de Negócio: Deve conter entre 1 e 10 caracteres.
-
-- **`bairro`** (`String`): Bairro onde o endereço está localizado.
-  - Regras de Negócio: Deve conter entre 3 e 50 caracteres.
-
-- **`cidade`** (`String`): Cidade onde o endereço está localizado.
-  - Regras de Negócio: Deve conter entre 3 e 50 caracteres.
-
-- **`estado`** (`String`): Estado (UF) onde o endereço está localizado.
-  - Regras de Negócio: Deve conter entre 2 e 20 caracteres.
+### Métodos
+- `findAll()`: Retorna todas as disciplinas cadastradas no sistema.
+- `findById(Long id)`: Busca uma disciplina específica pelo seu ID.
 
 ### Regras de Negócio
-- O `EnderecoDTO` é usado nas operações de **criação**, **atualização**, e **consulta** de endereços no sistema.
-- Validações como comprimento mínimo e máximo dos campos são aplicadas durante a entrada de dados, garantindo que o sistema receba informações formatadas corretamente.
-- A utilização de DTOs evita o tráfego de dados sensíveis ou complexos (como IDs e relacionamentos bidirecionais), focando apenas nas informações relevantes para o usuário.
+- O nome da disciplina deve ser único.
+- Não deve ser possível deletar uma disciplina que esteja associada a uma turma ou professor.
 
 ---
 
-## Conclusão
-O package `endereco` modela e gerencia as informações de localização dos usuários no sistema, permitindo que essas informações sejam facilmente associadas a outras entidades, como alunos, professores, coordenadores e coordenações. A entidade `Endereco` foi projetada com validações e relacionamentos eficientes, garantindo a integridade dos dados e a consistência das associações. O uso do `EnderecoDTO` simplifica o tráfego de informações entre o sistema e os clientes, garantindo que apenas os dados necessários sejam enviados e recebidos.
+## DisciplinaService.java (Serviço)
+
+A classe DisciplinaService contém a lógica de negócio relacionada à disciplina. Ela realiza a intermediação entre o controlador e o repositório, além de aplicar as regras de negócio na criação, atualização e exclusão de disciplinas.
+
+### Métodos
+- `getAllDisciplinas()`: Retorna uma lista de todas as disciplinas cadastradas no banco de dados e converte as entidades para DisciplinaGetDTO.
+- `getDisciplinaById(Long id)`: Busca uma disciplina específica pelo ID e retorna suas informações detalhadas. Lança exceção se a disciplina não for encontrada.
+- `saveDisciplina(DisciplinaDTO disciplinaDTO)`: Persiste uma nova disciplina no banco de dados.
+
+### Regras de Negócio
+- O nome da disciplina deve ser único.
+- A disciplina pode ser associada a uma turma e, opcionalmente, a um professor.
+
+- `updateDisciplina(Long id, DisciplinaDTO disciplinaDTO)`: Atualiza uma disciplina existente no banco de dados.
+- `deleteDisciplina(Long id)`: Remove uma disciplina do banco de dados.
+
+Regras de negócio:
+- A disciplina só pode ser deletada se não houver vínculos obrigatórios com turmas ou professores.
 
 ---
 
-# Documentação Técnica - Package `professor`
+## DTOs
 
-O package `professor` é responsável pelo gerenciamento das entidades e operações relacionadas ao **Professor** no sistema. Ele lida com a persistência de dados, regras de negócio, comunicação com o banco de dados e a exposição de APIs REST. Abaixo está a explicação técnica de cada arquivo presente no package, seguindo a ordem **Entidade > Repositório > Serviço > DTOs > Controlador**.
+### DisciplinaDTO (Data Transfer Object)
+Este DTO é usado para transferir os dados principais de uma disciplina nas operações de criação e atualização. 
 
----
+**Atributos**:
+- Nome: Nome da disciplina.
+- Carga Horária: Carga horária da disciplina.
+- TurmaId: ID da turma associada à disciplina.
+- ProfessorId: (Opcional) ID do professor associado à disciplina.
 
-## `Professor.java` (Entidade)
+### DisciplinaGetDTO
+DTO utilizado para retornar as informações detalhadas de uma disciplina. 
 
-### Descrição:
-A classe `Professor` representa a **entidade** professor que será persistida no banco de dados. Ela herda de `Usuario`, contendo atributos e relacionamentos específicos do professor. Esta classe é a base para todas as operações e interações relacionadas ao professor no sistema.
+**Atributos**:
+- Nome: Nome da disciplina.
+- Carga Horária: Carga horária da disciplina.
+- Nome da Turma: Nome da turma associada (se houver).
+- Nome do Professor: Nome do professor associado (se houver).
 
-### Anotações:
-- `@Entity`: Define que a classe será uma entidade JPA (mapeada para uma tabela no banco de dados).
-- `@Table(name = "professor")`: Especifica o nome da tabela no banco de dados como "professor".
-- `@Id`: Define o campo `cpf` como a chave primária da entidade.
-- `@NotNull`, `@Column`: Validações aplicadas ao campo `cpf`, garantindo que ele seja único e não nulo.
-
-### Relacionamentos:
-- **Coordenacao** (`ManyToOne`): Um professor pode estar associado a uma coordenação.
-- **Endereços** (`OneToMany`): Um professor pode ter vários endereços.
-- **Telefones** (`OneToMany`): Um professor pode ter vários telefones.
-- **Turmas e Disciplinas** (`OneToMany`): Relaciona o professor com suas turmas e disciplinas, através da entidade `TurmaDisciplinaProfessor`.
-
-### Regras de Negócio:
-- O campo **CPF** é obrigatório e único.
-- O **status** do professor indica se ele está **ativo** no sistema.
-
-### Métodos Auxiliares:
-- `addEndereco(Endereco endereco)`: Adiciona um endereço ao professor e configura a relação bidirecional.
-- `addTelefone(Telefone telefone)`: Adiciona um telefone ao professor e configura a relação bidirecional.
-- `addTurmaDisciplinaProfessor(TurmaDisciplinaProfessor tdp)`: Adiciona uma relação de turma e disciplina ao professor.
+### DisciplinaResumidaDTO
+DTO resumido utilizado para retornar dados simplificados da disciplina, como nome e carga horária.
 
 ---
 
-## `ProfessorRepository.java` (Repositório)
+## DisciplinaController.java (Controlador)
 
-### Descrição:
-Essa interface define a camada de **persistência** dos dados do professor. Estende o **`JpaRepository`** e permite a execução de operações CRUD diretamente com o banco de dados.
+O DisciplinaController expõe os endpoints REST para interagir com as disciplinas. Ele recebe as requisições HTTP, aplica as validações necessárias e interage com o DisciplinaService para execução das operações.
 
-### Métodos Principais:
-- `existsByCpf(String cpf)`: Verifica se já existe um professor com o CPF fornecido.
-- `findAll()`: Retorna todos os professores cadastrados.
-- `findById(String cpf)`: Busca um professor pelo CPF.
+### Rotas (Endpoints)
 
-### Regras de Negócio:
-- **CPF único**: Verifica a unicidade do CPF ao criar um professor.
+#### GET
+- `/disciplinas`: Retorna uma lista de todas as disciplinas.
 
----
+**Regras de negócio**:
+- Lista todas as disciplinas com informações resumidas.
 
-## `ProfessorService.java` (Serviço)
+- `/disciplinas/{id}`: Retorna os detalhes de uma disciplina específica.
 
-### Descrição:
-A classe `ProfessorService` contém a lógica de **negócio** relacionada aos professores. Ela serve como intermediária entre o `ProfessorRepository` e o `ProfessorController`, aplicando regras de negócio antes de persistir ou retornar dados.
+**Validações**:
+- Se o ID fornecido não existir, retorna 404 (Not Found).
 
-### Métodos:
+#### POST
+- `/disciplinas`: Cria uma nova disciplina.
 
-#### `saveProfessor(ProfessorDTO professorDTO)`
-- Cria e salva um novo professor no banco de dados.
-- **Regras de Negócio**:
-  - O CPF do professor deve ser único.
-  - O professor pode ser associado a uma coordenação, turmas, disciplinas, endereços e telefones.
+**Regras de negócio**:
+- O nome da disciplina deve ser único.
+- A disciplina pode ser associada a uma turma e, opcionalmente, a um professor.
 
-#### `updateProfessor(String cpf, ProfessorDTO professorDTO)`
-- Atualiza as informações de um professor existente.
-- **Regras de Negócio**:
-  - O CPF do professor deve ser consistente com o banco de dados.
-  - Associações com turmas, disciplinas, endereços e telefones podem ser alteradas.
+#### PUT
+- `/disciplinas/{id}`: Atualiza uma disciplina existente.
 
-#### `deleteProfessor(String cpf)`
-- Remove um professor pelo CPF.
-- **Regras de Negócio**:
-  - Verifica se o professor existe no sistema antes de excluí-lo.
+**Regras de negócio**:
+- O ID da disciplina deve ser válido.
+- As associações anteriores são removidas antes de aplicar as novas associações de turma e professor.
 
-#### `getProfessorById(String cpf)`
-- Retorna os detalhes de um professor pelo CPF.
+#### DELETE
+- `/disciplinas/{id}`: Remove uma disciplina existente.
 
-#### `getAllProfessores()`
-- Retorna a lista de todos os professores cadastrados no sistema.
+**Regras de negócio**:
+- A disciplina só pode ser deletada se não estiver associada a uma turma ou professor.
 
 ---
 
-## DTOs (Data Transfer Objects)
+## Tratamento de Erros
 
-### `ProfessorDTO.java`
-- **Descrição**: DTO usado para transferir dados de um professor nas operações de criação e atualização. Contém atributos como CPF, nome, gênero, data de nascimento, email, endereços, telefones e turmas/disciplina.
-
-### `ProfessorResumidoDTO.java`
-- **Descrição**: DTO usado para operações de leitura, contendo uma visão mais simplificada dos dados do professor. Usado principalmente em respostas de API.
-
-### `ProfessorResumido2DTO.java`
-- **Descrição**: Uma variação mais compacta de `ProfessorResumidoDTO`, contendo apenas os dados essenciais do professor.
-
----
-
-## `ProfessorController.java` (Controlador)
-
-### Descrição:
-A classe `ProfessorController` expõe os **endpoints REST** para operações relacionadas ao professor, usando o **Spring Framework**. Interage com o `ProfessorService` para lidar com as requisições HTTP e aplicar as regras de negócio.
-
-### Anotações:
-- `@RestController`: Indica que a classe é um controlador REST.
-- `@RequestMapping("/professores")`: Define que todas as rotas dentro dessa classe começam com `/professores`.
-- `@Tag(name = "Professor", description = "Operações relacionadas aos Professores")`: Usado para a documentação do Swagger.
-
-### Rotas (Endpoints):
-
-#### **GET `/professores`**
-- Retorna uma lista de todos os professores cadastrados.
-
-#### **GET `/professores/{cpf}`**
-- Retorna um professor específico baseado no CPF.
-
-#### **POST `/professores`**
-- Cria um novo professor no sistema.
-
-#### **PUT `/professores/{cpf}`**
-- Atualiza os dados de um professor existente.
-
-#### **DELETE `/professores/{cpf}`**
-- Remove um professor existente baseado no CPF.
+- **400 Bad Request**: Erros de validação de dados fornecidos, como nome duplicado ou carga horária inválida.
+- **404 Not Found**: Quando uma disciplina não é encontrada pelo ID.
+- **500 Internal Server Error**: Erros inesperados no servidor durante a manipulação de disciplinas.
 
 ---
 
 ## Conclusão
 
-O package `professor` gerencia todas as operações relacionadas aos professores no sistema, desde a camada de persistência de dados até a exposição de APIs REST. A entidade `Professor` contém relacionamentos e regras de negócio específicos para o gerenciamento dos dados de professores, incluindo a validação de CPF único. As operações são expostas via endpoints REST no `ProfessorController`, enquanto a lógica de negócio é implementada no `ProfessorService`. Os DTOs garantem uma comunicação eficiente entre o frontend e o backend, focando nos dados essenciais para cada operação.
+O package disciplina oferece todas as funcionalidades necessárias para a gestão de disciplinas no sistema, garantindo que sejam corretamente associadas a turmas e professores. A lógica de negócios é implementada no DisciplinaService, que lida com regras como a unicidade dos nomes e a exclusão segura de disciplinas. O DisciplinaController disponibiliza uma interface REST para que outros serviços ou aplicações possam interagir com esses dados de forma eficiente.
+
 
 ---
 
-# Pacote `projeto.integrador3.senac.mediotec.pi3_mediotec.responsavel`
 
-Este pacote é responsável pelo gerenciamento das operações e informações relacionadas à entidade `Responsavel` no sistema, que representa o responsável por um aluno. Aqui são armazenados dados como nome, CPF, grau de parentesco e telefones. As classes principais deste pacote são a **entidade `Responsavel`** e o **DTO `ResponsavelDTO`**.
+# Package Endereco
 
----
+O package `endereco` é responsável por representar e armazenar os dados de endereço no sistema. Apesar de não possuir serviços ou controladores próprios, o package é amplamente utilizado e acessado por outras entidades, como Aluno, Professor, Coordenador e Coordenação, para armazenar e gerenciar os endereços associados a esses usuários e entidades.
 
-## Classe `Responsavel.java` (Entidade)
+Este package implementa a classe `Endereco` e seu respectivo DTO (Data Transfer Object), que facilitam a manipulação dos dados de endereço tanto na aplicação quanto nas interações entre camadas.
 
-### Descrição:
-A classe `Responsavel` é uma entidade que mapeia a tabela `responsavel` no banco de dados. Esta classe contém os atributos essenciais para identificar e associar o responsável a um aluno, bem como armazenar seus telefones e o grau de parentesco com o aluno.
+### Estrutura do Package
 
-### Anotações:
-- **@Entity**: Indica que a classe `Responsavel` será persistida como uma entidade JPA.
-- **@Table(name = "responsavel")**: Define o nome da tabela no banco de dados como `responsavel`.
-- **@Id**: Define o campo `id` como chave primária.
-- **@GeneratedValue(strategy = GenerationType.IDENTITY)**: Especifica que o valor de `id` será gerado automaticamente.
-- **@Column**: Configurações de mapeamento dos atributos para as colunas do banco de dados.
-  - `nullable = false`: Indica que o campo não pode ser nulo.
-  - `unique = true`: Indica que o campo `cpfResponsavel` deve ser único.
+O package `endereco` é composto pelas seguintes classes principais:
+- `Endereco.java` (Entidade)
+- `EnderecoDTO.java` (Objeto de Transferência de Dados)
 
-### Relacionamentos:
-- **@ManyToOne**: Um responsável está associado a um aluno, ou seja, muitos responsáveis podem compartilhar o mesmo aluno.
-- **@OneToMany**: Um responsável pode ter vários telefones. A relação é configurada como "um para muitos" e utiliza `cascade = CascadeType.ALL` para propagar operações ao banco de dados e `orphanRemoval = true` para garantir a exclusão automática de telefones órfãos.
+## Entidade Endereco.java
 
-### Atributos:
-- **`id`**: Chave primária gerada automaticamente.
-- **`cpfResponsavel`**: CPF do responsável, campo único e obrigatório.
-- **`nome`**: Nome do responsável, campo obrigatório.
-- **`ultimoNome`**: Sobrenome do responsável, campo obrigatório.
-- **`grauParentesco`**: Grau de parentesco do responsável com o aluno, campo obrigatório.
-- **`aluno`**: Relacionamento com a entidade `Aluno`, representando o aluno associado ao responsável.
-- **`telefones`**: Conjunto de telefones associados ao responsável, representado pela entidade `Telefone`.
+A entidade `Endereco` é responsável por armazenar as informações detalhadas sobre o endereço, como CEP, rua, número, bairro, cidade e estado. Cada endereço pode ser associado a diversas outras entidades do sistema, como alunos, professores, coordenadores e coordenações, refletindo a flexibilidade de uso dessa entidade.
 
-### Métodos Auxiliares:
-- **`addTelefone(Telefone telefone)`**: Método utilizado para adicionar um telefone ao responsável e configurar a relação bidirecional.
+### Anotações
+- `@Entity`: Define que a classe representa uma entidade JPA, mapeada para o banco de dados.
+- `@Table(name = "endereco")`: Define que a tabela associada a essa entidade será chamada de "endereco".
+- `@Id`: Define o campo `id_endereco` como chave primária.
+- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Gera automaticamente o ID do endereço no banco de dados.
 
----
+### Atributos Principais
+- **id_endereco**: Chave primária que identifica exclusivamente um endereço.
+- **cep**: O código postal (CEP) do endereço.
+- **rua**: O nome da rua ou avenida onde o endereço está localizado.
+- **numero**: O número do imóvel.
+- **bairro**: O bairro onde o endereço está localizado.
+- **cidade**: O nome da cidade.
+- **estado**: O estado ou unidade federativa.
 
-## Classe `ResponsavelDTO.java`
+### Relacionamentos
 
-### Descrição:
-A classe `ResponsavelDTO` é um **Data Transfer Object** (DTO) utilizado para transferir dados entre o frontend e o backend em operações relacionadas ao responsável. O `ResponsavelDTO` contém informações essenciais sobre o responsável, como nome, CPF, grau de parentesco e os telefones associados.
+A entidade `Endereco` possui relacionamentos de `ManyToOne` com várias outras entidades, sendo elas:
+- **Aluno**: Relacionamento com a entidade `Aluno`, indicando que um endereço pode estar vinculado a um aluno.
+- **Professor**: Relacionamento com a entidade `Professor`, permitindo a associação de um endereço a um professor.
+- **Coordenador**: Relacionamento com a entidade `Coordenador`, para associar o endereço a um coordenador.
+- **Coordenação**: Relacionamento com a entidade `Coordenacao`, indicando que um endereço pode estar vinculado à coordenação.
 
-### Atributos:
-- **`nome`**: Nome do responsável.
-- **`ultimoNome`**: Sobrenome do responsável.
-- **`cpfResponsavel`**: CPF do responsável.
-- **`telefones`**: Conjunto de telefones associados ao responsável, representado por `TelefoneDTO`.
-- **`grauParentesco`**: Grau de parentesco do responsável com o aluno.
+### Regras de Negócio
+- O endereço deve conter informações válidas e coerentes, como o CEP sendo composto por 8 a 9 caracteres, e os campos rua, bairro, cidade e estado respeitando limites mínimos e máximos de caracteres.
+- Cada endereço pode ser associado a um ou mais alunos, professores, coordenadores ou coordenações, garantindo a reutilização de um mesmo endereço em múltiplas entidades, se necessário.
+
+### Métodos Importantes
+- `hashCode()` e `equals()`: Esses métodos são implementados para garantir que as comparações entre objetos de endereço sejam baseadas apenas no ID, evitando possíveis problemas de ciclo nos relacionamentos.
 
 ---
 
-## Relação entre `Responsavel` e `ResponsavelDTO`:
-A entidade `Responsavel` é mapeada diretamente para o DTO `ResponsavelDTO` em operações de criação, leitura e atualização. O `DTO` garante que apenas os dados essenciais sejam transferidos para o frontend, enquanto os dados mais complexos e a lógica de negócio são manipulados na entidade.
-
---- 
-
-# Documentação Técnica - Package `telefone`
-
-O package `telefone` é responsável por gerenciar as informações de contato (telefones) associadas a várias entidades do sistema, como **Aluno**, **Professor**, **Coordenador**, **Coordenação** e **Responsável**. Este package inclui a definição da **entidade `Telefone`** e do **DTO `TelefoneDTO`**, usados para armazenar, processar e transferir informações de telefones.
-
----
-
-## Entidade `Telefone`
-
-### Descrição:
-A entidade `Telefone` é uma classe que modela os dados de telefone no sistema, como o **DDD** e o **número**. Esta entidade também define os relacionamentos com outras entidades que podem possuir telefones (como alunos, professores, coordenadores e responsáveis).
-
-### Atributos Principais:
-- **`id`**: Chave primária gerada automaticamente, usada para identificar unicamente cada registro de telefone no banco de dados.
-- **`ddd`**: Código de área do telefone (obrigatório e com exatamente 2 caracteres).
-- **`numero`**: O número de telefone (obrigatório e deve conter entre 8 e 9 caracteres).
-
-### Relacionamentos:
-A entidade `Telefone` tem vários relacionamentos **ManyToOne** com outras entidades do sistema:
-- **Aluno**, **Professor**, **Coordenador**, **Coordenação** e **Responsável**: Cada telefone pode ser associado a uma dessas entidades, representando o telefone de um aluno, professor, coordenador, etc. Essas associações são configuradas usando `@ManyToOne`, o que significa que vários telefones podem ser associados a uma única instância dessas entidades.
-
-Os relacionamentos são anotados com `@JsonIgnore`, o que evita que esses dados sejam incluídos em respostas JSON. Isso é útil para prevenir loops de serialização e garantir que a API retorne apenas os dados essenciais.
-
-### Validações:
-A entidade `Telefone` faz uso das anotações de validação:
-- **`@NotNull`**: Assegura que os campos `ddd` e `numero` não sejam nulos.
-- **`@Size`**: Garante que o `ddd` tenha exatamente 2 caracteres e que o número tenha entre 8 e 9 caracteres.
-
-### Regras de Negócio:
-- Cada telefone pode ser associado a apenas **um** aluno, professor, coordenador, coordenação ou responsável por vez.
-- A exclusão de um telefone é feita em **cascata**, o que significa que, ao remover uma entidade associada, seus telefones também podem ser removidos automaticamente, dependendo da configuração do relacionamento.
-
----
-
-## DTO `TelefoneDTO`
-
-### Descrição:
-O **`TelefoneDTO`** (Data Transfer Object) é usado para transferir dados de telefone entre o sistema e os clientes (como frontends ou APIs). Ele simplifica a manipulação dos dados, focando apenas nos atributos essenciais que precisam ser trafegados, como o **DDD** e o **número**, sem incluir informações de relacionamentos com outras entidades.
-
-### Atributos:
-- **`ddd`**: O código de área do telefone (apenas os 2 dígitos do DDD).
-- **`numero`**: O número do telefone (8 a 9 dígitos).
-
-### Objetivo e Funcionamento:
-O `TelefoneDTO` é utilizado nas operações de **entrada e saída** de dados (como criar, atualizar ou exibir informações sobre um telefone). Quando o cliente deseja enviar ou receber dados de telefone, como durante a criação de um aluno ou professor, apenas os campos `ddd` e `numero` são necessários.
-
-Ele é anotado com **`@JsonIgnoreProperties`**, o que significa que os atributos de relacionamento (como aluno, professor, coordenador) não serão enviados ou recebidos no tráfego de dados. Isso mantém a transferência de dados eficiente e evita que o cliente receba informações desnecessárias ou complexas.
-
-### Exemplo de Utilização:
-- **Entrada de Dados**: Ao criar ou atualizar um telefone, o sistema espera receber um `TelefoneDTO` com apenas o `ddd` e o `numero`. Informações relacionadas a qual entidade (aluno, professor, etc.) o telefone pertence são gerenciadas pela entidade `Telefone`, não pelo DTO.
-- **Saída de Dados**: Quando o sistema responde a uma solicitação para obter informações de telefone, ele envia um `TelefoneDTO` contendo apenas o `ddd` e o `numero`, sem expor detalhes internos ou relacionamentos.
-
-### Importância:
-O uso do `TelefoneDTO` melhora a segurança e a eficiência do sistema ao:
-- Garantir que apenas as informações essenciais sejam trafegadas entre o cliente e o servidor.
-- Evitar a exposição de informações sensíveis ou desnecessárias, como os relacionamentos complexos que a entidade `Telefone` mantém com outras entidades.
-
----
-
-## Relação entre `Telefone` e `TelefoneDTO`
-
-- A **entidade `Telefone`** é usada internamente pelo sistema para gerenciar os dados completos de telefone, incluindo os relacionamentos com outras entidades.
-- O **`TelefoneDTO`** é utilizado para simplificar a comunicação entre o backend e o frontend, expondo apenas os campos relevantes (como `ddd` e `numero`) nas operações de API, sem expor a complexidade das relações com outras entidades.
-
----
-
-## Conclusão
-
-O package `telefone` lida com a gestão dos dados de telefone, garantindo que as informações sejam armazenadas e manipuladas corretamente, mantendo relações com outras entidades do sistema (como aluno, professor, etc.). A entidade `Telefone` define essas relações e as regras de validação, enquanto o `TelefoneDTO` oferece uma interface simplificada para que os dados essenciais de telefone possam ser transferidos entre o sistema e os clientes, garantindo eficiência e segurança.
-
----
-
-# Documentação Técnica - Package `turma`
-
-O pacote `turma` é responsável pelo gerenciamento completo das turmas dentro do sistema, incluindo operações CRUD (criar, ler, atualizar e deletar) e a associação de turmas com alunos, professores e disciplinas.
-
-## 1. Entidade `Turma`
-
-### Descrição:
-A classe `Turma` modela a entidade que representa uma turma no sistema educacional. Ela define as informações básicas da turma, como nome, ano letivo, turno, além dos relacionamentos com outras entidades como `Aluno`, `Disciplina` e `Professor`.
-
-### Atributos:
-- **`id`**: Identificador único da turma gerado automaticamente.
-- **`nome`**: Nome da turma, gerado automaticamente com base no ID.
-- **`anoLetivo`**: Ano letivo da turma.
-- **`anoEscolar`**: Ano escolar correspondente (ex: 1º ano, 2º ano).
-- **`turno`**: Turno em que a turma está alocada (manhã, tarde, noite).
-- **`status`**: Status da turma (ativa/inativa).
-  
-### Relacionamentos:
-- **`coordenacao`**: Relação `ManyToOne` com a entidade `Coordenacao`, representando a coordenação associada à turma.
-- **`alunos`**: Relação `ManyToMany` com a entidade `Aluno`, representando os alunos que pertencem à turma.
-- **`turmaDisciplinaProfessores`**: Relação `OneToMany` com a entidade `TurmaDisciplinaProfessor`, que mapeia a relação entre turmas, disciplinas e professores.
-
-### Validações:
-- **`@NotNull`**: O campo `anoLetivo` é obrigatório.
-- **`@Size`**: O nome gerado da turma segue um formato padrão.
-
-### Métodos Auxiliares:
-- **`addAluno(Aluno aluno)`**: Adiciona um aluno à turma e configura a relação bidirecional.
-- **`removeAluno(Aluno aluno)`**: Remove a associação de um aluno à turma.
-- **`addTurmaDisciplinaProfessor(TurmaDisciplinaProfessor tdp)`**: Adiciona uma disciplina e um professor à turma.
-- **`removeTurmaDisciplinaProfessor(TurmaDisciplinaProfessor tdp)`**: Remove a associação de uma disciplina e professor à turma.
-
----
-
-## 2. Repositório `TurmaRepository`
-
-### Descrição:
-Interface `TurmaRepository` estende `JpaRepository` e fornece os métodos padrão para realizar operações CRUD sobre a entidade `Turma`. Essa interface permite que o framework Spring Data JPA forneça a implementação automaticamente.
-
-### Métodos:
-- **`findAll()`**: Retorna todas as turmas cadastradas.
-- **`findById(Long id)`**: Retorna uma turma específica com base no seu ID.
-- **`save(Turma turma)`**: Persiste uma nova turma ou atualiza uma existente no banco de dados.
-- **`deleteById(Long id)`**: Remove uma turma com base no seu ID.
-
----
-
-## 3. Serviço `TurmaService`
-
-### Descrição:
-O serviço `TurmaService` encapsula a lógica de negócios associada à entidade `Turma`. Ele interage com o repositório para realizar operações de persistência e aplica as regras de negócio como criação de turmas, associação de alunos e professores.
-
-### Principais Métodos:
-
-- **`saveTurma(TurmaInputDTO turmaDTO)`**:
-  - Cria uma nova turma no sistema com base nas informações fornecidas no `TurmaInputDTO`.
-  - Gera automaticamente o nome da turma após a criação.
-  - Associa alunos e professores com as disciplinas fornecidas, validando as existências no sistema.
-
-- **`updateTurma(Long id, TurmaInputDTO turmaDTO)`**:
-  - Atualiza uma turma existente com os dados fornecidos no `TurmaInputDTO`.
-  - Atualiza as associações com alunos, professores e disciplinas.
-
-- **`getAllTurmas()`**:
-  - Lista todas as turmas cadastradas no sistema.
-
-- **`getTurmaById(Long id)`**:
-  - Retorna os detalhes de uma turma específica com base no seu ID.
-
-- **`deleteTurma(Long id)`**:
-  - Remove uma turma e suas associações no sistema com base no ID fornecido.
-
-- **Regras de Negócio**:
-  - Cada turma deve ser associada a uma coordenação válida.
-  - Associações de `Aluno`, `Disciplina` e `Professor` são opcionais, mas são validadas caso fornecidas.
-
----
-
-## 4. DTOs (Data Transfer Objects)
-
-### 4.1. `TurmaDTO`
-
-#### Descrição:
-DTO utilizado para transferir os dados detalhados de uma turma, incluindo suas associações com alunos, disciplinas e professores.
-
-#### Atributos:
-- **`nome`**: Nome da turma.
-- **`anoEscolar`**: Ano escolar correspondente.
-- **`turno`**: Turno em que a turma está alocada.
-- **`status`**: Status da turma (ativa/inativa).
-- **`coordenacao`**: Nome da coordenação associada.
-- **`disciplinas`**: Conjunto de disciplinas associadas à turma.
-- **`disciplinasProfessores`**: Lista de relações entre professores e disciplinas dentro da turma.
-- **`alunos`**: Conjunto de alunos associados à turma.
-
-### 4.2. `TurmaInputDTO`
-
-#### Descrição:
-DTO utilizado para receber os dados necessários para criar ou atualizar uma turma. Este DTO simplifica a entrada de dados, garantindo que apenas as informações relevantes sejam recebidas.
-
-#### Atributos:
-- **`anoLetivo`**: Ano letivo da turma.
-- **`anoEscolar`**: Ano escolar correspondente.
-- **`turno`**: Turno da turma.
-- **`status`**: Status da turma.
-- **`coordenacaoId`**: ID da coordenação a ser associada.
-- **`alunosIds`**: Lista de IDs de alunos a serem associados à turma.
-- **`disciplinasProfessores`**: Lista de disciplinas associadas a professores.
-
-### 4.3. `TurmaResumidaDTO`
-
-#### Descrição:
-DTO utilizado para transferir um resumo das informações de uma turma. Focado em exibir as informações essenciais como nome da turma, ano escolar, turno e coordenação.
-
-#### Atributos:
-- **`nome`**: Nome da turma.
-- **`anoEscolar`**: Ano escolar.
-- **`turno`**: Turno da turma.
-- **`coordenacao`**: Nome da coordenação associada.
-
----
-
-## 5. Controlador `TurmaController`
-
-### Descrição:
-O `TurmaController` expõe as operações relacionadas à turma através de uma API REST. Ele recebe requisições HTTP, invoca o `TurmaService` para realizar as operações e retorna as respostas adequadas.
-
-### Endpoints Principais:
-
-- **`GET /turmas`**:
-  - Lista todas as turmas cadastradas no sistema.
-  - **Resposta**: `200 OK` com a lista de `TurmaDTO`.
-
-- **`GET /turmas/{id}`**:
-  - Retorna os detalhes de uma turma específica com base no ID fornecido.
-  - **Resposta**: `200 OK` se encontrado, `404 Not Found` caso contrário.
-
-- **`POST /turmas`**:
-  - Cria uma nova turma com os dados fornecidos no `TurmaInputDTO`.
-  - **Resposta**: `201 Created` com o `TurmaDTO` da turma criada.
-
-- **`PUT /turmas/{id}`**:
-  - Atualiza os dados de uma turma existente.
-  - **Resposta**: `200 OK` com o `TurmaDTO` atualizado.
-
-- **`DELETE /turmas/{id}`**:
-  - Remove uma turma com base no seu ID.
-  - **Resposta**: `204 No Content` se a remoção for bem-sucedida.
+## EnderecoDTO.java (Data Transfer Object)
+
+O `EnderecoDTO` é utilizado para transferir os dados de endereço de forma simplificada e eficiente entre as diferentes camadas da aplicação. Ele é utilizado principalmente quando dados de endereço precisam ser fornecidos ou recebidos pelas entidades controladoras (como AlunoController, ProfessorController, etc.).
+
+### Anotações
+- `@Builder`: Permite a construção de objetos `EnderecoDTO` de maneira fluida, utilizando o padrão Builder.
+- `@Data`: Inclui automaticamente métodos como getters, setters, equals, hashCode e toString.
+- `@JsonIgnoreProperties`: Indica que as propriedades relacionadas a outras entidades (como aluno, professor, coordenador, coordenacao) devem ser ignoradas durante a serialização/deserialização JSON, evitando possíveis loops ou informações irrelevantes no DTO.
+
+### Atributos
+- **cep**: Código postal do endereço.
+- **rua**: Nome da rua.
+- **numero**: Número do endereço.
+- **bairro**: Bairro onde o endereço está localizado.
+- **cidade**: Cidade do endereço.
+- **estado**: Estado ou unidade federativa do endereço.
+
+### Utilização
+
+O `EnderecoDTO` é amplamente utilizado quando é necessário transmitir ou exibir os dados de endereço para outras entidades. Por exemplo:
+- Quando um aluno é registrado ou atualizado, o endereço do aluno é gerenciado por meio do `EnderecoDTO`.
+- O mesmo ocorre para professores, coordenadores e coordenações, que podem ter seus endereços manipulados utilizando este DTO.
 
 ---
 
 ## Considerações Finais
 
-O pacote `turma` é responsável pela gestão eficiente das turmas, garantindo a correta associação com alunos, disciplinas e professores. Ele encapsula as regras de negócio relacionadas à organização das turmas e suas operações, expondo uma API clara e otimizada para administração via controladores REST.
+O package `endereco` não possui serviços ou controladores próprios, pois suas funcionalidades são acessadas e manipuladas pelas outras entidades do sistema, como Aluno, Professor, Coordenador e Coordenação. Isso ocorre porque um endereço é considerado um dado auxiliar para essas entidades, e seu gerenciamento é feito por meio dos respectivos serviços e controladores dessas entidades principais.
+
+Este package garante a reutilização de endereços por várias entidades, centralizando e padronizando a forma como essas informações são tratadas no sistema.
+
+
+---
+
+# Package Professor
+
+O package `professor` é responsável por gerenciar todas as operações relacionadas aos professores no sistema. Ele inclui a criação, atualização, listagem e exclusão de professores, além de permitir associar professores a turmas, disciplinas e coordenadorias. As funcionalidades são acessadas através de endpoints REST definidos no `ProfessorController`, e a lógica de negócios está centralizada no `ProfessorService`.
+
+### Este package contém as principais classes:
+- **ProfessorService**: Implementa a lógica de negócio para a manipulação dos professores.
+- **ProfessorController**: Define os endpoints REST para interação com as operações relacionadas a professores.
 
 ---
 
 
-# Documentação Técnica - Package `turmaDisciplinaProfessor`
+## Entidade Professor.java
 
-O package `turmaDisciplinaProfessor` é responsável por gerenciar a associação entre as entidades **Turma**, **Disciplina** e **Professor**. Ele lida com o relacionamento muitos-para-muitos entre essas três entidades, usando uma tabela intermediária e uma chave composta para manter a unicidade das associações. Este package também fornece DTOs para transferir dados entre as camadas de aplicação de forma eficiente.
+A entidade `Professor` define o modelo de dados dos professores no sistema. Ela inclui atributos como CPF, nome, data de nascimento, e possui relacionamentos com Coordenação, Endereços, Telefones, Turmas e Disciplinas.
 
-## Entidade `TurmaDisciplinaProfessor`
+### Atributos Principais
+- **CPF**: Identificador único do professor.
+- **Nome**: Nome e sobrenome do professor.
+- **E-mail**: Endereço de e-mail para contato.
+- **Coordenação**: Associação opcional com uma coordenação.
+- **Status**: Indica se o professor está ativo ou inativo.
 
-### Descrição:
-A entidade `TurmaDisciplinaProfessor` gerencia a relação entre as três entidades principais: **Turma**, **Disciplina** e **Professor**. Essa associação é persistida em uma tabela intermediária chamada `turma_disciplina_professor`, que armazena os IDs dessas três entidades para formar uma relação única e garantir que um professor esteja corretamente vinculado a uma turma e a uma disciplina.
+### Relacionamentos
+- **Coordenação**: Um professor pode ser associado a uma coordenação, sendo opcional.
+- **Endereços e Telefones**: O professor pode ter múltiplos endereços e telefones.
+- **Turmas e Disciplinas**: Professores podem ser associados a várias turmas e disciplinas por meio da entidade intermediária `TurmaDisciplinaProfessor`.
 
-### Principais Anotações:
-- `@Entity` e `@Table`: Define que a classe será uma entidade JPA e mapeada para a tabela `turma_disciplina_professor` no banco de dados.
-- `@EmbeddedId`: Utiliza uma chave composta (`TurmaDisciplinaProfessorId`) para identificar unicamente a associação.
-- `@ManyToOne` e `@MapsId`: Mapeia as relações com **Turma**, **Disciplina** e **Professor**. Cada uma dessas entidades é referenciada com uma relação ManyToOne e mapeada com base nos IDs da chave composta.
-- `fetch = FetchType.LAZY`: Carrega os dados das entidades associadas de forma "preguiçosa", ou seja, somente quando acessadas diretamente.
+---
 
-### Regras de Negócio:
-- A associação entre **Turma**, **Disciplina** e **Professor** deve ser única, garantida pela chave composta.
-- As operações que envolvem essa entidade geralmente são relacionadas ao gerenciamento de turmas, disciplinas ministradas e professores responsáveis.
 
-## Entidade `TurmaDisciplinaProfessorId`
+# ProfessorRepository.java (Repositório)
 
-### Descrição:
-Esta classe define a chave composta da entidade `TurmaDisciplinaProfessor`. Ela agrupa os identificadores de **turma**, **disciplina** e **professor** para garantir a unicidade da associação no banco de dados.
+O ProfessorRepository é responsável pela persistência de dados e consultas da entidade Professor no banco de dados. Ele herda da interface `JpaRepository`, o que facilita a execução de operações de CRUD (Create, Read, Update, Delete) sem a necessidade de definir SQL manualmente.
 
-### Principais Anotações:
-- `@Embeddable`: Indica que esta classe será embutida em outra entidade (neste caso, `TurmaDisciplinaProfessor`).
-- `@Column`: Cada campo representa o identificador de uma entidade, como `turmaId`, `disciplinaId` e `professorId`.
+## Métodos
 
-### Métodos:
-- `equals()` e `hashCode()`: Esses métodos garantem que dois objetos de `TurmaDisciplinaProfessorId` sejam comparados corretamente e possam ser usados em estruturas que dependem de hash, como coleções.
+- **findById(String cpf)**: 
+  - Busca um professor específico pelo CPF, que é a chave primária da entidade.
+  - **Tipo de retorno**: `Optional<Professor>`, que encapsula a entidade encontrada ou retorna vazio se não existir.
 
-### Regras de Negócio:
-- A combinação de `turmaId`, `disciplinaId` e `professorId` deve ser única, garantindo que não existam duplicações na relação entre essas entidades.
+- **existsByCpf(String cpf)**: 
+  - Verifica se já existe um professor com o CPF fornecido no banco de dados.
+  - **Tipo de retorno**: `boolean`, retornando `true` se o CPF já estiver registrado, ou `false` se não estiver.
+
+## Regras de Negócio
+- O CPF de um professor deve ser único, garantindo que não existam duplicidades no sistema.
+- Professores podem ser buscados pelo CPF para realizar operações como atualização ou exclusão.
+- A validação de existência pelo CPF garante que duplicidades sejam evitadas antes de inserir um novo registro no banco de dados.
+
+
+---
+
+
+## ProfessorService.java (Serviço)
+
+O `ProfessorService` é o responsável por implementar a lógica de negócios relacionada aos professores. Ele utiliza os repositórios para acessar e manipular os dados no banco e expõe métodos que são consumidos pelo controlador.
+
+### Métodos Principais
+1. **saveProfessor(ProfessorDTO professorDTO)**
+   - Cria um novo professor no sistema.
+   - Associa o professor a uma coordenação (se fornecida), endereços, telefones, turmas e disciplinas.
+   - **Validação**: Verifica se o CPF já está registrado para evitar duplicações.
+
+2. **updateProfessor(String cpf, ProfessorDTO professorDTO)**
+   - Atualiza as informações de um professor existente.
+   - Permite a atualização de dados básicos como nome, gênero, data de nascimento, além de endereços, telefones, e suas associações com turmas e disciplinas.
+
+3. **deleteProfessor(String cpf)**
+   - Exclui um professor do sistema com base no CPF.
+
+4. **getAllProfessores()**
+   - Retorna uma lista de todos os professores registrados no sistema, com suas informações resumidas.
+
+5. **getProfessorById(String cpf)**
+   - Busca um professor específico pelo CPF e retorna suas informações detalhadas.
+
+### Métodos Auxiliares
+- **associateEnderecos(ProfessorDTO professorDTO, Professor professor)**: Associa e salva os endereços de um professor.
+- **associateTelefones(ProfessorDTO professorDTO, Professor professor)**: Associa e salva os telefones de um professor.
+- **associateTurmasDisciplinas(ProfessorDTO professorDTO, Professor professor)**: Associa o professor a turmas e disciplinas.
+- **convertToDto(Professor professor)**: Converte um objeto `Professor` para o DTO `ProfessorResumidoDTO`, facilitando a transferência de dados.
+
+---
+
+## ProfessorController.java (Controlador)
+
+O `ProfessorController` expõe os endpoints REST para gerenciar as operações relacionadas aos professores. Ele utiliza o `ProfessorService` para realizar as operações de criação, listagem, atualização e exclusão de professores.
+
+### Endpoints Principais
+1. **GET /professores**
+   - Lista todos os professores cadastrados no sistema.
+   - **Resposta**: Lista de `ProfessorResumidoDTO`.
+
+2. **GET /professores/{cpf}**
+   - Busca um professor pelo CPF.
+   - **Parâmetro**: CPF do professor.
+   - **Resposta**: Detalhes do professor em `ProfessorResumidoDTO`.
+
+3. **POST /professores**
+   - Cria um novo professor.
+   - **Corpo da Requisição**: Dados do professor no formato `ProfessorDTO`.
+   - **Resposta**: Professor criado no formato `ProfessorResumidoDTO`.
+
+4. **PUT /professores/{cpf}**
+   - Atualiza um professor existente com base no CPF.
+   - **Parâmetro**: CPF do professor.
+   - **Corpo da Requisição**: Dados atualizados do professor no formato `ProfessorDTO`.
+   - **Resposta**: Professor atualizado em `ProfessorResumidoDTO`.
+
+5. **DELETE /professores/{cpf}**
+   - Deleta um professor com base no CPF.
+   - **Parâmetro**: CPF do professor.
+   - **Resposta**: Código de status HTTP 204 (No Content).
+
+---
+
+## Métodos Relacionados a Conceitos
+
+Além de gerenciar as operações de professores, o `ProfessorController` também inclui endpoints que permitem aos professores adicionar e atualizar conceitos dos alunos em disciplinas e turmas específicas, utilizando o `ConceitoService`.
+
+---
+
+## Considerações Finais
+
+O package `professor` implementa uma arquitetura limpa e estruturada para o gerenciamento dos professores no sistema. Com a ajuda dos DTOs, repositórios e métodos transacionais, ele garante que a lógica de negócios seja tratada de forma eficiente e segura. Além disso, as operações relacionadas a turmas, disciplinas e coordenação são integradas, proporcionando uma visão completa do professor no contexto educacional.
+
+
+---
+
+
+# Package Responsável
+
+O package `responsavel` gerencia as informações relacionadas aos responsáveis dos alunos, incluindo seus dados pessoais, como CPF, nome, grau de parentesco, e suas associações com telefones. Sem serviços e controladores próprios, o pacote é acessado e manipulado por meio de outras entidades, principalmente pela entidade Aluno.
+
+Neste pacote, o Responsável está diretamente associado ao Aluno e pode ter múltiplos telefones associados, seguindo uma relação de um para muitos. O package foca na representação da entidade responsável e em suas relações com outras entidades do sistema.
+
+---
+
+## Estrutura do Package
+
+O package `responsavel` contém as seguintes classes principais:
+
+- **Responsavel.java**: Representa a entidade responsável, com atributos como CPF, nome e grau de parentesco. A classe também gerencia a relação entre os responsáveis e seus telefones.
+- **ResponsavelDTO.java**: Um objeto de transferência de dados (DTO) usado para simplificar a transferência de informações de responsáveis, principalmente em consultas associadas aos alunos.
+
+Apesar de não possuir serviços e controladores próprios, o package é essencial para a representação dos dados e para o relacionamento dos responsáveis com alunos e telefones.
+
+---
+
+## Entidade Responsavel.java
+
+A entidade `Responsavel` define os responsáveis que podem estar associados aos alunos no sistema. Um responsável é uma pessoa (como pai, mãe ou tutor legal) que tem um relacionamento formal com um ou mais alunos. O responsável também pode possuir múltiplos telefones para contato.
+
+### Atributos Principais
+- **ID**: Chave primária da entidade, gerada automaticamente.
+- **CPF**: CPF do responsável, obrigatório e único.
+- **Nome e Sobrenome**: Nome completo do responsável.
+- **Grau de Parentesco**: Especifica a relação familiar do responsável com o aluno (ex.: Pai, Mãe, Tio, Tutor, etc.).
+
+### Relacionamentos
+- **Aluno**: Um responsável pode estar associado a um ou mais alunos. A relação é `ManyToOne`, o que significa que muitos responsáveis podem estar relacionados a um único aluno.
+- **Telefones**: Um responsável pode ter vários telefones associados. Esta relação é `OneToMany`, garantindo que, ao excluir um responsável, os telefones também sejam excluídos automaticamente (graças ao `CascadeType.ALL` e `orphanRemoval = true`).
+
+### Métodos Auxiliares
+- **addTelefone(Telefone telefone)**: Este método permite adicionar um telefone ao conjunto de telefones de um responsável e garantir que a relação bidirecional entre o telefone e o responsável seja mantida. Isso significa que, ao adicionar um telefone, o telefone também terá seu atributo `responsavel` configurado corretamente.
+
+### Exemplo de Relacionamento com Aluno
+Um Aluno pode ter um ou mais responsáveis. Essa relação é essencial para sistemas educacionais, onde o contato com o responsável é necessário para questões administrativas, como comunicação sobre o desempenho do aluno ou autorização de eventos.
+
+### Exemplo de Relacionamento com Telefones
+Um responsável pode ter vários telefones cadastrados, que podem ser utilizados para contato emergencial ou diário. O sistema garante que, ao remover um responsável, seus telefones sejam removidos automaticamente.
+
+---
+
+## ResponsavelDTO.java (Data Transfer Object)
+
+A classe `ResponsavelDTO` é usada para transferir os dados dos responsáveis de forma eficiente entre as camadas da aplicação. Ao utilizar DTOs, evitamos a exposição direta das entidades internas do sistema, garantindo mais flexibilidade e segurança na comunicação entre os diferentes módulos.
+
+### Atributos Principais
+- **Nome e Sobrenome**: Dados do nome completo do responsável.
+- **CPF**: CPF do responsável.
+- **Telefones**: Lista de telefones associados ao responsável, utilizando o `TelefoneDTO` para simplificar a transferência de dados.
+- **Grau de Parentesco**: Especifica o relacionamento entre o responsável e o aluno.
+
+Este DTO é frequentemente utilizado em operações que envolvem a exibição de dados de alunos, já que os responsáveis estão diretamente associados a eles.
+
+---
+
+## Considerações Finais
+
+O package `responsavel` é um componente fundamental para a representação dos dados de responsáveis dentro do sistema educacional. Embora não possua serviços e controladores próprios, ele é acessado principalmente através da entidade Aluno, garantindo que informações críticas sobre os responsáveis sejam gerenciadas de forma eficaz.
+
+Assim como o package `endereco`, o `responsavel` é manipulado indiretamente por outras entidades, o que torna sua estrutura mais simples, focando em seus atributos, relacionamentos e métodos auxiliares.
+
+
+---
+
+# Package Telefone
+
+O package `telefone` é responsável pela representação dos telefones associados a diversas entidades do sistema, como Aluno, Professor, Coordenador, Coordenação e Responsável. Ele gerencia o armazenamento e a validação de dados de telefones, como o código de área (DDD) e o número de telefone. Embora não possua serviços e controladores próprios, o package é amplamente utilizado por outras entidades do sistema para gerenciar informações de contato.
+
+O package `telefone` segue uma estrutura simples, sendo manipulado pelas outras entidades do sistema, que gerenciam as operações de CRUD sobre os telefones.
+
+---
+
+## Estrutura do Package
+
+O package `telefone` contém as seguintes classes principais:
+
+- **Telefone.java**: Representa a entidade de telefone, responsável por armazenar o DDD e o número, além de manter relações com outras entidades do sistema.
+- **TelefoneDTO.java**: Um Data Transfer Object (DTO) que simplifica o transporte de dados relacionados a telefones entre as camadas da aplicação.
+
+Assim como o package `endereco`, o package `telefone` é manipulado por outras entidades, mas possui uma estrutura própria de validações e relacionamentos.
+
+---
+
+## Entidade Telefone.java
+
+A entidade `Telefone` gerencia as informações dos telefones no sistema, associando-os a entidades como Aluno, Professor, Coordenador, Coordenação e Responsável. Ela possui atributos que garantem a validação de informações como o DDD e o número do telefone, além de manter o relacionamento adequado com outras entidades.
+
+### Atributos Principais
+
+- **ID**: Chave primária da entidade, gerada automaticamente.
+- **DDD**: O código de área do telefone, obrigatório, com tamanho fixo de 2 dígitos.
+- **Número**: O número de telefone, obrigatório, com tamanho entre 8 e 9 dígitos.
+
+### Validações
+
+- O **DDD** deve conter exatamente 2 dígitos, seguindo a padronização de códigos de área no Brasil.
+- O **Número** deve conter entre 8 e 9 dígitos, garantindo que o número seja válido tanto para números fixos quanto móveis.
+
+### Relacionamentos
+
+A entidade `Telefone` possui várias associações `ManyToOne`, o que significa que um telefone pode pertencer a apenas uma entidade (Aluno, Professor, Coordenador, Coordenação ou Responsável) por vez. O relacionamento é bidirecional, mas a serialização para JSON (por exemplo, em APIs) omite os dados dessas associações para evitar ciclos de referência e problemas de performance.
+
+### Entidades Relacionadas
+
+- **Aluno**: Um telefone pode estar associado a um único aluno.
+- **Professor**: Um telefone pode pertencer a um professor.
+- **Coordenador**: Um telefone pode estar associado a um coordenador.
+- **Coordenação**: Um telefone pode ser relacionado diretamente a uma coordenação.
+- **Responsável**: Um telefone pode estar vinculado a um responsável.
+
+Esses relacionamentos permitem que qualquer uma dessas entidades tenha um ou mais telefones associados a elas. Como os telefones são manipulados diretamente por essas entidades, não há necessidade de um serviço ou controlador exclusivo para telefones.
+
+---
+
+## Métodos Auxiliares
+
+- **setResponsavel(Responsavel responsavel)**: Este método estabelece a relação bidirecional entre um telefone e um responsável. Ele é utilizado quando um telefone é associado a um responsável, garantindo que ambos os objetos reconheçam a relação entre si.
+
+---
+
+## TelefoneDTO.java (Data Transfer Object)
+
+O `TelefoneDTO` é um objeto de transferência de dados usado para simplificar o transporte das informações de telefone entre as camadas da aplicação. Ele serve para exibir e transportar apenas os dados relevantes do telefone (DDD e número) sem incluir detalhes sobre os relacionamentos com outras entidades.
+
+### Atributos Principais
+
+- **DDD**: O código de área do telefone.
+- **Número**: O número do telefone.
+
+O DTO é essencial para garantir a comunicação eficiente entre as camadas do sistema, isolando as entidades internas da exposição direta em APIs e interfaces de usuário.
+
+---
+
+## Considerações Finais
+
+O package `telefone` desempenha um papel crucial ao permitir que várias entidades do sistema (como Aluno, Professor, Coordenador, Coordenação e Responsável) possam gerenciar e armazenar seus números de telefone de forma organizada. Mesmo sem possuir serviços ou controladores próprios, ele é acessado e manipulado pelas entidades mencionadas, seguindo uma estrutura de relacionamento clara e validada.
+
+Esse modelo de encapsulamento garante a integridade dos dados de contato no sistema, permitindo que os telefones sejam facilmente acessados e gerenciados por meio de outras entidades, ao mesmo tempo que mantém a simplicidade e clareza no design do sistema.
+
+
+---
+
+
+# Package Turma
+
+## Entidade Turma.java
+
+A entidade Turma representa uma turma no sistema acadêmico. Cada turma é composta por atributos como o ano letivo, turno, status e coordenação, além de associações com alunos, disciplinas e professores.
+
+### Anotações
+- `@Entity`: Define a classe como uma entidade JPA.
+- `@Table(name = "turma")`: Define o nome da tabela como "turma".
+- `@Id`: Define o campo `id` como chave primária.
+- `@GeneratedValue(strategy = GenerationType.IDENTITY)`: Gera automaticamente o ID da turma.
+
+### Atributos Principais
+- **Ano Letivo**: Representa o ano em que a turma está ativa.
+- **Turno**: Define o período em que as aulas ocorrem (manhã, tarde, noite).
+- **Status**: Indica se a turma está ativa ou inativa.
+- **Coordenação**: Associação com a entidade Coordenação, responsável pela gestão da turma.
+
+### Relacionamentos
+- **Alunos (OneToMany)**: A turma pode conter vários alunos.
+- **TurmaDisciplinaProfessor (OneToMany)**: A turma pode estar associada a várias disciplinas e professores por meio da entidade intermediária TurmaDisciplinaProfessor.
+
+### Regras de Negócio
+- Cada turma deve ter uma coordenação associada.
+- O nome da turma é gerado automaticamente com base no seu ID e segue o formato "Turma {ID}".
+- A turma só pode ser excluída se não houver vínculos obrigatórios com disciplinas ou professores.
+
+## TurmaRepository.java (Repositório)
+
+O TurmaRepository é responsável pela persistência e consulta das turmas no banco de dados. Ele estende JpaRepository, o que facilita a execução de operações CRUD (Create, Read, Update, Delete) sem a necessidade de definir SQL manualmente.
+
+### Métodos
+- `findById(Long id)`: Busca uma turma específica pelo seu ID.
+- `findAllIds()`: Retorna uma lista com todos os IDs das turmas cadastradas.
+
+### Regras de Negócio
+- A turma pode ser buscada por seu ID para ser atualizada ou excluída.
+- A listagem de IDs permite operações otimizadas quando o carregamento completo da entidade não é necessário.
+
+## TurmaService.java (Serviço)
+
+A classe TurmaService contém a lógica de negócios relacionada à manipulação de turmas. O serviço intermedia a comunicação entre o repositório e o controlador, gerenciando as operações de criação, atualização, exclusão e consulta de turmas, além de lidar com suas associações a alunos, disciplinas e professores.
+
+### Métodos
+- `getAllTurmas()`: Retorna uma lista de todas as turmas cadastradas, convertendo as entidades para TurmaDTO.
+- `getTurmaById(Long id)`: Busca uma turma específica pelo ID e retorna suas informações detalhadas.
+- `saveTurma(TurmaInputDTO turmaDTO)`: Cria uma nova turma no banco de dados e associa seus alunos, disciplinas e professores.
+- `updateTurma(Long id, TurmaInputDTO turmaDTO)`: Atualiza uma turma existente, recriando suas associações com alunos, disciplinas e professores.
+- `deleteTurma(Long id)`: Exclui uma turma do banco de dados, removendo suas associações antes da exclusão.
+
+### Regras de Negócio
+- O nome da turma é gerado automaticamente com base no ID.
+- A turma pode ser associada a uma coordenação, alunos, disciplinas e professores.
+- A exclusão de uma turma só é permitida se não houver vínculos obrigatórios com disciplinas e professores.
 
 ## DTOs
 
-Os **Data Transfer Objects (DTOs)** simplificam a transferência de dados entre as diferentes camadas da aplicação, como a comunicação entre o back-end e o front-end. Existem três principais DTOs no package, cada um com um propósito específico.
+### TurmaDTO (Data Transfer Object)
+Este DTO é utilizado para transferir os dados completos de uma turma nas operações de busca, criação e atualização.
 
-### `TurmaDisciplinaProfessorDTO`
+### Atributos
+- **Nome**: Nome gerado da turma.
+- **Ano Letivo**: O ano em que a turma está ativa.
+- **Turno**: Turno de aula da turma.
+- **Status**: Status (ativo/inativo) da turma.
+- **Coordenação**: Nome da coordenação associada.
+- **Disciplinas**: Lista de disciplinas associadas à turma.
+- **DisciplinasProfessores**: Lista das associações entre disciplinas e professores.
+- **Alunos**: Lista de alunos matriculados na turma.
 
-#### Descrição:
-Este DTO é usado para representar a associação entre **turma**, **disciplina** e **professor** por meio de seus identificadores (IDs). Ele é utilizado quando não são necessários detalhes adicionais, apenas os IDs das entidades relacionadas.
+### TurmaInputDTO
+DTO utilizado nas operações de criação e atualização de turmas. Contém os dados básicos para definir uma nova turma, além dos IDs de alunos, disciplinas e professores que devem ser associados à turma.
 
-#### Atributos:
-- `turmaId`: ID da turma.
-- `disciplinaId`: ID da disciplina.
-- `professorId`: ID do professor.
+### Atributos
+- **Ano Letivo**: O ano em que a turma será criada.
+- **Ano Escolar**: O ano escolar da turma.
+- **Turno**: Turno de aula da turma.
+- **Status**: Status (ativo/inativo) da turma.
+- **CoordenaçãoId**: ID da coordenação associada.
+- **AlunosIds**: IDs dos alunos a serem associados à turma.
+- **DisciplinasProfessores**: Dados que ligam as disciplinas aos professores.
 
-#### Uso:
-Ideal para operações onde apenas os identificadores são suficientes, como em criações ou atualizações rápidas da relação entre as entidades.
+### DisciplinaProfessorDTO
+DTO utilizado para associar disciplinas e professores a uma turma. Ele agrupa as disciplinas ensinadas por um determinado professor.
 
-### `TurmaDisciplinaProfessorCompletoDTO`
+### Atributos
+- **ProfessorId**: ID do professor.
+- **Nome do Professor**: Nome completo do professor.
+- **Email do Professor**: Email do professor.
+- **NomesDisciplinas**: Lista de nomes das disciplinas ensinadas pelo professor.
 
-#### Descrição:
-Este DTO fornece uma visão mais completa da relação entre **turma**, **disciplina** e **professor**, incluindo os nomes dessas entidades em vez de apenas seus IDs.
+## TurmaController.java (Controlador)
 
-#### Atributos:
-- `nomeTurma`: Nome completo da turma.
-- `nomeDisciplina`: Nome completo da disciplina.
-- `nomeProfessor`: Nome do professor associado.
+O TurmaController expõe os endpoints REST que permitem a interação com os dados das turmas. Ele recebe as requisições HTTP, aplica as validações necessárias e interage com o TurmaService para executar operações de criação, atualização, exclusão e consulta de turmas.
 
-#### Uso:
-Esse DTO é utilizado quando é necessário fornecer informações mais detalhadas para o usuário final, como em exibições ou listagens detalhadas.
+### Rotas (Endpoints)
 
-### `TurmaDisciplinaProfessorIdDTO`
+#### GET
+- `/turmas`: Retorna uma lista de todas as turmas cadastradas.
+  - **Regras de negócio**: Retorna informações resumidas de todas as turmas.
+- `/turmas/{id}`: Retorna os detalhes de uma turma específica.
+  - **Validações**: Se o ID não existir, retorna 404 (Not Found).
 
-#### Descrição:
-Este DTO encapsula apenas os dados referentes à chave composta da associação, ou seja, os IDs de **turma**, **disciplina** e **professor**. É uma representação simples e direta da chave.
+#### POST
+- `/turmas`: Cria uma nova turma com base nos dados fornecidos.
+  - **Regras de negócio**: A coordenação, alunos, disciplinas e professores devem existir e estar válidos.
 
-#### Atributos:
-- `turmaId`: ID da turma.
-- `disciplinaId`: ID da disciplina.
-- `professorId`: ID do professor.
+#### PUT
+- `/turmas/{id}`: Atualiza uma turma existente com base no ID.
+  - **Validações**: O ID da turma deve ser válido, e suas associações anteriores são removidas antes de criar novas.
 
-#### Uso:
-Utilizado em cenários onde é necessária a identificação da associação com base nos três IDs, sem informações adicionais.
+#### DELETE
+- `/turmas/{id}`: Remove uma turma existente.
+  - **Regras de negócio**: A turma só pode ser excluída se não houver vínculos obrigatórios com disciplinas ou professores.
+
+### Tratamento de Erros
+- **400 Bad Request**: Quando os dados fornecidos na criação ou atualização são inválidos.
+- **404 Not Found**: Quando a turma não é encontrada pelo ID fornecido.
+- **500 Internal Server Error**: Para erros inesperados no servidor.
 
 ## Conclusão
-O package `turmaDisciplinaProfessor` é central para gerenciar a relação entre **Turma**, **Disciplina** e **Professor** no sistema. Através de uma entidade intermediária e uma chave composta, ele garante que as associações entre essas entidades sejam únicas e gerenciadas de forma eficiente. Os DTOs fornecem flexibilidade na transferência de dados, permitindo tanto operações rápidas com IDs quanto exibições detalhadas para o usuário final.
+O package `turma` oferece uma estrutura completa para gerenciar turmas no sistema, incluindo funcionalidades para criação, atualização, listagem e exclusão de turmas. Ele permite associar alunos, disciplinas e professores, garantindo que a turma seja gerenciada conforme as regras de negócio definidas. A lógica de negócios é implementada no `TurmaService`, e o `TurmaController` expõe as funcionalidades via API REST.
 
-Este package contribui diretamente para a organização das turmas e para o correto mapeamento das disciplinas ministradas por professores em cada turma, mantendo a estrutura de dados clara e bem definida.
 
 ---
 
-# Documentação Técnica - Pacote `usuario`
+# Package TurmaDisciplinaProfessor
+
+O package `TurmaDisciplinaProfessor` é responsável por representar o relacionamento entre turmas, disciplinas e professores no sistema. Ele associa essas três entidades, garantindo que uma disciplina seja ministrada por um professor específico em uma turma. A estrutura permite gerenciar e consultar quais disciplinas são ministradas em quais turmas e por quais professores.
+
+## Entidade TurmaDisciplinaProfessor.java
+
+A classe `TurmaDisciplinaProfessor` gerencia o relacionamento entre turmas, disciplinas e professores. Ela cria uma relação intermediária, permitindo que uma turma tenha várias disciplinas ministradas por professores específicos.
+
+### Anotações
+- `@Entity`: Define a classe como uma entidade JPA.
+- `@Table(name = "turma_disciplina_professor")`: Define o nome da tabela.
+- `@ManyToOne`: Define os relacionamentos com as entidades Turma, Disciplina e Professor.
+- `@EmbeddedId`: Utiliza uma chave composta para identificar cada relação de forma única.
+
+### Atributos Principais
+- **Turma** (`@ManyToOne`): Representa a relação de uma turma com as disciplinas e professores.
+- **Disciplina** (`@ManyToOne`): Disciplina ministrada na turma.
+- **Professor** (`@ManyToOne`): Professor responsável pela disciplina na turma.
+
+### Regras de Negócio
+- Cada associação entre uma turma, disciplina e professor deve ser única.
+- Não devem existir relações duplicadas para a mesma combinação de turma, disciplina e professor.
+
+## Classe TurmaDisciplinaProfessorId.java
+
+A classe `TurmaDisciplinaProfessorId` define a chave composta da entidade `TurmaDisciplinaProfessor`, garantindo a unicidade de cada relação.
+
+### Anotações
+- `@Embeddable`: Define a classe como um identificador embutido.
+
+### Atributos Principais
+- **TurmaId**: ID da turma associada.
+- **DisciplinaId**: ID da disciplina associada.
+- **ProfessorCpf**: CPF do professor associado.
+
+### Regras de Negócio
+- A combinação de `TurmaId`, `DisciplinaId` e `ProfessorCpf` deve ser única.
+
+## DTOs
+
+### TurmaDisciplinaProfessorDTO.java
+
+O `TurmaDisciplinaProfessorDTO` é utilizado para transferir dados de uma associação entre turma, disciplina e professor.
+
+#### Atributos:
+- **TurmaId**: ID da turma.
+- **DisciplinaId**: ID da disciplina.
+- **ProfessorCpf**: CPF do professor associado.
+
+### TurmaDisciplinaProfessorIdDTO.java
+
+O `TurmaDisciplinaProfessorIdDTO` representa a chave composta da associação entre uma turma, disciplina e professor.
+
+#### Atributos:
+- **TurmaId**: Identificador único da turma.
+- **DisciplinaId**: Identificador único da disciplina.
+- **ProfessorCpf**: CPF do professor.
+
+### TurmaDisciplinaProfessorCompletoDTO.java
+
+O `TurmaDisciplinaProfessorCompletoDTO` contém informações detalhadas da relação entre turma, disciplina e professor.
+
+#### Atributos:
+- **Nome da Turma**: Nome da turma associada.
+- **Nome da Disciplina**: Nome da disciplina associada.
+- **Nome do Professor**: Nome completo do professor associado.
+
+## Repositório TurmaDisciplinaProfessorRepository.java
+
+O `TurmaDisciplinaProfessorRepository` é responsável pela persistência e consulta dos relacionamentos entre turmas, disciplinas e professores no banco de dados. Ele herda da interface `JpaRepository`, oferecendo operações de CRUD e consultas personalizadas.
+
+### Métodos
+- **findByDisciplinaId(Long disciplinaId)**: Retorna todas as associações de uma disciplina específica.
+- **deleteByTurmaId(Long turmaId)**: Remove todas as associações relacionadas a uma turma.
+
+### Regras de Negócio
+- Não é possível deletar uma associação de uma turma se existirem registros vinculados que dependam dessa relação.
+
+## Conclusão
+O package `TurmaDisciplinaProfessor` é essencial para gerenciar as associações entre turmas, disciplinas e professores. Ele garante que essas relações sejam únicas e que as operações sobre elas sejam realizadas de maneira eficiente. As classes de entidade, DTOs e repositório proporcionam uma estrutura organizada para o gerenciamento acadêmico no sistema.
+
+
+---
+
+
+# Package Usuario
 
 ## Visão Geral
-O pacote `usuario` define a estrutura básica para os usuários do sistema. A classe `Usuario` serve como uma superclasse abstrata, fornecendo atributos comuns a diferentes tipos de usuários, como **nome**, **último nome**, **gênero**, **data de nascimento** e **email**. Essa estrutura permite herança em outras classes, como `Aluno`, `Professor`, ou `Coordenador`, centralizando os dados essenciais e as regras de validação comuns a todos.
+O package `usuario` contém a classe `Usuario`, que serve como uma superclasse abstrata para outras entidades que representam usuários no sistema, como alunos, professores, coordenadores e responsáveis. A classe define atributos comuns a todos os tipos de usuários, incluindo nome, sobrenome, gênero, data de nascimento e e-mail. Ao ser declarada como uma `@MappedSuperclass`, essa classe permite que outras entidades herdem seus atributos sem que ela própria seja mapeada diretamente para uma tabela no banco de dados.
 
-## Classe `Usuario.java`
+## Classe Usuario.java
 
 ### Descrição
-A classe `Usuario` é uma superclasse abstrata que contém os atributos principais de um usuário no sistema. Outras classes herdam desta para evitar duplicação de código, centralizando a lógica e os atributos comuns. Como é marcada com `@MappedSuperclass`, seus atributos são compartilhados pelas subclasses, mas não diretamente mapeados para uma tabela no banco de dados.
+A classe `Usuario` é abstrata e contém atributos e comportamentos comuns a todos os tipos de usuários no sistema. Ela é responsável por armazenar informações básicas como nome, sobrenome, gênero, data de nascimento e email. Além disso, utiliza anotações de validação para garantir que os dados sejam consistentes e corretos.
 
-### Atributos
-- **nome**: Nome do usuário, obrigatório, entre 3 e 50 caracteres.
-- **ultimoNome**: Sobrenome do usuário, obrigatório, entre 3 e 50 caracteres.
-- **gênero**: Gênero do usuário, obrigatório.
-- **data_nascimento**: Data de nascimento do usuário, obrigatório e no formato de data.
-- **email**: Endereço de email do usuário, obrigatório, com validação de formato e único no banco de dados.
+### Anotações
+- `@MappedSuperclass`: Define a classe como uma superclasse mapeada no JPA. Ela não será mapeada diretamente para uma tabela, mas suas subclasses herdarão os atributos e comportamentos.
+- `@Data`: Gera automaticamente métodos `getters`, `setters`, `equals`, `hashCode` e `toString` para todos os atributos.
+- `@NoArgsConstructor`: Cria automaticamente um construtor sem parâmetros.
+- `@AllArgsConstructor`: Cria um construtor com todos os parâmetros.
+- `@SuperBuilder`: Facilita a criação de objetos utilizando o padrão Builder, compatível com classes que utilizam herança.
 
-### Anotações Específicas
-- `@MappedSuperclass`: Indica que a classe não será mapeada diretamente para uma tabela no banco de dados, mas suas subclasses herdarão seus atributos.
-- `@NotNull`: Garante que o campo não pode ser nulo.
-- `@Size`: Restringe o tamanho do campo (`nome` e `sobrenome`) entre 3 e 50 caracteres.
-- `@Email`: Valida se o campo segue o formato de email.
-- `@Temporal(TemporalType.DATE)`: Define que o campo `data_nascimento` será armazenado como uma data.
-- `@Column(unique = true)`: Garante que o email seja único no banco de dados.
+### Atributos Principais
+- **nome** (`@Column`, `@NotNull`, `@Size`): Nome do usuário, obrigatório e deve ter entre 3 e 50 caracteres.
+- **ultimoNome** (`@Column`, `@NotNull`, `@Size`): Sobrenome do usuário, obrigatório e deve ter entre 3 e 50 caracteres.
+- **genero** (`@Column`, `@NotNull`): Gênero do usuário (por exemplo, "Masculino", "Feminino"), obrigatório.
+- **data_nascimento** (`@Temporal`, `@Column`, `@NotNull`): Data de nascimento do usuário, obrigatória e armazenada como data no banco.
+- **email** (`@Column`, `@NotNull`, `@Email`, `unique = true`): Email do usuário, obrigatório, único e deve seguir o formato de um endereço de e-mail válido.
 
-## Importância
-A classe `Usuario` desempenha um papel crucial no sistema, pois padroniza os atributos essenciais de qualquer usuário. Dessa forma, qualquer tipo de usuário (como alunos, professores, coordenadores) pode herdar esses campos e suas validações, promovendo consistência e reaproveitamento de código em todo o sistema.
+### Validações
+- O nome e o sobrenome devem ter entre 3 e 50 caracteres e não podem ser nulos.
+- O gênero é obrigatório.
+- A data de nascimento é obrigatória e deve ser armazenada em formato de data.
+- O email deve ser único no sistema, seguir um formato válido, e ser obrigatório.
+
+### Regras de Negócio
+- A classe `Usuario` não é diretamente instanciada, pois é uma superclasse abstrata. Subclasses, como `Aluno`, `Professor` ou `Coordenador`, devem herdar dessa classe para garantir que os dados essenciais de cada usuário sejam consistentes.
+- O campo `email` deve ser único para evitar que dois usuários tenham o mesmo endereço de e-mail.
+
+## Conclusão
+O package `usuario` define a estrutura básica de um usuário no sistema através da classe `Usuario`. Ela serve como uma superclasse para todas as outras entidades que representam diferentes tipos de usuários. Com suas anotações de validação e atributos comuns, o `Usuario` garante que informações essenciais como nome, sobrenome, gênero, data de nascimento e email sejam armazenadas de maneira consistente e validada.
+
+
+---
+
+# Package de Configuração
+
+O package `projeto.integrador3.senac.mediotec.pi3_mediotec` tem um papel fundamental na configuração e inicialização da aplicação. Este package contém classes essenciais para a execução do sistema, bem como configurações de CORS e Swagger para documentar e gerenciar as APIs. Abaixo, detalhamos cada uma dessas classes, suas funções e sua importância.
+
+## Pi3MediotecApplication.java
+
+### Descrição
+Esta classe é o ponto de entrada da aplicação Spring Boot. Ela contém o método `main`, que dispara a execução do sistema. A anotação `@SpringBootApplication` é usada para habilitar várias funcionalidades do Spring Boot, como a configuração automática e a varredura de componentes.
+
+### Anotações
+- `@SpringBootApplication`: Combina três anotações essenciais do Spring:
+  - `@Configuration`: Indica que a classe pode conter definições de Beans.
+  - `@EnableAutoConfiguration`: Permite ao Spring Boot configurar automaticamente os componentes da aplicação.
+  - `@ComponentScan`: Habilita a varredura de componentes do Spring em todo o package base.
+
+### Método Principal
+- **main(String[] args)**: Método principal da aplicação. Ele utiliza o `SpringApplication.run` para iniciar o contexto do Spring e executar a aplicação.
+
+---
+
+## SwaggerConfig.java
+
+### Descrição
+A classe `SwaggerConfig` configura a integração com o Swagger/OpenAPI, uma ferramenta amplamente utilizada para documentar APIs REST. Ela customiza a documentação gerada para a API, oferecendo informações detalhadas como o nome da aplicação, sua versão e contatos.
+
+### Anotações
+- `@Configuration`: Indica que essa classe contém configurações do Spring.
+
+### Métodos
+- **customOpenAPI()**: Configura o Swagger/OpenAPI para fornecer uma documentação interativa da API.
+- **Info**: Fornece informações sobre o sistema, como o título, versão e uma descrição detalhada.
+- **Contact**: Informações de contato do desenvolvedor responsável.
+- **ExternalDocumentation**: Adiciona links externos, como o repositório do GitHub.
+
+### Principais Configurações
+- **Título**: "SGE - Sistema de Gerenciamento Escolar"
+- **Versão**: "1.0.0"
+- **Contato**: Rafael Vitor de Oliveira (LinkedIn e e-mail)
+- **Link Externo**: Repositório no GitHub
+
+Essa configuração permite que a API tenha uma interface gráfica e documentação acessível via `/swagger-ui.html` ou outros endpoints configurados pelo Swagger.
+
+---
+
+## WebConfig.java
+
+### Descrição
+A classe `WebConfig` contém a configuração de CORS (Cross-Origin Resource Sharing) para permitir que a API seja acessada por clientes front-end hospedados em diferentes domínios. Ela define quais origens, métodos HTTP e cabeçalhos são permitidos ao acessar os serviços da API.
+
+### Anotações
+- `@Configuration`: Indica que essa classe contém definições de configuração do Spring.
+
+### Métodos
+- **addCorsMappings(CorsRegistry registry)**: Configura as permissões de CORS para toda a aplicação. Especifica que qualquer rota (`/**`) pode ser acessada pela origem `http://localhost:3000` (ideal para desenvolvimento com React ou outras interfaces web hospedadas localmente).
+  - **allowedOrigins**: Permite a origem `http://localhost:3000`.
+  - **allowedMethods**: Especifica os métodos HTTP permitidos: `GET`, `POST`, `PUT`, `DELETE`, `OPTIONS`.
+  - **allowedHeaders**: Permite todos os cabeçalhos (`*`).
+  - **allowCredentials**: Indica que as credenciais, como cookies, podem ser incluídas nas requisições.
+
+Essa configuração é especialmente útil durante o desenvolvimento, permitindo que um front-end local interaja com a API sem problemas de bloqueio por CORS.
+
+---
+
+## Conclusão
+O package de configuração é essencial para o funcionamento da aplicação e para garantir que os componentes fundamentais estejam bem integrados e prontos para serem utilizados. A classe `Pi3MediotecApplication` é o ponto de entrada principal da aplicação, iniciando o contexto Spring. A `SwaggerConfig` oferece uma documentação interativa para que os desenvolvedores possam explorar e testar as APIs facilmente. Por fim, `WebConfig` garante que as requisições entre o front-end e o back-end possam ser feitas com permissões adequadas via CORS.
+
+---
+
+
+# Capítulo 3 - Configurações da Aplicação
+
+Este capítulo aborda as configurações essenciais da aplicação, detalhando como o arquivo `application.properties` e o `pom.xml` estruturam o comportamento do sistema. Ambos são fundamentais para o correto funcionamento da aplicação Spring Boot, fornecendo propriedades de configuração e dependências necessárias para rodar o sistema.
+
+## Configurações do `application.properties`
+
+O arquivo `application.properties` é o local onde são definidas as propriedades que configuram o comportamento do sistema. Ele contém configurações de conexão com o banco de dados, parâmetros do Hibernate, configurações regionais, e mais. Abaixo, são descritas as principais configurações utilizadas neste projeto.
+
+### 1. Configuração Básica da Aplicação
+
+```properties
+spring.application.name=pi3-mediotec
+```
+
+**Descrição**: Define o nome da aplicação Spring Boot, neste caso, "pi3-mediotec". Esse nome pode ser usado em logs ou para identificar a aplicação em ambientes distribuídos.
+
+### 2. Configurações do Banco de Dados
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/pi3_mediotec?createDatabaseIfNotExist=true
+spring.datasource.username=root
+spring.datasource.password=root
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+```
+
+- **spring.datasource.url**: Define a URL de conexão com o banco de dados MySQL. Aqui, a aplicação se conecta ao banco `pi3_mediotec` na porta 3306 do `localhost`. O parâmetro `createDatabaseIfNotExist=true` assegura que o banco seja criado automaticamente se ainda não existir.
+- **spring.datasource.username**: Nome de usuário do banco de dados, configurado como `root`.
+- **spring.datasource.password**: Senha do banco de dados, também definida como `root`.
+- **spring.datasource.driver-class-name**: Classe do driver JDBC responsável por gerenciar a conexão com o MySQL, neste caso, `com.mysql.cj.jdbc.Driver`.
+
+### 3. Configurações do Hibernate
+
+```properties
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.show_sql=true
+spring.jpa.properties.hibernate.use_sql_comments=true
+```
+
+- **spring.jpa.properties.hibernate.dialect**: Define o dialeto SQL que o Hibernate deve usar ao interagir com o banco de dados. No caso do MySQL, o dialeto padrão é `org.hibernate.dialect.MySQLDialect`, que permite ao Hibernate gerar queries SQL compatíveis com este banco.
+- **spring.jpa.hibernate.ddl-auto**: Configura como o Hibernate deve lidar com o esquema do banco de dados:
+  - `update`: O Hibernate atualiza o esquema de banco de dados existente com base nas entidades mapeadas na aplicação, sem perder dados. É útil para desenvolvimento, mas deve ser usado com cuidado em produção.
+- **spring.jpa.show-sql**: Ativa o log de todas as queries SQL geradas pelo Hibernate no console.
+- **spring.jpa.properties.hibernate.format_sql**: Formata as queries SQL no log para facilitar a leitura.
+- **spring.jpa.properties.hibernate.show_sql**: Um complemento de `spring.jpa.show-sql`, que permite visualizar as queries SQL geradas.
+- **spring.jpa.properties.hibernate.use_sql_comments**: Adiciona comentários nas queries SQL para auxiliar no entendimento de qual parte da aplicação originou a query.
+
+### 4. Configurações Regionais e de Fuso Horário
+
+```properties
+spring.jackson.time-zone=America/Sao_Paulo
+spring.messages.basename=messages
+```
+
+- **spring.jackson.time-zone**: Define o fuso horário para a serialização de datas. Aqui, a aplicação está configurada para o fuso horário de "America/Sao_Paulo", garantindo que todas as transações de tempo estejam ajustadas para o horário de Brasília.
+- **spring.messages.basename**: Define o local onde o Spring Boot buscará arquivos de mensagens internacionalizadas. Por exemplo, arquivos `messages.properties` podem conter mensagens e validações em vários idiomas.
+
+### 5. Configuração do Swagger UI
+
+```properties
+springdoc.swagger-ui.path=/swagger-ui.html
+```
+
+- **springdoc.swagger-ui.path**: Define o caminho onde a interface Swagger UI será acessível. Neste caso, o Swagger estará disponível no endpoint `/swagger-ui.html`. Essa interface é essencial para visualizar e testar as APIs expostas pela aplicação de forma interativa.
+
+## Conclusão
+
+O arquivo `application.properties` desempenha um papel fundamental na configuração de vários aspectos da aplicação. Ele define a conexão com o banco de dados, configurações do Hibernate para mapear entidades e gerenciar o banco de dados, ajustes de fuso horário, internacionalização, e a integração com o Swagger para documentação da API. Ajustar essas propriedades corretamente garante que a aplicação funcione adequadamente em diferentes ambientes, desde o desenvolvimento até a produção.
+
+
+---
+
+
+# Configurações do pom.xml
+
+O arquivo `pom.xml` (Project Object Model) é um dos principais arquivos de configuração de projetos no Maven. Ele descreve as informações do projeto, gerencia as dependências necessárias e configura os plugins usados no ciclo de vida do projeto. Para projetos baseados em Spring Boot, como o presente, o `pom.xml` também é utilizado para configurar a versão do Java, bibliotecas adicionais, e comportamentos durante a compilação e execução da aplicação.
+
+## Estrutura do pom.xml
+
+O arquivo é dividido em várias seções importantes:
+
+- `<modelVersion>`: Define a versão do modelo POM usada.
+- `<parent>`: Define o projeto pai, que neste caso é o Spring Boot Starter Parent. Ele herda propriedades e dependências de configuração comuns aos projetos Spring Boot.
+
+```xml
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.3.2</version>
+</parent>
+```
+
+O Spring Boot Starter Parent facilita o gerenciamento de versões e configurações padrão, incluindo dependências essenciais para uma aplicação Spring Boot.
+
+### Informações do Projeto
+
+- **`<groupId>`**: Representa o grupo ao qual o projeto pertence. No caso, `projeto.integrador.3.senac.mediotec`.
+- **`<artifactId>`**: Nome único do projeto, neste caso, `pi3-mediotec`.
+- **`<version>`**: Versão atual do projeto.
+- **`<name>`** e **`<description>`**: Definem o nome e uma breve descrição do projeto.
+
+### Propriedades
+
+```xml
+<properties>
+    <java.version>17</java.version>
+</properties>
+```
+
+Define a versão do Java utilizada no projeto. Aqui, a aplicação está configurada para usar o Java 17.
+
+### Dependências
+
+As dependências são bibliotecas e frameworks externos que a aplicação precisa para funcionar corretamente. O Maven baixa essas dependências automaticamente e as inclui no projeto. Abaixo estão listadas e explicadas as dependências presentes no `pom.xml`:
+
+#### SpringDoc OpenAPI
+
+```xml
+<dependency>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    <version>2.1.0</version>
+</dependency>
+```
+
+Descrição: Adiciona suporte à documentação automática de APIs usando Swagger e OpenAPI. Proporciona uma interface gráfica interativa para testar e visualizar os endpoints da aplicação.
+
+#### Spring Boot Validation
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
+```
+
+Descrição: Fornece mecanismos de validação de dados (como tamanho de strings e validação de emails) para as entidades e DTOs da aplicação, usando anotações como `@NotNull`, `@Email`, e `@Size`.
+
+#### Spring Boot Data JPA
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+```
+
+Descrição: Inclui todas as funcionalidades do JPA (Java Persistence API) para facilitar o mapeamento objeto-relacional e persistência de dados em bancos de dados relacionais. Permite a integração com Hibernate e a criação de repositórios.
+
+#### Spring Boot Web
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+Descrição: Inclui as dependências necessárias para a criação de aplicações web usando Spring MVC. Oferece suporte para o desenvolvimento de APIs RESTful.
+
+#### Spring Boot DevTools
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-devtools</artifactId>
+    <scope>runtime</scope>
+    <optional>true</optional>
+</dependency>
+```
+
+Descrição: Fornece ferramentas de desenvolvimento, como recarregamento automático da aplicação e configuração simplificada de cache para acelerar o desenvolvimento.
+
+#### MySQL Connector
+
+```xml
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+Descrição: Driver JDBC para conectar a aplicação ao banco de dados MySQL.
+
+#### PostgreSQL Driver
+
+```xml
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+Descrição: Driver JDBC para conectar a aplicação ao banco de dados PostgreSQL.
+
+#### Lombok
+
+```xml
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <optional>true</optional>
+</dependency>
+```
+
+Descrição: Biblioteca que reduz o boilerplate (código repetitivo) em classes Java, como getters, setters, construtores e métodos `equals` e `hashCode`. Facilita a criação de código mais enxuto.
+
+#### Spring Boot Starter Test
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+Descrição: Conjunto de dependências para testes de unidade e integração no Spring Boot, incluindo bibliotecas como JUnit, Mockito, e Spring Test.
+
+### Plugins
+
+Os plugins são utilizados pelo Maven para realizar tarefas específicas, como compilação, empacotamento e execução de testes.
+
+#### Spring Boot Maven Plugin
+
+```xml
+<plugin>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-maven-plugin</artifactId>
+</plugin>
+```
+
+Descrição: Facilita a criação de arquivos JAR e WAR executáveis. Também fornece funcionalidades úteis para rodar e empacotar a aplicação Spring Boot.
+
+## Conclusão
+
+O arquivo `pom.xml` é essencial para o gerenciamento do projeto Spring Boot, permitindo a inclusão de bibliotecas e frameworks necessários, além de configurar o ciclo de vida da aplicação com plugins e dependências. Cada uma das dependências mencionadas desempenha um papel fundamental no funcionamento correto da aplicação, desde a persistência de dados até a documentação e teste das APIs.
+
+
+---
+
+
+# Capítulo 4 - Documentação do Banco de Dados
+
+## 1. Introdução
+
+Este banco de dados é o núcleo de um Sistema de Gerenciamento Escolar, contendo informações sobre alunos, professores, disciplinas, coordenadores, responsáveis, e outras entidades relacionadas ao ambiente acadêmico. Cada tabela e relacionamento foi modelado para otimizar a integração entre professores, alunos e coordenadores, além de armazenar dados como presenças, notas, horários e comunicação interna.
+
+## 2. Tabelas
+
+### 2.1 Tabela aluno
+
+| Campo                     | Tipo      | Chave     |
+|----------------------------|-----------|-----------|
+| matricula_aluno             | PK        |           |
+| nome                       | string    |           |
+| ultimo_nome                | string    |           |
+| data_nascimento            | date      |           |
+| genero                     | string    |           |
+| cpf                        | string    | Unique    |
+| email                      | string    | Unique    |
+| status                     | bit       |           |
+| coordenacao_id_coordenacao | FK        |           |
+| Relationships               |           |           |
+| aluno_turma                | N:N       |           |
+| responsavel                | 1:N       |           |
+| presenca                   | 1:N       |           |
+| conceito                   | 1:N       |           |
+
+
+A tabela aluno armazena as informações dos alunos matriculados no sistema. Ela possui os seguintes campos:
+
+- **matricula_aluno**: Chave primária auto-incrementável.
+- **nome**: Nome do aluno.
+- **ultimo_nome**: Sobrenome do aluno.
+- **data_nascimento**: Data de nascimento.
+- **genero**: Gênero do aluno.
+- **cpf**: Número do CPF (único).
+- **email**: Email do aluno (único).
+- **status**: Status de ativo/inativo (bit).
+- **coordenacao_id_coordenacao**: Chave estrangeira para a tabela coordenacao.
+
+#### Relacionamentos:
+
+- **aluno_turma**: Relaciona alunos com turmas (relacionamento N:N).
+- **responsavel**: Um aluno pode ter um ou mais responsáveis.
+- **presenca**: Relação com as presenças dos alunos em suas aulas.
+- **conceito**: Notas e conceitos relacionados ao aluno.
+
+### 2.2 Tabela professor
+
+| Campo        | Tipo      | Chave     |
+|--------------|-----------|-----------|
+| cpf          | PK        |           |
+| nome         | string    |           |
+| ultimo_nome  | string    |           |
+| data_nascimento | date   |           |
+| email        | string    | Unique    |
+| genero       | string    |           |
+| status       | bit       |           |
+| id_coordenacao| FK       |           |
+| Relationships |           |           |
+| turma_disciplina_professor | N:N     |           
+| comunicado   | 1:N       |           |
+
+
+
+A tabela professor armazena os dados dos professores:
+
+- **cpf**: Chave primária e CPF do professor.
+- **nome**: Nome do professor.
+- **ultimo_nome**: Sobrenome do professor.
+- **data_nascimento**: Data de nascimento do professor.
+- **email**: Endereço de email (único).
+- **genero**: Gênero do professor.
+- **status**: Status de atividade (bit).
+- **id_coordenacao**: Chave estrangeira para a tabela coordenacao.
+
+#### Relacionamentos:
+
+- **turma_disciplina_professor**: Relaciona professores com disciplinas e turmas.
+- **comunicado**: Permite que professores enviem comunicados.
+
+### 2.3 Tabela disciplina
+
+| Campo          | Tipo      | Chave     |
+|----------------|-----------|-----------|
+| id_disciplina  | PK        |           |
+| nome           | string    |           |
+| carga_horaria  | int       |           |
+| Relationships  |           |           |
+| turma_disciplina_professor | N:N       |           
+| conceito       | 1:N       |           |
+| horario        | 1:N       |           |
+
+A tabela disciplina contém as disciplinas oferecidas no sistema:
+
+- **id_disciplina**: Chave primária auto-incrementável.
+- **nome**: Nome da disciplina.
+- **carga_horaria**: Carga horária total da disciplina.
+
+#### Relacionamentos:
+
+- **turma_disciplina_professor**: Relaciona disciplinas com turmas e professores.
+- **conceito**: Registra notas dos alunos para cada disciplina.
+- **horario**: Define os horários de aulas para cada disciplina.
+
+### 2.4 Tabela turma
+
+| Campo         | Tipo      | Chave     |
+|---------------|-----------|-----------|
+| id_turma      | PK        |           |
+| nome          | string    |           |
+| ano_letivo    | int       |           |
+| ano_escolar   | string    |           |
+| turno         | string    |           |
+| status        | bit       |           |
+| id_coordenacao| FK        |           |
+| Relationships |           |           |
+| aluno_turma   | N:N       |           |
+| turma_disciplina_professor | N:N      |   
+
+A tabela turma representa as turmas cadastradas no sistema:
+
+- **id_turma**: Chave primária auto-incrementável.
+- **nome**: Nome da turma.
+- **ano_letivo**: Ano letivo da turma.
+- **ano_escolar**: Ano escolar (por exemplo, 1º ano, 2º ano, etc.).
+- **turno**: Turno da turma (matutino, vespertino, etc.).
+- **status**: Status de atividade (bit).
+- **id_coordenacao**: Chave estrangeira para a tabela coordenacao.
+
+#### Relacionamentos:
+
+- **aluno_turma**: Relaciona alunos com turmas.
+- **turma_disciplina_professor**: Relaciona turmas com disciplinas e professores.
+
+### 2.5 Tabela responsavel
+
+| Campo        | Tipo      | Chave     |
+|--------------|-----------|-----------|
+| id           | PK        |           |
+| cpf          | string    | Unique    |
+| nome         | string    |           |
+| ultimo_nome  | string    |           |
+| grau_parentesco | string  |           |
+| aluno_id     | FK        |           |
+| Relationships|           |           |
+| aluno        | N:1       |           |
+
+Armazena os responsáveis pelos alunos, com informações como nome, CPF, e grau de parentesco:
+
+- **id**: Chave primária auto-incrementável.
+- **cpf**: CPF do responsável (único).
+- **nome**: Nome do responsável.
+- **ultimo_nome**: Sobrenome do responsável.
+- **grau_parentesco**: Grau de parentesco com o aluno.
+- **aluno_id**: Chave estrangeira para a tabela aluno.
+
+### 2.6 Tabela telefone
+
+| Campo         | Tipo      | Chave     |
+|---------------|-----------|-----------|
+| id            | PK        |           |
+| ddd           | int       |           |
+| numero        | string    |           |
+| aluno_id      | FK        |           |
+| professor_id  | FK        |           |
+| coordenador_id| FK        |           |
+| responsavel_id| FK        |           |
+
+Armazena os números de telefone associados a alunos, professores, coordenadores e responsáveis:
+
+- **id**: Chave primária auto-incrementável.
+- **ddd**: Código de área do telefone (2 dígitos).
+- **numero**: Número do telefone.
+- **aluno_id**: Chave estrangeira para a tabela aluno.
+- **professor_id**: Chave estrangeira para a tabela professor.
+- **coordenador_id**: Chave estrangeira para a tabela coordenador.
+- **responsavel_id**: Chave estrangeira para a tabela responsavel.
+
+### 2.7 Tabela coordenacao
+
+| Campo         | Tipo      | Chave     |
+|---------------|-----------|-----------|
+| id_coordenacao| PK        |           |
+| nome          | string    |           |
+| descricao     | string    |           |
+
+
+Armazena as coordenações dentro da instituição:
+
+- **id_coordenacao**: Chave primária auto-incrementável.
+- **nome**: Nome da coordenação.
+- **descricao**: Breve descrição da coordenação.
+
+### 2.8 Tabela turma_disciplina_professor
+
+| Campo         | Tipo      | Chave     |
+|---------------|-----------|-----------|
+| id_disciplina | FK        |           |
+| id_professor  | FK        |           |
+| id_turma      | FK        |           |
+
+Essa tabela é intermediária e realiza a associação entre turmas, disciplinas e professores:
+
+- **id_disciplina**: Chave estrangeira para a tabela disciplina.
+- **id_professor**: Chave estrangeira para a tabela professor.
+- **id_turma**: Chave estrangeira para a tabela turma.
+
+### 2.9 Tabela conceito
+
+| Campo          | Tipo      | Chave     |
+|----------------|-----------|-----------|
+| id_conceito    | PK        |           |
+| id_aluno       | FK        |           |
+| id_disciplina  | FK        |           |
+| id_professor   | FK        |           |
+| id_turma       | FK        |           |
+| media_final    | float     |           |
+| nota_unidade1  | float     |           |
+| nota_unidade2  | float     |           |
+| nota_unidade3  | float     |           |
+| nota_unidade4  | float     |           |
+| noa1           | float     |           |
+| noa2           | float     |           |
+| noa_final      | float     |           |
+
+Registra as notas e avaliações (conceitos) dos alunos em suas disciplinas:
+
+- **id_conceito**: Chave primária auto-incrementável.
+- **id_aluno**: Chave estrangeira para a tabela aluno.
+- **id_disciplina**: Chave estrangeira para a tabela disciplina.
+- **id_professor**: Chave estrangeira para a tabela professor.
+- **id_turma**: Chave estrangeira para a tabela turma.
+- **media_final**: Média final do aluno na disciplina.
+- **nota_unidade1** até **nota_unidade4**: Notas das quatro unidades avaliadas.
+- **noa1**, **noa2**, **noa_final**: Notas de recuperação e exame final.
+
+### 2.10 Tabela presenca
+
+| Campo          | Tipo      | Chave     |
+|----------------|-----------|-----------|
+| id_presenca    | PK        |           |
+| data           | date      |           |
+| presenca       | bool      |           |
+| id_aluno       | FK        |           |
+| id_disciplina  | FK        |           |
+| id_professor   | FK        |           |
+| id_turma       | FK        |           |
+
+Registra a presença dos alunos nas aulas:
+
+- **id_presenca**: Chave primária auto-incrementável.
+- **data**: Data da aula.
+- **presenca**: Booleano que indica se o aluno estava presente.
+- **id_aluno**: Chave estrangeira para a tabela aluno.
+- **id_disciplina**: Chave estrangeira para a tabela disciplina.
+- **id_professor**: Chave estrangeira para a tabela professor.
+- **id_turma**: Chave estrangeira para a tabela turma.
+
+### 2.11 Tabela horario
+
+
+| Campo          | Tipo      | Chave     |
+|----------------|-----------|-----------|
+| id_horario     | PK        |           |
+| dia_semana     | string    |           |
+| hora_inicio    | time      |           |
+| hora_fim       | time      |           |
+| id_disciplina  | FK        |           |
+| id_professor   | FK        |           |
+| id_turma       | FK        |           |
+
+Define os horários de aula para as turmas:
+
+- **id_horario**: Chave primária auto-incrementável.
+- **dia_semana**: Dia da semana (enum).
+- **hora_inicio**: Hora de início da aula.
+- **hora_fim**: Hora de término da aula.
+- **id_disciplina**: Chave estrangeira para a tabela disciplina.
+- **id_professor**: Chave estrangeira para a tabela professor.
+- **id_turma**: Chave estrangeira para a tabela turma.
+
+### 2.12 Tabela comunicado
+
+| Campo                    | Tipo          | Chave     |
+|---------------------------|---------------|-----------|
+| id                        | PK            |           |
+| conteudo                  | string        |           |
+| data_envio                | datetime      |           |
+| remetente_coordenacao_id   | FK            |           |
+| remetente_professor_id     | FK            |           |
+
+Armazena os comunicados enviados entre professores, coordenações, alunos e turmas:
+
+- **id**: Chave primária auto-incrementável.
+- **conteudo**: Conteúdo do comunicado.
+- **data_envio**: Data e hora do envio do comunicado.
+- **remetente_coordenacao_id**: Chave estrangeira para a tabela coordenacao.
+- **remetente_professor_id**: Chave estrangeira para a tabela professor.
+
+### 2.13 Tabela comunicado_receptor_alunos e comunicado_receptor_turmas
+
+#### Comunicado_Receptor_Alunos
+
+| Campo         | Tipo      | Chave     |
+|---------------|-----------|-----------|
+| comunicado_id | FK        |           |
+| aluno_id      | FK        |           |
+
+#### Comunicado_Receptor_Turmas
+
+| Campo         | Tipo      | Chave     |
+|---------------|-----------|-----------|
+| comunicado_id | FK        |           |
+| turma_id      | FK        |           |
+
+Relacionam os comunicados com os alunos e turmas que os receberam:
+
+- **comunicado_id**: Chave estrangeira para a tabela comunicado.
+- **aluno_id**: Chave estrangeira para a tabela aluno (na tabela comunicado_receptor_alunos).
+- **turma_id**: Chave estrangeira para a tabela turma (na tabela comunicado_receptor_turmas).
+
+## 3. Relacionamentos Principais
+
+- **Aluno e Turma**: Relacionamento N:N através da tabela `aluno_turma`.
+- **Turma, Disciplina e Professor**: Relacionamento N:N através da tabela intermediária `turma_disciplina_professor`.
+- **Conceito**: Armazena as notas de cada aluno para suas disciplinas e turmas.
+- **Presença**: Registra se os alunos estavam presentes nas aulas.
+- **Comunicados**: Professores e coordenações podem enviar comunicados para alunos e turmas.
+
+
+---
+
+
+# Capítulo 5 - Endpoints
+
+## Introdução
+Esta seção apresenta os principais endpoints de cadastro e consulta do SGE (Sistema de Gerenciamento Escolar). Para uma documentação completa de todos os endpoints disponíveis, incluindo parâmetros, respostas e exemplos, acesse o Swagger da API:
+
+**Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+A seguir, são apresentados os exemplos de requisições POST (cadastro mínimo e máximo) e GET (consulta detalhada) para cada entidade do sistema.
+
+## 1. Aluno
+**Campos mínimos**:
+- Nome
+- Último nome
+- Gênero
+- Data de nascimento
+- Email
+- CPF
+- Responsável (ID do responsável)
+
+### Exemplo de cadastro (POST - Mínimo):
+```json
+{
+  "nome": "João",
+  "ultimoNome": "Silva",
+  "genero": "Masculino",
+  "data_nascimento": "2005-05-10",
+  "email": "joao.silva@email.com",
+  "cpf": "123.456.789-00",
+  "responsavel": {
+    "nome": "Carlos",
+    "ultimoNome": "Silva",
+    "cpf": "321.654.987-00",
+    "grauParentesco": "Pai"
+  }
+}
+```
+
+### Exemplo de cadastro (POST - Máximo):
+```json
+{
+  "nome": "João",
+  "ultimoNome": "Silva",
+  "genero": "Masculino",
+  "data_nascimento": "2005-05-10",
+  "email": "joao.silva@email.com",
+  "cpf": "123.456.789-00",
+  "responsavel": {
+    "nome": "Carlos",
+    "ultimoNome": "Silva",
+    "cpf": "321.654.987-00",
+    "grauParentesco": "Pai",
+    "telefones": [
+      {
+        "ddd": "81",
+        "numero": "999999999"
+      }
+    ]
+  },
+  "enderecos": [
+    {
+      "cep": "50000-000",
+      "rua": "Rua A",
+      "numero": "123",
+      "bairro": "Centro",
+      "cidade": "Recife",
+      "estado": "PE"
+    }
+  ],
+  "turmasIds": [1, 2]
+}
+```
+
+### Exemplo de consulta (GET - Completo):
+```json
+{
+  "nome": "João",
+  "ultimoNome": "Silva",
+  "genero": "Masculino",
+  "data_nascimento": "2005-05-10",
+  "email": "joao.silva@email.com",
+  "cpf": "123.456.789-00",
+  "status": true,
+  "responsavel": {
+    "nome": "Carlos",
+    "ultimoNome": "Silva",
+    "cpf": "321.654.987-00",
+    "grauParentesco": "Pai"
+  },
+  "enderecos": [
+    {
+      "cep": "50000-000",
+      "rua": "Rua A",
+      "numero": "123",
+      "bairro": "Centro",
+      "cidade": "Recife",
+      "estado": "PE"
+    }
+  ],
+  "turmas": [
+    {
+      "nome": "Turma A",
+      "anoLetivo": 2024,
+      "anoEscolar": "1º Ano"
+    }
+  ]
+}
+```
+
+## 2. Professor
+**Campos mínimos**:
+- Nome
+- Último nome
+- Gênero
+- Data de nascimento
+- Email
+- CPF
+
+### Exemplo de cadastro (POST - Mínimo):
+```json
+{
+  "nome": "Maria",
+  "ultimoNome": "Fernandes",
+  "genero": "Feminino",
+  "data_nascimento": "1980-03-12",
+  "email": "maria.fernandes@email.com",
+  "cpf": "987.654.321-00"
+}
+```
+
+### Exemplo de cadastro (POST - Máximo):
+```json
+{
+  "nome": "Maria",
+  "ultimoNome": "Fernandes",
+  "genero": "Feminino",
+  "data_nascimento": "1980-03-12",
+  "email": "maria.fernandes@email.com",
+  "cpf": "987.654.321-00",
+  "enderecos": [
+    {
+      "cep": "50000-000",
+      "rua": "Rua B",
+      "numero": "321",
+      "bairro": "Boa Vista",
+      "cidade": "Recife",
+      "estado": "PE"
+    }
+  ],
+  "telefones": [
+    {
+      "ddd": "81",
+      "numero": "988888888"
+    }
+  ],
+  "turmasDisciplinas": [
+    {
+      "turmaId": 1,
+      "disciplinasIds": [1]
+    }
+  ]
+}
+```
+
+### Exemplo de consulta (GET - Completo):
+```json
+{
+  "cpf": "987.654.321-00",
+  "nome": "Maria",
+  "ultimoNome": "Fernandes",
+  "genero": "Feminino",
+  "data_nascimento": "1980-03-12",
+  "email": "maria.fernandes@email.com",
+  "status": true,
+  "enderecos": [
+    {
+      "cep": "50000-000",
+      "rua": "Rua B",
+      "numero": "321",
+      "bairro": "Boa Vista",
+      "cidade": "Recife",
+      "estado": "PE"
+    }
+  ],
+  "telefones": [
+    {
+      "ddd": "81",
+      "numero": "988888888"
+    }
+  ],
+  "coordenacao": {
+    "nome": "Coordenação de Exatas",
+    "coordenadores": [
+      {
+        "nomeCoordenador": "Carlos Silva",
+        "email": "carlos.silva@email.com"
+      }
+    ]
+  },
+  "turmas": [
+    {
+      "nome": "Turma A",
+      "anoLetivo": 2024,
+      "anoEscolar": "1º Ano",
+      "disciplinas": [
+        {
+          "nome": "Matemática"
+        }
+      ]
+    }
+  ]
+}
+```
+
+## 3. Coordenação
+**Campos mínimos**:
+- Nome
+- ID do Coordenador
+
+### Exemplo de cadastro (POST - Mínimo):
+```json
+{
+  "nome": "Coordenação de Ciências",
+  "coordenadorId": "98765432100"
+}
+```
+
+### Exemplo de cadastro (POST - Máximo):
+```json
+{
+  "nome": "Coordenação de Ciências",
+  "descricao": "Coordenação responsável pelas disciplinas de ciências naturais",
+  "coordenadorId": "98765432100"
+}
+```
+
+### Exemplo de consulta (GET - Completo):
+```json
+{
+  "nome": "Coordenação de Ciências",
+  "descricao": "Coordenação responsável pelas disciplinas de ciências naturais",
+  "coordenadores": [
+    {
+      "nomeCoordenador": "Carlos Silva",
+      "email": "carlos.silva@email.com"
+    }
+  ]
+}
+```
+
+## 4. Disciplina
+**Campos mínimos**:
+- Nome
+- Carga horária
+
+### Exemplo de cadastro (POST - Mínimo):
+```json
+{
+  "nome": "Matemática",
+  "carga_horaria": 80
+}
+```
+
+### Exemplo de cadastro (POST - Máximo):
+```json
+{
+  "nome": "Matemática",
+  "carga_horaria": 80
+}
+```
+
+### Exemplo de consulta (GET - Completo):
+```json
+{
+  "nome": "Matemática",
+  "carga_horaria": 80,
+  "turmas": [
+    {
+      "nome": "Turma A",
+      "anoLetivo": 2024,
+      "anoEscolar": "1º Ano"
+    }
+  ],
+  "professores": [
+    {
+      "cpf": "987.654.321-00",
+      "nome": "Maria Fernandes"
+    }
+  ]
+}
+```
+
+## 5. Turma
+**Campos mínimos**:
+- Nome
+- Ano letivo
+- Ano escolar
+- Turno
+
+### Exemplo de cadastro (POST - Mínimo):
+```json
+{
+  "nome": "Turma A",
+  "anoLetivo": 2024,
+  "anoEscolar": "1º Ano",
+  "turno": "Matutino"
+}
+```
+
+### Exemplo de cadastro (POST - Máximo):
+```json
+{
+  "nome": "Turma A",
+  "anoLetivo": 2024,
+  "anoEscolar": "1º Ano",
+  "turno": "Matutino",
+  "alunosIds": [1, 2],
+  "disciplinasProfessores": [
+    {
+      "professorId": "98765432100",
+      "disciplinasIds": [1]
+    }
+  ]
+}
+```
+
+### Exemplo de consulta (GET - Completo):
+```json
+{
+  "nome": "Turma A",
+  "anoLetivo": 2024,
+  "anoEscolar": "1º Ano",
+  "turno": "Matutino",
+  "disciplinas": [
+    {
+      "nome": "Matemática",
+      "professores": [
+        {
+          "nome": "Maria Fernandes",
+          "email": "maria.fernandes@email.com"
+        }
+      ]
+    }
+  ],
+  "alunos": [
+    {
+      "nomeAluno": "João Silva",
+      "email": "joao.silva@email.com"
+    }
+  ]
+}
+```
+
+## 6. Responsável
+**Campos mínimos**:
+- Nome
+- Último nome
+- CPF
+- Grau de parentesco
+
+### Exemplo de cadastro (POST - Mínimo):
+```json
+{
+  "nome": "Carlos",
+  "ultimoNome": "Oliveira",
+  "cpf": "321.654.987-00",
+  "grauParentesco": "Pai"
+}
+```
+
+### Exemplo de cadastro (POST - Máximo):
+```json
+{
+  "nome": "Carlos",
+  "ultimoNome": "Oliveira",
+  "cpf": "321.654.987-00",
+  "grauParentesco": "Pai",
+  "telefones": [
+    {
+      "ddd": "81",
+      "numero": "999999999"
+    }
+  ]
+}
+```
+
+### Exemplo de consulta (GET - Completo):
+```json
+{
+  "nome": "Carlos",
+  "ultimoNome": "Oliveira",
+  "cpf": "321.654.987-00",
+  "grauParentesco": "Pai",
+  "telefones": [
+    {
+      "ddd": "81",
+      "numero": "999999999"
+    }
+  ],
+  "alunos": [
+    {
+      "nomeAluno": "João Silva",
+      "email": "joao.silva@email.com"
+    }
+  ]
+}
+```
+
+## 7. Conceito
+**Campos mínimos**:
+- ID do Aluno
+- ID da Disciplina
+- ID da Turma
+- Conceito final (aprovado ou reprovado)
+
+### Exemplo de cadastro (POST - Mínimo):
+```json
+{
+  "idAluno": 1,
+  "idDisciplina": 1,
+  "idTurma": 1,
+  "conceito_final": "Aprovado"
+}
+```
+
+### Exemplo de cadastro (POST - Máximo):
+```json
+{
+  "idAluno": 1,
+  "idDisciplina": 1,
+  "idTurma": 1,
+  "conceito_final": "Aprovado",
+  "nota_unidade1": 8.0,
+  "nota_unidade2": 9.0,
+  "media_final": 8.5
+}
+```
+
+### Exemplo de consulta (GET - Completo):
+```json
+{
+  "aluno": {
+    "nome": "João Silva",
+    "email": "joao.silva@email.com"
+  },
+  "disciplina": {
+    "nome": "Matemática"
+  },
+  "turma": {
+    "nome": "Turma A",
+    "anoLetivo": 2024
+  },
+  "conceito_final": "Aprovado",
+  "media_final": 8.5,
+  "nota_unidade1": 8.0,
+  "nota_unidade2": 9.0
+}
+```
+
+## 8. Comunicado
+**Campos mínimos**:
+- Conteúdo do comunicado
+- Data de envio
+- Remetente (ID da coordenação ou professor)
+
+### Exemplo de cadastro (POST - Mínimo):
+```json
+{
+  "conteudo": "Reunião importante na próxima segunda-feira.",
+  "data_envio": "2024-09-21T14:30:00",
+  "remetenteCoordenacaoId": 1
+}
+```
+
+### Exemplo de cadastro (POST - Máximo):
+```json
+{
+  "conteudo": "Reunião importante na próxima segunda-feira.",
+  "data_envio": "2024-09-21T14:30:00",
+  "remetenteCoordenacaoId": 1,
+  "receptores": {
+    "alunosIds": [1, 2],
+    "turmasIds": [1]
+  }
+}
+```
+
+### Exemplo de consulta (GET - Completo):
+```json
+{
+  "conteudo": "Reunião importante na próxima segunda-feira.",
+  "data_envio": "2024-09-21T14:30:00",
+  "remetente": {
+    "nome": "Coordenação de Ciências"
+  },
+  "receptores": {
+    "alunos": [
+      {
+        "nomeAluno": "João Silva",
+        "email": "joao.silva@email.com"
+      }
+    ],
+    "turmas": [
+      {
+        "nome": "Turma A",
+        "anoLetivo": 2024
+      }
+    ]
+  }
+}
+```
+
+
+---
+
+
+# Capítulo 6 - Em Desenvolvimento (futuras melhorias)
+
+Com o desenvolvimento contínuo do Sistema de Gerenciamento Escolar (SGE), novas funcionalidades e aprimoramentos serão necessários para melhorar sua robustez, segurança e escalabilidade. Abaixo estão algumas das melhorias planejadas para futuras versões do sistema:
+
+## 1. Tratamento de Erros Mais Robustos
+
+Atualmente, o tratamento de erros é funcional, porém, há espaço para melhorias. Pretende-se implementar uma camada de tratamento de erros mais robusta, que incluirá:
+
+- Validações mais detalhadas nas entradas e saídas do sistema.
+- Mensagens de erro padronizadas, que facilitem a identificação e resolução de problemas pelos usuários e desenvolvedores.
+- Logger aprimorado para capturar detalhes completos dos erros no sistema, ajudando na auditoria e na correção de bugs.
+
+## 2. Encapsulamento da Regra de Negócio
+
+Para aumentar a manutenção e reutilização de código, as regras de negócio serão completamente encapsuladas dentro de serviços especializados. Isso trará:
+
+- Separação clara entre regras de negócio e a lógica de apresentação.
+- Reuso de lógica em diferentes partes do sistema, evitando duplicação de código.
+- Facilidade de testes unitários e de integração, garantindo a confiabilidade das operações críticas.
+
+## 3. Configuração Mais Forte das Bilateralidades
+
+Pretendemos revisar e fortalecer os relacionamentos bidirecionais (Many-to-Many, One-to-Many) no sistema, incluindo:
+
+- Validação das bilateralidades em operações de persistência, para garantir a integridade dos relacionamentos entre entidades.
+- Implementação de métodos auxiliares para garantir que os relacionamentos entre entidades sejam corretamente gerenciados e sincronizados.
+- Documentação aprimorada das bilateralidades, detalhando como as entidades se inter-relacionam no sistema.
+
+## 4. Implementação de Spring Security
+
+A segurança do sistema será aprimorada com a integração do Spring Security. Esse framework fornecerá:
+
+- **Autenticação**: Controle de acesso aos recursos, garantindo que apenas usuários autorizados possam acessar informações sensíveis.
+- **Autorização baseada em papéis (roles)**: Definição de permissões para cada usuário ou grupo de usuários, como administradores, coordenadores, professores e alunos.
+- Proteção contra ataques comuns, como CSRF (Cross-Site Request Forgery) e XSS (Cross-Site Scripting).
+
+## 5. Auditoria e Logs de Atividade
+
+Para aumentar a transparência e segurança, será implementado um sistema de auditoria que registre as ações dos usuários no sistema, incluindo:
+
+- Logs detalhados de todas as operações CRUD realizadas pelos usuários.
+- Relatórios de atividades, que permitirão verificar quem acessou ou modificou dados específicos.
+- Integração com ferramentas de monitoramento de segurança, para detectar atividades suspeitas em tempo real.
+
+## 6. Melhorias na Performance e Escalabilidade
+
+Com o crescimento da base de dados, será essencial garantir a escalabilidade do sistema, por meio de:
+
+- Otimização das consultas SQL para reduzir o tempo de resposta nas operações com grandes volumes de dados.
+- Implementação de caching para reduzir o número de consultas ao banco de dados em operações repetitivas.
+- Melhorias na infraestrutura de deploy, permitindo que o sistema suporte um maior número de usuários simultâneos sem perda de desempenho.
+
+Essas futuras melhorias visam tornar o SGE mais robusto, seguro e escalável, garantindo a satisfação dos usuários e a longevidade do sistema.
+
+
+### 7. Testes Automatizados
+
+-  Adição de testes automatizados é uma melhoria significativa, implementar testes unitários e de integração com JUnit ou Mockito garantindo que o sistema se comporta conforme esperado, reduzindo a possibilidade de erros em atualizações futuras.
+-  Criar testes para validar regras de negócio e integração entre os componentes.
+
+
+

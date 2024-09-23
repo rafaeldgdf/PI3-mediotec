@@ -102,6 +102,8 @@ public class AlunoController {
         }
     }
 
+    
+    /*
     // ============================= GET METHODS FOR CONCEITOS =============================
 
     // Rota para visualizar todos os conceitos de um aluno
@@ -128,5 +130,6 @@ public class AlunoController {
         }
         return ResponseEntity.ok(conceitos);
     }
-
+*/
+    
 }

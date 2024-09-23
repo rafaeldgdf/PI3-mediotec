@@ -119,94 +119,98 @@ public class ProfessorController {
 
     // ============================= MÉTODOS DE CONCEITOS =============================
 
-    /**
-     * Adiciona um conceito a um aluno em uma disciplina e turma específicas.
-     * Tag: Conceitos
-     */
-    @Operation(summary = "Adicionar conceito a um aluno em uma disciplina e turma específica", 
-               description = "Adiciona um conceito para um aluno em uma disciplina e turma específicas.", 
-               tags = { "Conceitos" })  
-    @PostMapping("/{idProfessor}/aluno/{idAluno}/disciplina/{idDisciplina}/turma/{idTurma}/conceitos")
-    public ResponseEntity<ConceitoDTO> adicionarConceitoParaAlunoComTurma(
-            @PathVariable String idProfessor,
-            @PathVariable Long idAluno,
-            @PathVariable Long idDisciplina,
-            @PathVariable Long idTurma,
-            @RequestBody ConceitoInputDTO conceitoInputDTO) {
-        try {
-            ConceitoDTO novoConceito = conceitoService.salvarConceitoParaAlunoComTurma(idProfessor, idAluno, idDisciplina, idTurma, conceitoInputDTO);
-            return new ResponseEntity<>(novoConceito, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao adicionar conceito: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Atualiza um conceito de um aluno em uma disciplina e turma específicas.
-     * Tag: Conceitos
-     */
-    @Operation(summary = "Atualizar conceito de um aluno em uma disciplina e turma específica", 
-               description = "Atualiza um conceito existente para um aluno em uma disciplina e turma específicas.", 
-               tags = { "Conceitos" })  // Aqui também as operações são documentadas sob "Conceitos"
-    @PutMapping("/{idProfessor}/aluno/{idAluno}/disciplina/{idDisciplina}/turma/{idTurma}/conceitos/{idConceito}")
-    public ResponseEntity<ConceitoDTO> atualizarConceitoParaAlunoComTurma(
-            @PathVariable String idProfessor,
-            @PathVariable Long idAluno,
-            @PathVariable Long idDisciplina,
-            @PathVariable Long idTurma,
-            @PathVariable Long idConceito,
-            @RequestBody ConceitoInputDTO conceitoInputDTO) {
-        try {
-            ConceitoDTO conceitoAtualizado = conceitoService.atualizarConceitoParaAlunoComTurma(idProfessor, idAluno, idDisciplina, idTurma, idConceito, conceitoInputDTO);
-            return new ResponseEntity<>(conceitoAtualizado, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Erro ao atualizar conceito: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Visualiza as notas de todos os alunos de uma turma específica.
-     * Tag: Conceitos
-     */
-    @Operation(summary = "Visualizar notas de todos os alunos de uma turma", 
-               description = "Retorna as notas de todos os alunos de uma turma específica em uma disciplina.", 
-               tags = { "Conceitos" })  // Operações de listagem de conceitos também estão sob "Conceitos"
-    @GetMapping("/{idProfessor}/disciplina/{idDisciplina}/turma/{idTurma}/conceitos")
-    public ResponseEntity<List<ConceitoDTO>> getConceitosPorTurma(
-            @PathVariable String idProfessor,
-            @PathVariable Long idDisciplina,
-            @PathVariable Long idTurma) {
-        try {
-            List<ConceitoDTO> conceitos = conceitoService.getConceitosPorTurma(idProfessor, idDisciplina, idTurma);
-            if (conceitos.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum conceito encontrado para essa turma.");
-            }
-            return new ResponseEntity<>(conceitos, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar conceitos", e);
-        }
-    }
-
-    /**
-     * Visualiza a nota de um aluno específico em uma disciplina e turma.
-     * Tag: Conceitos
-     */
-    @Operation(summary = "Visualizar nota de um aluno", 
-               description = "Retorna as notas de um aluno específico em uma disciplina e turma.", 
-               tags = { "Conceitos" })  // Certifique-se de que todas as operações de conceitos tenham essa tag
-    @GetMapping("/{idProfessor}/aluno/{idAluno}/disciplina/{idDisciplina}/turma/{idTurma}/conceitos")
-    public ResponseEntity<ConceitoDTO> getConceitoPorAluno(
-            @PathVariable String idProfessor,
-            @PathVariable Long idAluno,
-            @PathVariable Long idDisciplina,
-            @PathVariable Long idTurma) {
-        try {
-            ConceitoDTO conceito = conceitoService.getConceitoPorAluno(idProfessor, idAluno, idDisciplina, idTurma);
-            return ResponseEntity.ok(conceito);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Erro ao buscar conceito para o aluno: " + e.getMessage());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar conceito", e);
-        }
-    }
+//    /**
+//     * Adiciona um conceito a um aluno em uma disciplina e turma específicas.
+//     * Tag: Conceitos
+//     */
+//    
+//    
+//    @Operation(summary = "Adicionar conceito a um aluno em uma disciplina e turma específica", 
+//               description = "Adiciona um conceito para um aluno em uma disciplina e turma específicas.", 
+//               tags = { "Conceitos" })  
+//    @PostMapping("/{idProfessor}/aluno/{idAluno}/disciplina/{idDisciplina}/turma/{idTurma}/conceitos")
+//    public ResponseEntity<ConceitoDTO> adicionarConceitoParaAlunoComTurma(
+//            @PathVariable String idProfessor,
+//            @PathVariable Long idAluno,
+//            @PathVariable Long idDisciplina,
+//            @PathVariable Long idTurma,
+//            @RequestBody ConceitoInputDTO conceitoInputDTO) {
+//        try {
+//            ConceitoDTO novoConceito = conceitoService.salvarConceitoParaAlunoComTurma(idProfessor, idAluno, idDisciplina, idTurma, conceitoInputDTO);
+//            return new ResponseEntity<>(novoConceito, HttpStatus.CREATED);
+//        } catch (RuntimeException e) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao adicionar conceito: " + e.getMessage(), e);
+//        }
+//    }
+//
+//    /**
+//     * Atualiza um conceito de um aluno em uma disciplina e turma específicas.
+//     * Tag: Conceitos
+//     */
+//    @Operation(summary = "Atualizar conceito de um aluno em uma disciplina e turma específica", 
+//               description = "Atualiza um conceito existente para um aluno em uma disciplina e turma específicas.", 
+//               tags = { "Conceitos" })  // Aqui também as operações são documentadas sob "Conceitos"
+//    @PutMapping("/{idProfessor}/aluno/{idAluno}/disciplina/{idDisciplina}/turma/{idTurma}/conceitos/{idConceito}")
+//    public ResponseEntity<ConceitoDTO> atualizarConceitoParaAlunoComTurma(
+//            @PathVariable String idProfessor,
+//            @PathVariable Long idAluno,
+//            @PathVariable Long idDisciplina,
+//            @PathVariable Long idTurma,
+//            @PathVariable Long idConceito,
+//            @RequestBody ConceitoInputDTO conceitoInputDTO) {
+//        try {
+//            ConceitoDTO conceitoAtualizado = conceitoService.atualizarConceitoParaAlunoComTurma(idProfessor, idAluno, idDisciplina, idTurma, idConceito, conceitoInputDTO);
+//            return new ResponseEntity<>(conceitoAtualizado, HttpStatus.OK);
+//        } catch (RuntimeException e) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Erro ao atualizar conceito: " + e.getMessage(), e);
+//        }
+//    }
+//
+//    /**
+//     * Visualiza as notas de todos os alunos de uma turma específica.
+//     * Tag: Conceitos
+//     */
+//    @Operation(summary = "Visualizar notas de todos os alunos de uma turma", 
+//               description = "Retorna as notas de todos os alunos de uma turma específica em uma disciplina.", 
+//               tags = { "Conceitos" })  // Operações de listagem de conceitos também estão sob "Conceitos"
+//    @GetMapping("/{idProfessor}/disciplina/{idDisciplina}/turma/{idTurma}/conceitos")
+//    public ResponseEntity<List<ConceitoDTO>> getConceitosPorTurma(
+//            @PathVariable String idProfessor,
+//            @PathVariable Long idDisciplina,
+//            @PathVariable Long idTurma) {
+//        try {
+//            List<ConceitoDTO> conceitos = conceitoService.getConceitosPorTurma(idProfessor, idDisciplina, idTurma);
+//            if (conceitos.isEmpty()) {
+//                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum conceito encontrado para essa turma.");
+//            }
+//            return new ResponseEntity<>(conceitos, HttpStatus.OK);
+//        } catch (Exception e) {
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar conceitos", e);
+//        }
+//    }
+//
+//    /**
+//     * Visualiza a nota de um aluno específico em uma disciplina e turma.
+//     * Tag: Conceitos
+//     */
+//    @Operation(summary = "Visualizar nota de um aluno", 
+//               description = "Retorna as notas de um aluno específico em uma disciplina e turma.", 
+//               tags = { "Conceitos" })  // Certifique-se de que todas as operações de conceitos tenham essa tag
+//    @GetMapping("/{idProfessor}/aluno/{idAluno}/disciplina/{idDisciplina}/turma/{idTurma}/conceitos")
+//    public ResponseEntity<ConceitoDTO> getConceitoPorAluno(
+//            @PathVariable String idProfessor,
+//            @PathVariable Long idAluno,
+//            @PathVariable Long idDisciplina,
+//            @PathVariable Long idTurma) {
+//        try {
+//            ConceitoDTO conceito = conceitoService.getConceitoPorAluno(idProfessor, idAluno, idDisciplina, idTurma);
+//            return ResponseEntity.ok(conceito);
+//        } catch (RuntimeException e) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Erro ao buscar conceito para o aluno: " + e.getMessage());
+//        } catch (Exception e) {
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar conceito", e);
+//        }
+//    }
+//    
+ 
 }

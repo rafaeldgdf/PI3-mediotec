@@ -179,6 +179,7 @@ public class ComunicadoController {
 
     
     // Listar comunicados enviados por coordenador
+    @Operation(summary = "Listar comunicados enviados por coordenador", description = "Lista os comunicados enviados por um coordenador.")
     @GetMapping("/coordenador/{coordenadorId}")
     public ResponseEntity<List<ComunicadoDetalhadoDTO>> listarComunicadosPorCoordenador(@PathVariable Long coordenadorId) {
         List<ComunicadoDetalhadoDTO> comunicados = comunicadoService.listarComunicadosPorCoordenador(coordenadorId);
@@ -186,6 +187,7 @@ public class ComunicadoController {
     }
 
     // Listar comunicados enviados por professor
+    @Operation(summary = "Listar comunicados enviados por professor", description = "Lista os comunicados enviados por um professor.")
     @GetMapping("/professor/{professorId}")
     public ResponseEntity<List<ComunicadoDetalhadoDTO>> listarComunicadosPorProfessor(@PathVariable String professorId) {
         List<ComunicadoDetalhadoDTO> comunicados = comunicadoService.listarComunicadosPorProfessor(professorId);
