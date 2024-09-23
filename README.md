@@ -6,10 +6,9 @@
 - [GitHub](https://github.com/rafaeldgdf)  
 - **E-mail:** [rafaelvd2@hotmail.com](mailto:rafaelvd2@hotmail.com)  
 
----
-
 Eu, **Rafael Vitor de Oliveira**, fui responsável por todo o desenvolvimento do **back-end** deste projeto, incluindo a **lógica de negócios** e a implementação do **banco de dados**. As futuras implementações, principalmente relacionadas à **interface gráfica** e **testes de integração**, serão realizadas pelos meus colegas de equipe, utilizando esta base como ponto de partida.
 
+---
 
 ## Introdução
 
