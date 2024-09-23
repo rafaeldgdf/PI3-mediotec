@@ -1,1 +1,0 @@
-web: cd pi3-mediotec-backend && ./mvnw clean install && ./mvnw spring-boot:run
