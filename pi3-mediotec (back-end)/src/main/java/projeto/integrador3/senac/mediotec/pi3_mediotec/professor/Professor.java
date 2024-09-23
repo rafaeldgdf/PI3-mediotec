@@ -96,7 +96,11 @@ public class Professor extends Usuario {
      * @param tdp A entidade que associa o professor à turma e disciplina.
      */
     public void addTurmaDisciplinaProfessor(TurmaDisciplinaProfessor tdp) {
+        if (this.turmaDisciplinaProfessores == null) {
+            this.turmaDisciplinaProfessores = new HashSet<>();
+        }
         tdp.setProfessor(this);
         this.turmaDisciplinaProfessores.add(tdp);
     }
+
 }

@@ -24,6 +24,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorRepository;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -307,7 +308,7 @@ public class ProfessorService {
                 .ultimoNome(professor.getUltimoNome())
                 .email(professor.getEmail())
                 .coordenacao(coordenacaoDTO)
-                .turmasDisciplinas(!turmasDisciplinas.isEmpty() ? turmasDisciplinas : null)
+                .turmaDisciplinaProfessores(new HashSet<>())
                 .enderecos(!enderecosDTO.isEmpty() ? enderecosDTO : null)
                 .telefones(!telefonesDTO.isEmpty() ? telefonesDTO : null)
                 .build();

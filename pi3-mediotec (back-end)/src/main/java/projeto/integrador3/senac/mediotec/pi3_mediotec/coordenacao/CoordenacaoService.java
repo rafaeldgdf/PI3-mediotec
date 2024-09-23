@@ -307,6 +307,7 @@ public class CoordenacaoService {
 
         // Retorna o DTO final com todos os dados convertidos
         return CoordenacaoDTO.builder()
+        		.id(coordenacao.getId())
                 .nome(coordenacao.getNome())
                 .descricao(coordenacao.getDescricao())
                 .enderecos(enderecosDTO)

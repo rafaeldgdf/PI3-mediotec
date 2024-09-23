@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @Builder
 @Data
 public class AlunoDTO {
+	private Long id;
     private String nome;
     private String ultimoNome;
     private String genero;

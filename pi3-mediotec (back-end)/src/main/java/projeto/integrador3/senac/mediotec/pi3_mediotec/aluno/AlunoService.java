@@ -339,6 +339,7 @@ public class AlunoService {
 
         // Converte o Aluno para AlunoDTO com todos os campos
         return AlunoDTO.builder()
+        	.id(aluno.getId())
             .nome(aluno.getNome())
             .ultimoNome(aluno.getUltimoNome())
             .genero(aluno.getGenero())

@@ -10,6 +10,8 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.
 @Data
 public class ConceitoDTO {
 	
+	private long id;
+	
     // Informações sobre o aluno e a disciplina
     private AlunoResumidoDTO aluno;
     private TurmaDisciplinaProfessorCompletoDTO turmaDisciplinaProfessor;

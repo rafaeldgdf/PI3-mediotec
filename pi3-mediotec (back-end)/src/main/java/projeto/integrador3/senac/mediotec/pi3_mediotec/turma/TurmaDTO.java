@@ -17,6 +17,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaResu
 @Builder
 @Data
 public class TurmaDTO {
+	private Long id;
     private String nome;
     private int anoLetivo;      
     private String anoEscolar;

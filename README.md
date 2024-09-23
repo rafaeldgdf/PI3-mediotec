@@ -1352,12 +1352,6 @@ O ConceitoController expõe os endpoints REST para gerenciar os conceitos dos al
 
 ---
 
-## Conclusão
-
-O package conceito lida com a lógica de avaliações e atribuição de conceitos para alunos. Através do controlador, os usuários podem criar, buscar, atualizar e remover conceitos, seguindo as regras de negócios relacionadas ao cálculo de notas e conceitos descritivos. O serviço aplica regras específicas, como a utilização de notas de recuperação (NOA) e o cálculo de médias, assegurando que os conceitos dos alunos sejam precisos e reflitam corretamente o desempenho acadêmico.
-
-
----
 
 # Package coordenacao
 
@@ -1873,13 +1867,139 @@ Este package garante a reutilização de endereços por várias entidades, centr
 
 ---
 
+
+# Package presencas
+
+O package presencas é responsável por gerenciar as informações de presença dos alunos no sistema, permitindo o registro, consulta, atualização e exclusão dessas informações. As presenças são vinculadas a um aluno, disciplina, turma e professor, e o pacote expõe APIs REST que possibilitam a interação com esses dados.
+
+## Presenca.java (Entidade)
+
+A classe Presenca representa a entidade de presença, que registra a frequência dos alunos em aulas específicas. Cada instância dessa entidade está associada a um aluno, uma turma, uma disciplina e um professor.
+
+### Anotações:
+- `@Entity`: Define a classe como uma entidade JPA.
+- `@Table(name = "presenca")`: Define o nome da tabela como presenca.
+- `@Id`: Define o campo id como chave primária.
+- `@ManyToOne`: Relaciona uma presença com as entidades Aluno e TurmaDisciplinaProfessor.
+
+### Relacionamentos:
+- **Aluno (`@ManyToOne`)**: Cada registro de presença pertence a um aluno específico.
+- **TurmaDisciplinaProfessor (`@ManyToOne`)**: Cada registro de presença está vinculado a uma combinação de turma, disciplina e professor.
+
+### Atributos Principais:
+- **Data**: Registra a data da aula.
+- **Presença**: Um valor booleano que indica se o aluno estava presente (`true`) ou ausente (`false`).
+
+### Regras de Negócio:
+- Cada registro de presença deve estar associado a um aluno e a uma aula (turma, disciplina e professor).
+- O campo de presença é um booleano que registra a presença ou ausência do aluno em uma data específica.
+
+## PresencaRepository.java (Repositório)
+
+O PresencaRepository é responsável por realizar operações de persistência e consulta relacionadas às presenças no banco de dados. Ele estende JpaRepository, permitindo operações CRUD e consultas personalizadas para buscar presenças de alunos, disciplinas, professores e turmas.
+
+### Métodos:
+- `findByAluno(Aluno aluno)`: Retorna todas as presenças associadas a um aluno específico.
+- `findByAlunoAndTurmaDisciplinaProfessor_Disciplina(Aluno aluno, Disciplina disciplina)`: Retorna as presenças de um aluno em uma disciplina específica.
+- `findByTurmaDisciplinaProfessor_Professor(Professor professor)`: Busca todas as presenças relacionadas a um professor específico.
+
+### Regras de Negócio:
+- A presença deve ser única por aluno e aula (definida pela combinação de turma, disciplina e professor).
+- Consultas podem ser filtradas por aluno, disciplina ou professor.
+
+## PresencaService.java (Serviço)
+
+A classe PresencaService gerencia a lógica de negócios associada à presença dos alunos. Ela é responsável por calcular, registrar e buscar informações de presença, além de permitir operações de CRUD.
+
+### Anotações:
+- `@Service`: Define a classe como um serviço do Spring, contendo a lógica de negócio.
+- `@Transactional`: Indica que as operações realizadas nos métodos de serviço são tratadas como transações atômicas.
+
+### Métodos:
+- `salvarPresenca(Long idAluno, Long idTurma, Long idDisciplina, String idProfessor, PresencaInputDTO presencaInputDTO)`
+    - Salva uma nova presença ou atualiza uma presença existente. A presença é vinculada ao aluno e à aula (definida por turma, disciplina e professor).
+
+#### Regras de Negócio:
+- O aluno deve existir no banco de dados.
+- A presença deve estar associada a uma aula (turma, disciplina, professor).
+
+- `buscarPresencaPorId(Long idAluno, Long idPresenca)`
+    - Busca uma presença específica por ID, garantindo que a presença está vinculada ao aluno correto.
+
+- `listarPresencasPorAluno(Long idAluno)`
+    - Lista todas as presenças registradas para um aluno específico.
+
+- `listarPresencasPorAlunoEDisciplina(Long idAluno, Long idDisciplina)`
+    - Lista as presenças de um aluno em uma disciplina específica.
+
+- `listarPresencasEmitidasPorProfessor(String idProfessor)`
+    - Lista todas as presenças registradas por um professor específico.
+
+- `deletarPresenca(Long idAluno, Long idPresenca)`
+    - Remove um registro de presença, garantindo que a presença pertence ao aluno informado.
+
+## PresencaController.java (Controlador)
+
+O PresencaController expõe os endpoints REST que permitem o gerenciamento das presenças dos alunos. Ele lida com a criação, consulta, atualização e exclusão de registros de presença, utilizando o PresencaService para realizar as operações.
+
+### Anotações:
+- `@RestController`: Define a classe como um controlador REST.
+- `@RequestMapping("/presencas")`: Define a rota base para todas as operações relacionadas às presenças.
+- `@Tag(name = "Presenças", description = "Operações relacionadas às presenças dos alunos")`: Agrupa as operações relacionadas às presenças na documentação do Swagger.
+
+### Rotas (Endpoints):
+- **POST** `/aluno/{idAluno}/turma/{idTurma}/disciplina/{idDisciplina}/professor/{idProfessor}`
+    - Cria uma nova presença para um aluno em uma aula específica.
+
+#### Validações:
+- O aluno, a turma, a disciplina e o professor devem existir.
+- Os dados fornecidos no `PresencaInputDTO` devem ser válidos.
+
+- **PUT** `/presencas/{id}/aluno/{idAluno}/turma/{idTurma}/disciplina/{idDisciplina}/professor/{idProfessor}`
+    - Atualiza uma presença existente.
+
+#### Validações:
+- A presença deve existir no banco de dados.
+- Os dados fornecidos no `PresencaInputDTO` devem seguir as regras de negócio.
+
+- **GET** `/presencas/{id}/aluno/{idAluno}`
+    - Busca uma presença específica por ID.
+
+#### Validações:
+- A presença deve estar vinculada ao aluno informado.
+- Se a presença não for encontrada, retorna `404 Not Found`.
+
+- **GET** `/aluno/{idAluno}`
+    - Lista todas as presenças de um aluno específico.
+
+- **GET** `/aluno/{idAluno}/disciplina/{idDisciplina}`
+    - Lista as presenças de um aluno em uma disciplina específica.
+
+- **GET** `/professor/{idProfessor}`
+    - Lista todas as presenças registradas por um professor específico.
+
+- **DELETE** `/presencas/{id}/aluno/{idAluno}`
+    - Deleta uma presença.
+
+#### Validações:
+- A presença deve estar vinculada ao aluno informado.
+- Se a presença não for encontrada, retorna `404 Not Found`.
+
+### Tratamento de Erros:
+- **400 Bad Request**: Utilizado para erros de validação de dados.
+- **404 Not Found**: Utilizado quando a presença ou o recurso solicitado não é encontrado no banco de dados.
+- **500 Internal Server Error**: Utilizado em casos de erros inesperados no servidor.
+
+O pacote `presencas` garante o correto gerenciamento das presenças dos alunos, aplicando regras de negócio específicas para garantir a integridade dos dados e a correta vinculação entre aluno, disciplina, turma e professor.
+
+
+---
+
+
 # Package Professor
 
 O package `professor` é responsável por gerenciar todas as operações relacionadas aos professores no sistema. Ele inclui a criação, atualização, listagem e exclusão de professores, além de permitir associar professores a turmas, disciplinas e coordenadorias. As funcionalidades são acessadas através de endpoints REST definidos no `ProfessorController`, e a lógica de negócios está centralizada no `ProfessorService`.
 
-### Este package contém as principais classes:
-- **ProfessorService**: Implementa a lógica de negócio para a manipulação dos professores.
-- **ProfessorController**: Define os endpoints REST para interação com as operações relacionadas a professores.
 
 ---
 
@@ -3342,7 +3462,6 @@ A seguir, são apresentados os exemplos de requisições POST (cadastro mínimo 
 
 ## 5. Turma
 **Campos mínimos**:
-- Nome
 - Ano letivo
 - Ano escolar
 - Turno
@@ -3350,7 +3469,6 @@ A seguir, são apresentados os exemplos de requisições POST (cadastro mínimo 
 ### Exemplo de cadastro (POST - Mínimo):
 ```json
 {
-  "nome": "Turma A",
   "anoLetivo": 2024,
   "anoEscolar": "1º Ano",
   "turno": "Matutino"
@@ -3360,7 +3478,7 @@ A seguir, são apresentados os exemplos de requisições POST (cadastro mínimo 
 ### Exemplo de cadastro (POST - Máximo):
 ```json
 {
-  "nome": "Turma A",
+  "nome": "Turma 1",
   "anoLetivo": 2024,
   "anoEscolar": "1º Ano",
   "turno": "Matutino",
@@ -3561,6 +3679,66 @@ A seguir, são apresentados os exemplos de requisições POST (cadastro mínimo 
 ```
 
 
+## 9. Presenca
+
+**Campos mínimos**:
+- ID do Aluno
+- ID da Disciplina
+- ID da Turma
+- ID do Professor
+- Data da presença
+- Status de presença (presente ou ausente)
+
+### Exemplo de cadastro (POST - Mínimo):
+```json
+{
+  "idAluno": 1,
+  "idDisciplina": 1,
+  "idTurma": 1,
+  "idProfessor": "123456789",
+  "data": "2024-09-22",
+  "presenca": true
+}
+```
+
+### Exemplo de cadastro (POST - Máximo):
+```json
+{
+  "idAluno": 1,
+  "idDisciplina": 1,
+  "idTurma": 1,
+  "idProfessor": "123456789",
+  "data": "2024-09-22",
+  "presenca": true
+}
+```
+
+### Exemplo de consulta (GET - Completo):
+```json
+{
+  "aluno": {
+    "nomeAluno": "João Silva",
+    "email": "joao.silva@email.com"
+  },
+  "disciplina": {
+    "nome": "Matemática"
+  },
+  "turma": {
+    "nome": "Turma A",
+    "anoLetivo": 2024,
+    "anoEscolar": "1º ano",
+    "turno": "Manhã"
+  },
+  "professor": {
+    "nomeProfessor": "Maria Oliveira",
+    "email": "maria.oliveira@email.com"
+  },
+  "data": "2024-09-22",
+  "presenca": true
+}
+```
+
+
 ---
 
 
@@ -3625,4 +3803,154 @@ Essas futuras melhorias visam tornar o SGE mais robusto, seguro e escalável, ga
 -  Criar testes para validar regras de negócio e integração entre os componentes.
 
 
+---
+
+
+# Capítulo 7: Instalação, Uso e Dependências
+
+## 1. Instruções de Instalação
+
+Aqui estão os passos detalhados para instalar e executar o projeto. Siga as etapas cuidadosamente para garantir uma instalação bem-sucedida:
+
+### 1.1 Instalar Eclipse
+
+**Baixar Eclipse:**  
+Faça o download do Eclipse pelo link oficial:
+
+- [Baixar Eclipse](https://www.eclipse.org/downloads/)
+
+**Instalar Eclipse:**  
+Execute o instalador e siga as instruções na tela para concluir a instalação.
+
+**Selecionar versão de Java Development Kit (JDK):**  
+Certifique-se de que o Eclipse está configurado para usar o JDK 11 ou superior. Caso não tenha o JDK instalado, baixe-o em [Oracle](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html) ou [OpenJDK](https://openjdk.java.net/).
+
+### 1.2 Instalar Dependências Adicionais
+
+**Instalar MySQL ou PostgreSQL (dependendo do banco de dados que você pretende usar):**
+
+- [MySQL Download](https://dev.mysql.com/downloads/)
+- [PostgreSQL Download](https://www.postgresql.org/download/)
+
+**Instalar Maven:**
+
+Verifique se o Maven está instalado no seu sistema. Para isso, execute o comando no terminal:
+
+```bash
+mvn -version
+```
+
+Caso não esteja instalado, faça o download do Maven e siga as instruções:
+
+- [Download Maven](https://maven.apache.org/download.cgi)
+
+**Instalar dependências do projeto:**
+
+Abra o terminal no diretório do projeto e execute o seguinte comando para garantir que todas as dependências sejam baixadas:
+
+```bash
+mvn clean install
+```
+
+## 2. Instruções de Uso
+
+### 2.1 Importar o Projeto no Eclipse
+
+**Abrir Eclipse:**  
+Após instalar o Eclipse, abra o aplicativo.
+
+**Importar o Projeto:**  
+Vá até o menu superior e selecione:  
+`File > Import... > Existing Maven Projects`.
+
+Na tela de seleção de projetos, clique em `Browse` e navegue até o diretório onde o projeto foi baixado.  
+Selecione a pasta raiz do projeto e clique em `Finish`. O Eclipse irá carregar as dependências automaticamente.
+
+### 2.2 Executar o Projeto
+
+**Executar a Aplicação:**  
+No painel de navegação do Eclipse, vá até o diretório `src/main/java` e encontre a classe principal do projeto, que contém a anotação `@SpringBootApplication`.  
+Clique com o botão direito do mouse sobre o arquivo e selecione:  
+`Run As > Java Application`.
+
+A aplicação será iniciada no servidor embutido do Spring Boot.
+
+**Configurar Variáveis de Ambiente:**  
+Se o projeto requer variáveis de ambiente específicas (como para banco de dados ou outras APIs), certifique-se de que elas estejam configuradas no sistema ou no arquivo `application.properties`.
+
+## 3. Configuração do `application.properties`
+
+Para que o projeto funcione corretamente, é necessário configurar o arquivo `application.properties` com as informações de conexão ao banco de dados e outras variáveis de ambiente.
+
+### 3.1 Localização do arquivo
+
+O arquivo `application.properties` está localizado no diretório `src/main/resources/`. Caso o arquivo não exista, crie-o e adicione as seguintes configurações:
+
+### 3.2 Exemplo de configuração do `application.properties`:
+
+```properties
+# Nome da aplicação
+spring.application.name=pi3-mediotec
+
+# Configurações de conexão com o banco de dados
+spring.datasource.url=jdbc:mysql://localhost:3306/pi3_mediotec?createDatabaseIfNotExist=true
+spring.datasource.username=<NOME_DO_USUARIO>
+spring.datasource.password=<SENHA>
+
+# Driver e Dialeto do banco de dados
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+# Configuração de atualização do esquema do banco de dados
+spring.jpa.hibernate.ddl-auto=update
+
+# Exibir consultas SQL no console
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.show_sql=true
+spring.jpa.properties.hibernate.use_sql_comments=true
+
+# Configurações de fuso horário e internacionalização
+spring.jackson.time-zone=America/Sao_Paulo
+spring.messages.basename=messages
+
+# Configuração para habilitar Swagger
+springdoc.swagger-ui.path=/swagger-ui.html
+```
+
+**Nota:** Substitua `<NOME_DO_USUARIO>` e `<SENHA>` pelas suas credenciais do MySQL. Para PostgreSQL, ajuste o `spring.datasource.url`, o `spring.datasource.driver-class-name` e o `spring.jpa.properties.hibernate.dialect` conforme necessário.
+
+### 3.3 Configurar Variáveis de Ambiente
+
+Se preferir, ao invés de colocar as credenciais de banco de dados diretamente no `application.properties`, você pode configurar variáveis de ambiente no seu sistema para maior segurança:
+
+```bash
+export SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/pi3_mediotec
+export SPRING_DATASOURCE_USERNAME=<NOME_DO_USUARIO>
+export SPRING_DATASOURCE_PASSWORD=<SENHA>
+```
+
+## 4. Dependências do Projeto
+
+O projeto requer as seguintes dependências para funcionar corretamente:
+
+- **Java 11 ou superior:**  
+  Certifique-se de que você tem o Java 11 ou superior instalado no seu sistema.
+
+- **Spring Boot:**  
+  O projeto usa o Spring Boot para facilitar a criação de aplicativos Java.
+
+- **MySQL ou PostgreSQL:**  
+  Dependendo do banco de dados escolhido, instale MySQL ou PostgreSQL no seu sistema.
+
+- **Maven:**  
+  O projeto utiliza o Maven para o gerenciamento de dependências. Certifique-se de que o Maven esteja instalado e configurado corretamente.
+
+Para mais informações, consulte o arquivo `pom.xml` para uma lista completa das dependências e suas versões.
+
+## Notas Adicionais:
+
+- **Swagger:** O projeto está configurado para utilizar o Swagger para a documentação da API. Após rodar o projeto, você pode acessar a interface Swagger em `http://localhost:8080/swagger-ui.html`.
+
+- **Banco de Dados:** Para rodar o projeto corretamente, o banco de dados MySQL precisa estar rodando e com um schema existente chamado `pi3_mediotec`. Caso ele não exista, será criado automaticamente com base nas configurações do `application.properties`.
 

@@ -193,6 +193,7 @@ public class DisciplinaService {
 
         // Retorna o DTO com os dados completos
         return DisciplinaGetDTO.builder()
+        	.id(disciplina.getId())
             .nome(disciplina.getNome())
             .carga_horaria(disciplina.getCarga_horaria())
             .nomeTurma(turmaDisciplinaProfessor != null && turmaDisciplinaProfessor.getTurma() != null

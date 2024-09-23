@@ -272,6 +272,7 @@ public class TurmaService {
                 .collect(Collectors.toSet()) : Collections.emptySet();
 
         return TurmaDTO.builder()
+        	.id(turma.getId())
             .nome(turma.getNome())
             .anoEscolar(turma.getAnoEscolar())
             .turno(turma.getTurno())

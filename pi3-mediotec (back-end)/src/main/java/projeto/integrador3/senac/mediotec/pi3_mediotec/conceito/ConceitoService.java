@@ -331,6 +331,7 @@ public class ConceitoService {
     // Converte a entidade Conceito para DTO
     private ConceitoDTO convertToDTO(Conceito conceito) {
         return ConceitoDTO.builder()
+        		.id(conceito.getId_conceito())
                 .aluno(convertToAlunoResumidoDTO(conceito.getAluno()))  // Converte o aluno para AlunoResumidoDTO
                 .turmaDisciplinaProfessor(convertToTurmaDisciplinaProfessorDTO(conceito.getTurmaDisciplinaProfessor()))  // Converte a turma-disciplina-professor para o DTO correspondente
                 .notaUnidade1(conceito.getNotaUnidade1())

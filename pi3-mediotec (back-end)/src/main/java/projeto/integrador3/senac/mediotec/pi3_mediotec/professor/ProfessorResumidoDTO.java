@@ -1,5 +1,6 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.professor;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoRe
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.CoordenadorResumidoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.EnderecoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessor;
 
 @Builder
 @Data
@@ -18,7 +20,7 @@ public class ProfessorResumidoDTO {
     private String ultimoNome;  // Sobrenome do Professor
     private String email;
     private CoordenacaoResumidaDTO coordenacao;
-    private Set<TurmaDisciplinaResumidaDTO> turmasDisciplinas;
+    private Set<TurmaDisciplinaProfessor> turmaDisciplinaProfessores = new HashSet<>();
     private Set<EnderecoDTO> enderecos;  // Endereços do professor
     private Set<TelefoneDTO> telefones;  // Telefones do professor
 }
