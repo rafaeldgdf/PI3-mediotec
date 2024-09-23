@@ -532,7 +532,21 @@ Além disso, meus colegas também se dedicarão à **documentação completa das
   - [6. Melhorias na Performance e Escalabilidade](#6.-Melhorias-na-Performance-e-Escalabilidade)
     - [7. Testes Automatizados](#7.-Testes-Automatizados)
     - [8. Integração de APIs](#8.-Integração-de-APIs)
-- [Capítulo 7: Instalação, Uso e Dependências](#Capítulo-7:-Instalação,-Uso-e-Dependências)
+- [Capítulo 7 - Instalação, Uso e Dependências](#Capítulo-7-Instalação-Uso-e-Dependências)
+  - [1. Instruções de Instalação](#1-Instruções-de-Instalação)
+    - [Instalar Eclipse](#Instalar-Eclipse)
+    - [Instalar Dependências Adicionais](#Instalar-Dependências-Adicionais)
+  - [2. Instruções de Uso](#2-Instruções-de-Uso)
+    - [Abrir o Eclipse](#Abrir-o-Eclipse)
+    - [Executar o Projeto](#Executar-o-Projeto)
+    - [Configuração do application.properties](#Configuração-do-application.properties)
+    - [Exemplo de Configuração do application.properties](#Exemplo-de-Configuração-do-application.properties)
+    - [Configurar as Variáveis de Ambiente](#Configurar-as-Variáveis-de-Ambiente)
+  - [3. Dependências do Projeto](#3-Dependências-do-Projeto)
+    - [Java 11 ou Superior](#Java-11-ou-Superior)
+    - [Spring Boot](#Spring-Boot)
+    - [MySQL ou PostgreSQL](#MySQL-ou-PostgreSQL)
+    - [Maven](#Maven)
 
 
 
