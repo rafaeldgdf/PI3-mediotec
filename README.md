@@ -6,14 +6,11 @@
 - [GitHub](https://github.com/rafaeldgdf)  
 - **E-mail:** [rafaelvd2@hotmail.com](mailto:rafaelvd2@hotmail.com)  
 
----
-
-## Autor
-
 Eu, **Rafael Vitor de Oliveira**, fui responsável por todo o desenvolvimento do **back-end** deste projeto, incluindo a **lógica de negócios** e a implementação do **banco de dados**. As futuras implementações, principalmente relacionadas à **interface gráfica** e **testes de integração**, serão realizadas pelos meus colegas de equipe, utilizando esta base como ponto de partida.
 
+---
 
-## Introdução
+# Introdução
 
 O **Sistema de Gerenciamento Escolar (SGE)** foi desenvolvido como parte do **Projeto Integrador III** do curso de **Análise e Desenvolvimento de Sistemas** da **Faculdade Senac Pernambuco**. Esse projeto tem como objetivo suprir as necessidades de gerenciamento do **Mediotec**, uma escola técnica de ensino médio do **Senac**, que atualmente não conta com um sistema de gestão escolar.
 
@@ -44,7 +41,7 @@ Nesta fase do desenvolvimento, o foco foi construir uma **base sólida** que gar
 
 - **Entidades robustas** foram criadas, cada uma seguindo **regras de negócio** específicas para garantir a integridade dos dados.
 - A integração com o banco de dados **MySQL** foi estruturada para assegurar a **persistência e segurança** das informações.
-- Todo o sistema foi projetado para futuras integrações com outras camadas, como a interface do usuário e o front-end.
+- Todo o sistema foi projetado para **futuras integrações** com outras camadas, como a interface do usuário e o front-end.
 
 # Colaboração e Futuras Integrações
 
@@ -1249,60 +1246,165 @@ O ConceitoRepository é responsável por realizar as operações de persistênci
 ---
 
 ### ConceitoService.java (Serviço)
- 
-A classe ConceitoService é responsável por gerenciar toda a lógica de negócios referente ao conceito dos alunos. Ela lida com o cálculo de notas e conceitos, a atribuição de status de aprovação ou reprovação, além de realizar operações de CRUD relacionadas aos conceitos.
 
-**Anotações**:
-- `@Service`: Define a classe como um serviço do Spring, gerenciada pelo framework e contendo a lógica de negócio.
-- `@Transactional`: Indica que as operações realizadas nos métodos de serviço são tratadas como transações atômicas.
+A classe ConceitoService gerencia toda a lógica de negócios relacionada ao conceito dos alunos, lidando com operações de CRUD, cálculos de notas e a atribuição de status de aprovação ou reprovação. Também implementa a lógica para o uso de notas de recuperação (NOA1 e NOA2) e a recuperação final (NOA Final).
 
-**Métodos**:
-- `buscarConceitoPorId(Long id)`: Busca um conceito específico com base no seu ID.
+## Anotações:
 
-**Validações**:
-- Verifica se o conceito existe. Caso contrário, lança uma exceção.
+- **@Service**: Define a classe como um serviço do Spring.
+- **@Transactional**: Garante que as operações de banco de dados sejam atômicas.
 
-- `salvarConceito(ConceitoResumidoDTO conceitoResumidoDTO)`: Persiste um novo conceito no banco de dados.
+## Métodos CRUD:
 
-**Regras de Negócio**:
-- O conceito deve estar vinculado a um aluno e a uma disciplina.
-- O conceito deve ser atribuído com base nas notas fornecidas.
-- As notas de recuperação (NOA) podem substituir as menores notas.
+- **buscarConceitoPorId(Long id)**:
+  - Busca um conceito específico por ID.
+  - **Validações**: Lança exceção se o conceito não for encontrado.
 
-- **Cálculo da Média**: A média é calculada com base nas quatro notas principais e, caso a média seja inferior a 7, as notas de recuperação (NOA) são utilizadas para recalcular a média.
+- **salvarConceito(ConceitoResumidoDTO conceitoResumidoDTO)**:
+  - Salva um novo conceito.
+  - **Regras de Negócio**:
+    - Vincula o conceito a um aluno e uma turma/disciplina.
+    - Calcula os conceitos e a média com base nas notas fornecidas.
+    - Realiza a persistência no banco de dados após aplicar as regras.
 
-- `atualizarConceito(Long id, ConceitoResumidoDTO conceitoResumidoDTO)`: Atualiza um conceito existente no banco de dados.
+- **atualizarConceito(Long id, ConceitoResumidoDTO conceitoResumidoDTO)**:
+  - Atualiza um conceito existente.
+  - **Validações**: Verifica se o conceito existe. Caso contrário, lança uma exceção.
+  - **Regras de Negócio**:
+    - Atualiza as notas e recalcula os conceitos e a média.
+    - Aplica as regras de NOA1 e NOA2 quando aplicável.
 
-**Regras de Negócio**
-- As notas podem ser atualizadas conforme os dados fornecidos, e a média é recalculada após a atualização.
-- As regras de cálculo de média e utilização de notas de recuperação (NOA) também são aplicadas aqui.
+- **deletarConceito(Long id)**:
+  - Remove um conceito do banco de dados.
+  - **Validações**: Verifica se o conceito existe antes de remover, caso contrário, lança uma exceção.
 
-- `deletarConceito(Long id)`: Remove um conceito do banco de dados.
+## Cálculos de Notas e Regras de Negócio
 
-**Regras de Negócio**:
-- Verifica se o conceito existe. Caso contrário, lança uma exceção.
+### 1. Cálculo das Notas de Recuperação: NOA1 e NOA2
 
-### Cálculo de Notas e Recuperação:
+As notas de recuperação **NOA1** e **NOA2** oferecem a oportunidade de melhorar as menores notas das unidades.
 
-- `calcularConceitos(Conceito conceito)`: Recalcula os conceitos com base nas notas fornecidas para cada unidade.
+- **NOA1**: Substitui a menor nota entre as Unidades 1 e 2.
+- **NOA2**: Substitui a menor nota entre as Unidades 3 e 4.
 
-**Conceitos Descritivos**:
-- Excelente (E): Nota ≥ 9.5
-- Ótimo (O): Nota ≥ 8.5 e < 9.5
-- Bom (B): Nota ≥ 7.0 e < 8.5
-- ANS (Ainda Não Suficiente): Nota ≥ 5.0 e < 7.0
-- Insuficiente (I): Nota < 5.0
+#### Regras de Substituição:
 
-- `calcularMediaEStatus(Conceito conceito)`: Calcula a média das notas principais e substitui as menores notas pelas notas de recuperação (NOA), se aplicável.
+- **NOA1**:
+  - Se **NOA1** for maior que a Nota da Unidade 1, e essa for menor que a da Unidade 2, substitui a Nota da Unidade 1.
+  - Se **NOA1** for maior que a Nota da Unidade 2, substitui essa nota.
 
-**Cálculo da Média**:
-- A média é a soma das notas das quatro unidades, dividida por 4.
-- Se a média for inferior a 7, mas maior ou igual a 5, e o aluno tiver notas de recuperação (NOA), a média é recalculada considerando a NOA.
-- Se a média final for ≥ 7, o aluno é considerado aprovado; caso contrário, o aluno está reprovado.
+- **NOA2**:
+  - Se **NOA2** for maior que a Nota da Unidade 3, e essa for menor que a da Unidade 4, substitui a Nota da Unidade 3.
+  - Se **NOA2** for maior que a Nota da Unidade 4, substitui essa nota.
 
-**Regras de Negócio**:
-- As menores notas podem ser substituídas por notas de recuperação (NOA), garantindo que o aluno tenha chance de recuperação.
-- O conceito final do aluno é calculado com base na média das notas, utilizando a fórmula e as classificações descritas acima.
+#### Exemplo de Substituição:
+
+- Nota Unidade 1: 5.0  
+- Nota Unidade 2: 6.0  
+- **NOA1**: 7.0  
+  Neste caso, a Nota da Unidade 1 será substituída por 7.0.
+
+### 2. Cálculo da Média Final
+
+A média final é calculada com base nas quatro unidades. A fórmula padrão é:
+
+```java
+media = (notaUnidade1 + notaUnidade2 + notaUnidade3 + notaUnidade4) / 4;
+```
+
+Após o cálculo da média, o sistema verifica a necessidade de aplicar o NOA Final, explicado a seguir.
+
+### 3. NOA Final: Recuperação Final
+
+O NOA Final é aplicado quando a média fica entre 5.0 e 6.9. Se a média das unidades for inferior a 7.0, mas maior ou igual a 5.0, o aluno pode realizar a recuperação final.
+
+#### Regras para Uso do NOA Final:
+
+Se aplicável, o NOA Final recalcula a média do aluno usando a fórmula:
+
+```java
+mediaFinal = (media + noaFinal) / 2;
+```
+
+#### Exemplo de Aplicação:
+
+- Média das unidades: 6.5  
+- **NOA Final**: 7.0  
+
+A média final será:
+
+```java
+mediaFinal = (6.5 + 7.0) / 2;
+mediaFinal = 6.75;
+```
+
+### 4. Critérios de Aprovação e Reprovação
+
+O sistema segue os seguintes critérios:
+
+- **Aprovação direta**: Média das unidades ≥ 7.0.
+- **Reprovação direta**: Média < 5.0.
+- **Aptidão para NOA Final**: Média entre 5.0 e 6.9.
+
+#### Aprovação com NOA Final:
+
+Se, após o recálculo da média com o NOA Final, o aluno atingir 7.0 ou mais, ele é considerado aprovado.
+
+```java
+if (mediaFinal >= 7.0) {
+    conceito.setAprovado(true);
+} else {
+    conceito.setAprovado(false);
+}
+```
+
+### 5. Implementação dos Cálculos no Sistema
+
+Os métodos da classe ConceitoService aplicam automaticamente essas regras de negócio e realizam o recalculo das médias sempre que necessário.
+
+- **calcularConceitos(Conceito conceito)**:
+
+  Este método recalcula os conceitos das unidades com base nas notas fornecidas e aplica as regras de NOA1 e NOA2.
+
+```java
+if (conceito.getNoa1() != null) {
+    if (conceito.getNotaUnidade1() != null && conceito.getNotaUnidade2() != null) {
+        if (conceito.getNoa1() > conceito.getNotaUnidade1() && conceito.getNotaUnidade1() < conceito.getNotaUnidade2()) {
+            conceito.setNotaUnidade1(conceito.getNoa1());
+        } else if (conceito.getNoa1() > conceito.getNotaUnidade2()) {
+            conceito.setNotaUnidade2(conceito.getNoa1());
+        }
+    }
+}
+```
+
+- **calcularMediaEStatus(Conceito conceito)**:
+
+  Calcula a média final e determina o status de aprovação do aluno com base nas regras descritas. Se a média for inferior a 7.0 e maior ou igual a 5.0, o NOA Final pode ser aplicado para recalcular a média.
+
+```java
+Float media = (conceito.getNotaUnidade1() + conceito.getNotaUnidade2() + ... ) / 4;
+
+if (media < 7 && media >= 5 && conceito.getNoaFinal() != null) {
+    media = (media + conceito.getNoaFinal()) / 2;
+}
+
+conceito.setMediaFinal(media);
+
+if (media >= 7) {
+    conceito.setAprovado(true);
+} else {
+    conceito.setAprovado(false);
+}
+```
+
+### Conceitos Descritivos:
+
+- **Excelente (E)**: Nota ≥ 9.5
+- **Ótimo (O)**: Nota ≥ 8.5 e < 9.5
+- **Bom (B)**: Nota ≥ 7.0 e < 8.5
+- **ANS (Ainda Não Suficiente)**: Nota ≥ 5.0 e < 7.0
+- **Insuficiente (I)**: Nota < 5.0
 
 ---
 
@@ -1352,6 +1454,12 @@ O ConceitoController expõe os endpoints REST para gerenciar os conceitos dos al
 
 ---
 
+## Conclusão
+
+O package conceito lida com a lógica de avaliações e atribuição de conceitos para alunos. Através do controlador, os usuários podem criar, buscar, atualizar e remover conceitos, seguindo as regras de negócios relacionadas ao cálculo de notas e conceitos descritivos. O serviço aplica regras específicas, como a utilização de notas de recuperação (NOA) e o cálculo de médias, assegurando que os conceitos dos alunos sejam precisos e reflitam corretamente o desempenho acadêmico.
+
+
+---
 
 # Package coordenacao
 
@@ -1856,14 +1964,6 @@ O `EnderecoDTO` é amplamente utilizado quando é necessário transmitir ou exib
 - Quando um aluno é registrado ou atualizado, o endereço do aluno é gerenciado por meio do `EnderecoDTO`.
 - O mesmo ocorre para professores, coordenadores e coordenações, que podem ter seus endereços manipulados utilizando este DTO.
 
----
-
-## Considerações Finais
-
-O package `endereco` não possui serviços ou controladores próprios, pois suas funcionalidades são acessadas e manipuladas pelas outras entidades do sistema, como Aluno, Professor, Coordenador e Coordenação. Isso ocorre porque um endereço é considerado um dado auxiliar para essas entidades, e seu gerenciamento é feito por meio dos respectivos serviços e controladores dessas entidades principais.
-
-Este package garante a reutilização de endereços por várias entidades, centralizando e padronizando a forma como essas informações são tratadas no sistema.
-
 
 ---
 
@@ -1996,10 +2096,22 @@ O pacote `presencas` garante o correto gerenciamento das presenças dos alunos, 
 ---
 
 
+## Considerações Finais
+
+O package `endereco` não possui serviços ou controladores próprios, pois suas funcionalidades são acessadas e manipuladas pelas outras entidades do sistema, como Aluno, Professor, Coordenador e Coordenação. Isso ocorre porque um endereço é considerado um dado auxiliar para essas entidades, e seu gerenciamento é feito por meio dos respectivos serviços e controladores dessas entidades principais.
+
+Este package garante a reutilização de endereços por várias entidades, centralizando e padronizando a forma como essas informações são tratadas no sistema.
+
+
+---
+
 # Package Professor
 
 O package `professor` é responsável por gerenciar todas as operações relacionadas aos professores no sistema. Ele inclui a criação, atualização, listagem e exclusão de professores, além de permitir associar professores a turmas, disciplinas e coordenadorias. As funcionalidades são acessadas através de endpoints REST definidos no `ProfessorController`, e a lógica de negócios está centralizada no `ProfessorService`.
 
+### Este package contém as principais classes:
+- **ProfessorService**: Implementa a lógica de negócio para a manipulação dos professores.
+- **ProfessorController**: Define os endpoints REST para interação com as operações relacionadas a professores.
 
 ---
 
@@ -2609,14 +2721,14 @@ spring.application.name=pi3-mediotec
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/pi3_mediotec?createDatabaseIfNotExist=true
-spring.datasource.username=root
-spring.datasource.password=root
+spring.datasource.username= <nome do usuario>
+spring.datasource.password= <senha>
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 ```
 
 - **spring.datasource.url**: Define a URL de conexão com o banco de dados MySQL. Aqui, a aplicação se conecta ao banco `pi3_mediotec` na porta 3306 do `localhost`. O parâmetro `createDatabaseIfNotExist=true` assegura que o banco seja criado automaticamente se ainda não existir.
-- **spring.datasource.username**: Nome de usuário do banco de dados, configurado como `root`.
-- **spring.datasource.password**: Senha do banco de dados, também definida como `root`.
+- **spring.datasource.username**: Nome de `usuário` do banco de dados.
+- **spring.datasource.password**: `Senha` do banco de dados.
 - **spring.datasource.driver-class-name**: Classe do driver JDBC responsável por gerenciar a conexão com o MySQL, neste caso, `com.mysql.cj.jdbc.Driver`.
 
 ### 3. Configurações do Hibernate
@@ -3462,6 +3574,7 @@ A seguir, são apresentados os exemplos de requisições POST (cadastro mínimo 
 
 ## 5. Turma
 **Campos mínimos**:
+- Nome
 - Ano letivo
 - Ano escolar
 - Turno
@@ -3469,6 +3582,7 @@ A seguir, são apresentados os exemplos de requisições POST (cadastro mínimo 
 ### Exemplo de cadastro (POST - Mínimo):
 ```json
 {
+  "nome": "Turma A",
   "anoLetivo": 2024,
   "anoEscolar": "1º Ano",
   "turno": "Matutino"
@@ -3478,7 +3592,7 @@ A seguir, são apresentados os exemplos de requisições POST (cadastro mínimo 
 ### Exemplo de cadastro (POST - Máximo):
 ```json
 {
-  "nome": "Turma 1",
+  "nome": "Turma A",
   "anoLetivo": 2024,
   "anoEscolar": "1º Ano",
   "turno": "Matutino",
@@ -3584,6 +3698,7 @@ A seguir, são apresentados os exemplos de requisições POST (cadastro mínimo 
 ### Exemplo de cadastro (POST - Mínimo):
 ```json
 {
+  "idProfessor": 1,
   "idAluno": 1,
   "idDisciplina": 1,
   "idTurma": 1,
@@ -3594,6 +3709,7 @@ A seguir, são apresentados os exemplos de requisições POST (cadastro mínimo 
 ### Exemplo de cadastro (POST - Máximo):
 ```json
 {
+  "idProfessor": 1,
   "idAluno": 1,
   "idDisciplina": 1,
   "idTurma": 1,
@@ -3677,7 +3793,6 @@ A seguir, são apresentados os exemplos de requisições POST (cadastro mínimo 
   }
 }
 ```
-
 
 ## 9. Presenca
 
@@ -3810,127 +3925,62 @@ Essas futuras melhorias visam tornar o SGE mais robusto, seguro e escalável, ga
 
 ## 1. Instruções de Instalação
 
-Aqui estão os passos detalhados para instalar e executar o projeto. Siga as etapas cuidadosamente para garantir uma instalação bem-sucedida:
+Aqui estão os passos detalhados para instalar e executar o projeto. Siga as etapas com cuidado para garantir uma instalação bem-sucedida:
 
-### 1.1 Instalar Eclipse
+1. **Instalar Eclipse:**
+   Baixe o Eclipse do link oficial:  
+   [https://www.eclipse.org/downloads/download.php?file=/oomph/epp/2024-09/R/eclipse-inst-jre-mac64.dmg](https://www.eclipse.org/downloads/download.php?file=/oomph/epp/2024-09/R/eclipse-inst-jre-mac64.dmg).
 
-**Baixar Eclipse:**  
-Faça o download do Eclipse pelo link oficial:
-
-- [Baixar Eclipse](https://www.eclipse.org/downloads/)
-
-**Instalar Eclipse:**  
-Execute o instalador e siga as instruções na tela para concluir a instalação.
-
-**Selecionar versão de Java Development Kit (JDK):**  
-Certifique-se de que o Eclipse está configurado para usar o JDK 11 ou superior. Caso não tenha o JDK instalado, baixe-o em [Oracle](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html) ou [OpenJDK](https://openjdk.java.net/).
-
-### 1.2 Instalar Dependências Adicionais
-
-**Instalar MySQL ou PostgreSQL (dependendo do banco de dados que você pretende usar):**
-
-- [MySQL Download](https://dev.mysql.com/downloads/)
-- [PostgreSQL Download](https://www.postgresql.org/download/)
-
-**Instalar Maven:**
-
-Verifique se o Maven está instalado no seu sistema. Para isso, execute o comando no terminal:
-
-```bash
-mvn -version
-```
-
-Caso não esteja instalado, faça o download do Maven e siga as instruções:
-
-- [Download Maven](https://maven.apache.org/download.cgi)
-
-**Instalar dependências do projeto:**
-
-Abra o terminal no diretório do projeto e execute o seguinte comando para garantir que todas as dependências sejam baixadas:
-
-```bash
-mvn clean install
-```
+2. **Instalar dependências adicionais:**
+   Siga as instruções fornecidas no arquivo `dependencies.md` para instalar todas as dependências necessárias do projeto.
 
 ## 2. Instruções de Uso
 
-### 2.1 Importar o Projeto no Eclipse
+1. **Abrir o Eclipse:**
+   Depois de instalar o Eclipse, abra o aplicativo e importe o projeto baixado.
 
-**Abrir Eclipse:**  
-Após instalar o Eclipse, abra o aplicativo.
+2. **Executar o Projeto:**
+   Navegue até o diretório do projeto no Eclipse, clique com o botão direito no arquivo principal e selecione "Run As > Java Application" para iniciar a aplicação
 
-**Importar o Projeto:**  
-Vá até o menu superior e selecione:  
-`File > Import... > Existing Maven Projects`.
+3. **Configuração do `application.properties`:**
 
-Na tela de seleção de projetos, clique em `Browse` e navegue até o diretório onde o projeto foi baixado.  
-Selecione a pasta raiz do projeto e clique em `Finish`. O Eclipse irá carregar as dependências automaticamente.
+Para que o projeto funcione corretamente, é necessário configurar o arquivo `application.properties` com as informações de conexão com o banco de dados e outras variáveis de ambiente.
 
-### 2.2 Executar o Projeto
+**Localização do arquivo:**  
+O arquivo `application.properties` geralmente está localizado no diretório `src/main/resources/`. Se não encontrar, crie o arquivo com o mesmo nome e no mesmo diretório. Depois copie a configuração abaixo e cole no seu arquivo, colocando apenas o **nome do usuário** e a **senha** correspondente ao seu MySQL. 
 
-**Executar a Aplicação:**  
-No painel de navegação do Eclipse, vá até o diretório `src/main/java` e encontre a classe principal do projeto, que contém a anotação `@SpringBootApplication`.  
-Clique com o botão direito do mouse sobre o arquivo e selecione:  
-`Run As > Java Application`.
+### Exemplo de configuração do `application.properties`:
 
-A aplicação será iniciada no servidor embutido do Spring Boot.
-
-**Configurar Variáveis de Ambiente:**  
-Se o projeto requer variáveis de ambiente específicas (como para banco de dados ou outras APIs), certifique-se de que elas estejam configuradas no sistema ou no arquivo `application.properties`.
-
-## 3. Configuração do `application.properties`
-
-Para que o projeto funcione corretamente, é necessário configurar o arquivo `application.properties` com as informações de conexão ao banco de dados e outras variáveis de ambiente.
-
-### 3.1 Localização do arquivo
-
-O arquivo `application.properties` está localizado no diretório `src/main/resources/`. Caso o arquivo não exista, crie-o e adicione as seguintes configurações:
-
-### 3.2 Exemplo de configuração do `application.properties`:
-
-```properties
-# Nome da aplicação
+```application.properties
 spring.application.name=pi3-mediotec
-
-# Configurações de conexão com o banco de dados
 spring.datasource.url=jdbc:mysql://localhost:3306/pi3_mediotec?createDatabaseIfNotExist=true
-spring.datasource.username=<NOME_DO_USUARIO>
-spring.datasource.password=<SENHA>
-
-# Driver e Dialeto do banco de dados
+spring.datasource.username= **<NOME DO USUÁRIO>**
+spring.datasource.password= **<SENHA>**
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
-
-# Configuração de atualização do esquema do banco de dados
+# spring.jpa.database-platform=org.hibernate.dialect.MySQL5InnoDBDialect
 spring.jpa.hibernate.ddl-auto=update
 
-# Exibir consultas SQL no console
 spring.jpa.show-sql=true
+
 spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.properties.hibernate.show_sql=true
 spring.jpa.properties.hibernate.use_sql_comments=true
-
-# Configurações de fuso horário e internacionalização
 spring.jackson.time-zone=America/Sao_Paulo
 spring.messages.basename=messages
 
-# Configuração para habilitar Swagger
 springdoc.swagger-ui.path=/swagger-ui.html
+
 ```
 
-**Nota:** Substitua `<NOME_DO_USUARIO>` e `<SENHA>` pelas suas credenciais do MySQL. Para PostgreSQL, ajuste o `spring.datasource.url`, o `spring.datasource.driver-class-name` e o `spring.jpa.properties.hibernate.dialect` conforme necessário.
+### Configurar as variáveis de ambiente
 
-### 3.3 Configurar Variáveis de Ambiente
+Verifique se o seu ambiente local tem as variáveis corretas configuradas para a URL, o usuário e a senha do banco de dados.
 
-Se preferir, ao invés de colocar as credenciais de banco de dados diretamente no `application.properties`, você pode configurar variáveis de ambiente no seu sistema para maior segurança:
+Agora o arquivo `application.properties` está incluído na documentação, garantindo que as configurações necessárias sejam feitas corretamente.
 
-```bash
-export SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/pi3_mediotec
-export SPRING_DATASOURCE_USERNAME=<NOME_DO_USUARIO>
-export SPRING_DATASOURCE_PASSWORD=<SENHA>
-```
 
-## 4. Dependências do Projeto
+## 3. Dependências do Projeto
 
 O projeto requer as seguintes dependências para funcionar corretamente:
 
@@ -3947,10 +3997,4 @@ O projeto requer as seguintes dependências para funcionar corretamente:
   O projeto utiliza o Maven para o gerenciamento de dependências. Certifique-se de que o Maven esteja instalado e configurado corretamente.
 
 Para mais informações, consulte o arquivo `pom.xml` para uma lista completa das dependências e suas versões.
-
-## Notas Adicionais:
-
-- **Swagger:** O projeto está configurado para utilizar o Swagger para a documentação da API. Após rodar o projeto, você pode acessar a interface Swagger em `http://localhost:8080/swagger-ui.html`.
-
-- **Banco de Dados:** Para rodar o projeto corretamente, o banco de dados MySQL precisa estar rodando e com um schema existente chamado `pi3_mediotec`. Caso ele não exista, será criado automaticamente com base nas configurações do `application.properties`.
 
