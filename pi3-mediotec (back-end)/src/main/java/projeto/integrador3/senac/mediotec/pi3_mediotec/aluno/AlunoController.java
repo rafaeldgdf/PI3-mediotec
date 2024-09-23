@@ -24,8 +24,6 @@ public class AlunoController {
     @Autowired
     private AlunoService alunoService;
 
-    @Autowired
-    private ConceitoService conceitoService;
 
     // ============================= GET METHODS =============================
 

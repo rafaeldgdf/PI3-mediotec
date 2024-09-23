@@ -24,6 +24,6 @@ public class SwaggerConfig {
                                 .email("rafaelvd2@hotmail.com")))
                 .externalDocs(new ExternalDocumentation()
                         .description("GitHub Repository")
-                        .url("https://github.com/rafaeldgdf"));
+                        .url("https://github.com/rafaeldgdf/PI3-mediotec.git"));
     }
 }
