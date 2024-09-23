@@ -44,7 +44,7 @@ Nesta fase do desenvolvimento, o foco foi construir uma **base sólida** que gar
 
 - **Entidades robustas** foram criadas, cada uma seguindo **regras de negócio** específicas para garantir a integridade dos dados.
 - A integração com o banco de dados **MySQL** foi estruturada para assegurar a **persistência e segurança** das informações.
-- Todo o sistema foi projetado para futuras integrações com outras camadas, como a interface do usuário e o front-end.
+- Todo o sistema foi projetado para **futuras integrações** com outras camadas, como a interface do usuário e o front-end.
 
 # Colaboração e Futuras Integrações
 
