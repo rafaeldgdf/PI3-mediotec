@@ -1,53 +1,545 @@
 # Sistema de Gerenciamento Escolar (SGE) - Back-end
 
-**Autor:**  
-**Rafael Vitor de Oliveira** **-** *Desenvolvedor de Software*  
+## Autor:
+**Rafael Vitor de Oliveira** - *Desenvolvedor de Software*
+
 - [LinkedIn](https://www.linkedin.com/in/rafaelvitor2/)  
 - [GitHub](https://github.com/rafaeldgdf)  
-- **E-mail:** [rafaelvd2@hotmail.com](mailto:rafaelvd2@hotmail.com)  
+- **E-mail:** [rafaelvd2@hotmail.com](mailto:rafaelvd2@hotmail.com)
 
-Eu, **Rafael Vitor de Oliveira**, fui responsável por todo o desenvolvimento do **back-end** deste projeto, incluindo a **lógica de negócios** e a implementação do **banco de dados**. As futuras implementações, principalmente relacionadas à **interface gráfica** e **testes de integração**, serão realizadas pelos meus colegas de equipe, utilizando esta base como ponto de partida.
+Eu, **Rafael Vitor de Oliveira**, fui responsável por todo o desenvolvimento do **back-end** deste projeto, que abrange a **lógica de negócios**, **integração de banco de dados**, e o **deploy da aplicação**. O projeto continuará em desenvolvimento por colegas de equipe, especialmente na implementação do **front-end** e em **testes de integração**.
 
 ---
 
-# Introdução
+## Introdução
 
-O **Sistema de Gerenciamento Escolar (SGE)** foi desenvolvido como parte do **Projeto Integrador III** do curso de **Análise e Desenvolvimento de Sistemas** da **Faculdade Senac Pernambuco**. Esse projeto tem como objetivo suprir as necessidades de gerenciamento do **Mediotec**, uma escola técnica de ensino médio do **Senac**, que atualmente não conta com um sistema de gestão escolar.
+O **Sistema de Gerenciamento Escolar (SGE)** é uma solução desenvolvida como parte do **Projeto Integrador III** do curso de **Análise e Desenvolvimento de Sistemas** na **Faculdade Senac Pernambuco**. Este sistema tem como objetivo modernizar e centralizar o gerenciamento acadêmico do **Mediotec**, um curso técnico integrado ao ensino médio, também ofertado pelo **Senac**. O **SGE** visa automatizar e otimizar diversos processos internos da escola, que até o momento são realizados manualmente.
 
-Com o **SGE**, espera-se facilitar o gerenciamento das atividades acadêmicas, incluindo o controle de turmas, disciplinas, professores e alunos, além de melhorar a comunicação entre os coordenadores e os demais envolvidos na escola. A solução propõe uma gestão centralizada de todas as operações escolares, trazendo mais eficiência e agilidade.
+Com essa solução, é possível centralizar o controle de **turmas**, **disciplinas**, **professores**, **alunos**, e avaliar o **desempenho acadêmico**, além de possibilitar uma comunicação mais eficiente entre a administração e os demais stakeholders, como professores e coordenadores.
+
+---
 
 ## Objetivo do Projeto
 
-A principal finalidade do SGE é oferecer um sistema integrado para o **Mediotec**, focado em:
+O **SGE** tem como propósito principal ser uma ferramenta integrada que automatize a gestão escolar do **Mediotec**. Contudo, o projeto vai além de um simples sistema de cadastro e controle. Ele é capaz de:
 
-- **Gestão de alunos, professores, turmas e disciplinas**.
-- **Controle acadêmico eficiente** com funcionalidades que permitem o registro de notas e conceitos.
-- **Melhoria da comunicação interna**, facilitando a troca de informações entre os diferentes papéis administrativos e acadêmicos.
+- **Gerenciar alunos, professores, turmas e disciplinas** de maneira eficiente.
+- **Registrar e acompanhar o desempenho acadêmico** de cada aluno, com possibilidade de emitir boletins de notas e conceitos.
+- **Facilitar a comunicação interna** entre professores, coordenadores e estudantes por meio de comunicados e alertas.
+- **Permitir o acompanhamento de presença e frequência** dos alunos, integrando dados em tempo real.
+- **Oferecer relatórios gerenciais** para coordenadores, como estatísticas de desempenho e frequência.
+
+O **SGE** é flexível e escalável, pronto para receber novos módulos e funcionalidades, de acordo com as demandas da instituição.
+
+---
 
 ## Tecnologias Utilizadas
 
-A parte de back-end foi construída com foco em alta performance e escalabilidade, utilizando tecnologias robustas como:
+O sistema foi projetado com foco em **desempenho** e **escalabilidade**, utilizando um conjunto moderno de tecnologias:
 
-- **Spring Boot**: Framework Java para construção de aplicações web.
-- **MySQL**: Banco de dados relacional para armazenamento de informações.
-- **JPA/Hibernate**: Ferramenta de mapeamento objeto-relacional (ORM).
-- **Swagger/OpenAPI**: Documentação automática da API, permitindo uma melhor comunicação entre os desenvolvedores e a API.
+- **Java com Spring Boot:** Para o desenvolvimento da lógica de negócios e gerenciamento das requisições.
+- **MySQL:** Como banco de dados relacional para o armazenamento e recuperação de informações.
+- **JPA/Hibernate:** Para o mapeamento objeto-relacional (ORM) e simplificação da interação com o banco de dados.
+- **Swagger/OpenAPI:** Para a documentação interativa da API, facilitando a integração e testes.
+- **Heroku:** A aplicação está atualmente **hospedada no Heroku**, permitindo que qualquer usuário possa acessar e fazer requisições à API via HTTPS.
 
-Essas tecnologias garantem que o SGE possa ser facilmente mantido e expandido para atender às necessidades futuras do sistema.
+---
+
+## Acesso Público
+
+A **API do SGE** está disponível publicamente e pode ser acessada diretamente por qualquer usuário através do seguinte link:
+
+[Swagger UI do SGE](https://projeto-mediotec-128688b099aa.herokuapp.com/swagger-ui/index.html)
+
+Com essa interface, é possível explorar e testar as funcionalidades da API sem a necessidade de configurar localmente.
+
+---
 
 ## Estrutura do Back-end e Banco de Dados
 
-Nesta fase do desenvolvimento, o foco foi construir uma **base sólida** que garante o correto funcionamento do sistema, incluindo a implementação da **lógica de negócios** e da **estruturação do banco de dados**:
+O **SGE** foi construído para garantir uma **estrutura sólida** e **modular** que permita futuras expansões:
 
-- **Entidades robustas** foram criadas, cada uma seguindo **regras de negócio** específicas para garantir a integridade dos dados.
-- A integração com o banco de dados **MySQL** foi estruturada para assegurar a **persistência e segurança** das informações.
-- Todo o sistema foi projetado para **futuras integrações** com outras camadas, como a interface do usuário e o front-end.
+- **Entidades robustas** foram modeladas para representar as principais operações escolares, com suas respectivas regras de negócio.
+- O sistema foi projetado para suportar a **persistência de dados** por meio de transações seguras com o banco de dados **MySQL**.
+- A arquitetura do back-end está pronta para futuras integrações com o **front-end** e **aplicações móveis**, proporcionando uma experiência unificada para todos os usuários.
 
-# Colaboração e Futuras Integrações
+---
 
-O projeto **SGE** foi concebido como parte de uma solução mais ampla. A próxima fase será conduzida por colegas de grupo que estarão responsáveis pelo desenvolvimento de um **front-end** moderno e a implementação de uma **Progressive Web App (PWA)**, garantindo uma experiência otimizada tanto em desktops quanto em dispositivos móveis. Além disso, eles realizarão **testes funcionais e de integração** para assegurar que as interfaces gráficas atendam às necessidades dos usuários e funcionem corretamente com o back-end.
+## IA Personalizada para Suporte ao Projeto
 
-Futuramente, serão implementados mecanismos de segurança, como **Spring Security**, bem como melhorias no tratamento de erros e validações de entrada e saída, resultando em um sistema mais robusto, seguro e confiável.
+Um diferencial importante do projeto **SGE** é a **IA personalizada**, que está disponível publicamente para auxiliar qualquer pessoa com dúvidas relacionadas ao projeto. Essa IA foi configurada e treinada com todos os comandos e funcionalidades do sistema, estando pronta para responder perguntas técnicas e fornecer suporte em tempo real. Qualquer pessoa pode acessar a IA via o link abaixo:
+
+[Acessar IA Personalizada para o Projeto SGE](https://chatgpt.com/g/g-gGPh7ItKn-projeto-mediotec)
+
+Essa ferramenta adicional permitirá que **usuários**, **desenvolvedores** e **interessados no projeto** obtenham respostas rápidas e precisas sobre o funcionamento do sistema e seus comandos.
+
+---
+
+## Colaboração e Futuras Integrações
+
+O projeto **SGE** é parte de uma solução colaborativa e integrada, onde cada fase é essencial para proporcionar uma **experiência completa** de gestão escolar. Com a primeira fase já concluída, que envolveu o desenvolvimento e publicação do **back-end**, a continuidade do projeto está nas mãos dos **meus colegas de equipe**, que serão responsáveis pela criação de um **front-end moderno e responsivo**. Eles desenvolverão uma **Progressive Web App (PWA)**, assegurando uma interface de alta performance que se adapta perfeitamente a **dispositivos móveis** e **desktops**, oferecendo uma experiência de uso contínua, independente da plataforma utilizada.
+
+Além disso, meus colegas também se dedicarão à **documentação completa das regras de negócios** do sistema, garantindo que todos os processos sejam devidamente registrados. Eles também liderarão a **integração entre o front-end e o back-end**, assegurando que todas as funcionalidades trabalhem de forma harmoniosa, resultando em um sistema coeso e eficiente.
+
+### Próximos Passos:
+
+- **Desenvolvimento do Front-end web e mobile:** Utilizando frameworks modernos como **React.js** ou **Vue.js**.
+- **Testes Funcionais e de Integração:** Para garantir a usabilidade e funcionamento correto entre as interfaces gráficas e o back-end.
+- **Segurança e Melhorias:** Implementação de mecanismos avançados de segurança, como **Spring Security**, e melhorias contínuas no tratamento de erros.
+- **Integração com APIs Externas:** Futuras integrações com sistemas de ensino à distância, gerenciadores de conteúdo e sistemas de pagamento.
+
+---
+
+
+# Sumário
+- [Sistema de Gerenciamento Escolar (SGE) - Back-end](#Sistema-de-Gerenciamento-Escolar-(SGE)---Back-end)
+  - [Autor:](#Autor:)
+  - [Introdução](#Introdução)
+  - [Objetivo do Projeto](#Objetivo-do-Projeto)
+  - [Tecnologias Utilizadas](#Tecnologias-Utilizadas)
+  - [Acesso Público](#Acesso-Público)
+  - [Estrutura do Back-end e Banco de Dados](#Estrutura-do-Back-end-e-Banco-de-Dados)
+  - [IA Personalizada para Suporte ao Projeto](#IA-Personalizada-para-Suporte-ao-Projeto)
+  - [Colaboração e Futuras Integrações](#Colaboração-e-Futuras-Integrações)
+    - [Próximos Passos:](#Próximos-Passos:)
+- [Capítulo 1 - Estrutura Geral dos Pacotes no Sistema SGE](#Capítulo-1---Estrutura-Geral-dos-Pacotes-no-Sistema-SGE)
+  - [Estrutura dos Pacotes](#Estrutura-dos-Pacotes)
+  - [Explicação da Estrutura](#Explicação-da-Estrutura)
+  - [Modularidade](#Modularidade)
+- [Entidades no Sistema SGE](#Entidades-no-Sistema-SGE)
+  - [O que são Entidades?](#O-que-são-Entidades?)
+  - [Estrutura e Funcionalidades no Java, Spring e SGE](#Estrutura-e-Funcionalidades-no-Java,-Spring-e-SGE)
+  - [O que é JPA?](#O-que-é-JPA?)
+    - [Funcionalidades da JPA](#Funcionalidades-da-JPA)
+  - [Uso do Lombok nas Entidades](#Uso-do-Lombok-nas-Entidades)
+    - [Principais Anotações do Lombok](#Principais-Anotações-do-Lombok)
+  - [Anotações Comuns da JPA](#Anotações-Comuns-da-JPA)
+  - [Exemplo de Entidade com JPA e Lombok: `Aluno.java`](#Exemplo-de-Entidade-com-JPA-e-Lombok:-`Aluno.java`)
+  - [Relacionamentos Entre Entidades](#Relacionamentos-Entre-Entidades)
+    - [Exemplo de Relacionamento](#Exemplo-de-Relacionamento)
+  - [Anotações para Validação](#Anotações-para-Validação)
+    - [Exemplo de validação em atributos da entidade `Aluno`:](#Exemplo-de-validação-em-atributos-da-entidade-`Aluno`:)
+  - [Métodos Auxiliares](#Métodos-Auxiliares)
+  - [Resumo: Importância das Entidades, JPA e Lombok no SGE](#Resumo:-Importância-das-Entidades,-JPA-e-Lombok-no-SGE)
+    - [Benefícios](#Benefícios)
+- [Repositórios no Sistema SGE](#Repositórios-no-Sistema-SGE)
+  - [O que são Repositórios?](#O-que-são-Repositórios?)
+  - [Estrutura e Funcionalidade no Java, Spring e SGE](#Estrutura-e-Funcionalidade-no-Java,-Spring-e-SGE)
+  - [Principais Anotações e Funcionalidades](#Principais-Anotações-e-Funcionalidades)
+  - [Exemplo de Interface de Repositório](#Exemplo-de-Interface-de-Repositório)
+  - [Métodos Comuns Herdados de JpaRepository](#Métodos-Comuns-Herdados-de-JpaRepository)
+  - [Consultas Personalizadas](#Consultas-Personalizadas)
+    - [Exemplo de Consulta Personalizada](#Exemplo-de-Consulta-Personalizada)
+    - [Exemplo de Consulta com @Query](#Exemplo-de-Consulta-com-@Query)
+  - [Injeção de Dependências](#Injeção-de-Dependências)
+    - [Exemplo de Injeção de Dependências](#Exemplo-de-Injeção-de-Dependências)
+  - [Resumo: Importância dos Repositórios no SGE](#Resumo:-Importância-dos-Repositórios-no-SGE)
+    - [Benefícios](#Benefícios)
+- [Serviços no Sistema SGE](#Serviços-no-Sistema-SGE)
+  - [O que são Serviços?](#O-que-são-Serviços?)
+  - [Estrutura e Funcionalidades no Java, Spring e SGE](#Estrutura-e-Funcionalidades-no-Java,-Spring-e-SGE)
+  - [Principais Anotações e Funcionalidades](#Principais-Anotações-e-Funcionalidades)
+  - [Métodos Comuns em Serviços](#Métodos-Comuns-em-Serviços)
+    - [1. Métodos CRUD (Create, Read, Update, Delete)](#1.-Métodos-CRUD-(Create,-Read,-Update,-Delete))
+      - [Criação de uma Entidade (Create)](#Criação-de-uma-Entidade-(Create))
+        - [Exemplo:](#Exemplo:)
+      - [Busca de Dados (Read)](#Busca-de-Dados-(Read))
+        - [Exemplo:](#Exemplo:)
+      - [Atualização de uma Entidade (Update)](#Atualização-de-uma-Entidade-(Update))
+        - [Exemplo:](#Exemplo:)
+      - [Deleção de uma Entidade (Delete)](#Deleção-de-uma-Entidade-(Delete))
+        - [Exemplo:](#Exemplo:)
+    - [2. Validações e Regras de Negócio](#2.-Validações-e-Regras-de-Negócio)
+      - [Exemplo de Regra de Negócio:](#Exemplo-de-Regra-de-Negócio:)
+    - [3. Métodos Específicos](#3.-Métodos-Específicos)
+      - [Exemplo:](#Exemplo:)
+    - [4. Métodos de Conversão (DTOs)](#4.-Métodos-de-Conversão-(DTOs))
+      - [Exemplo:](#Exemplo:)
+  - [Resumo: Importância dos Serviços no SGE](#Resumo:-Importância-dos-Serviços-no-SGE)
+    - [Benefícios:](#Benefícios:)
+- [DTOs no Sistema SGE](#DTOs-no-Sistema-SGE)
+  - [O que são DTOs?](#O-que-são-DTOs?)
+  - [Estrutura e Funcionalidade no Java, Spring e SGE](#Estrutura-e-Funcionalidade-no-Java,-Spring-e-SGE)
+    - [Quando Utilizar DTOs](#Quando-Utilizar-DTOs)
+  - [Criação de DTOs no Sistema](#Criação-de-DTOs-no-Sistema)
+    - [Estrutura Simples de um DTO](#Estrutura-Simples-de-um-DTO)
+    - [Exemplo de DTO para a Entidade Aluno](#Exemplo-de-DTO-para-a-Entidade-Aluno)
+    - [Como o DTO Funciona:](#Como-o-DTO-Funciona:)
+  - [Conversão Entre DTOs e Entidades](#Conversão-Entre-DTOs-e-Entidades)
+    - [Exemplo de Conversão Entre DTO e Entidade](#Exemplo-de-Conversão-Entre-DTO-e-Entidade)
+    - [Conversão de DTO para Entidade](#Conversão-de-DTO-para-Entidade)
+    - [Conversão de Entidade para DTO](#Conversão-de-Entidade-para-DTO)
+  - [Vantagens do Uso de DTOs](#Vantagens-do-Uso-de-DTOs)
+  - [Resumo: Importância dos DTOs no SGE](#Resumo:-Importância-dos-DTOs-no-SGE)
+    - [Benefícios:](#Benefícios:)
+- [Controladores (Controllers) no Sistema SGE](#Controladores-(Controllers)-no-Sistema-SGE)
+  - [O que são Controladores?](#O-que-são-Controladores?)
+  - [Estrutura e Funcionalidade no Java, Spring e SGE](#Estrutura-e-Funcionalidade-no-Java,-Spring-e-SGE)
+  - [Principais Anotações e Funcionalidades](#Principais-Anotações-e-Funcionalidades)
+  - [Exemplos de Métodos Comuns em Controladores](#Exemplos-de-Métodos-Comuns-em-Controladores)
+    - [1. Buscar Todos os Alunos (GET)](#1.-Buscar-Todos-os-Alunos-(GET))
+    - [2. Buscar Aluno por ID (GET)](#2.-Buscar-Aluno-por-ID-(GET))
+    - [3. Criar Novo Aluno (POST)](#3.-Criar-Novo-Aluno-(POST))
+    - [4. Atualizar Aluno (PUT)](#4.-Atualizar-Aluno-(PUT))
+    - [5. Deletar Aluno (DELETE)](#5.-Deletar-Aluno-(DELETE))
+  - [Tratamento de Erros nos Controladores](#Tratamento-de-Erros-nos-Controladores)
+  - [Resumo: Importância dos Controladores no SGE](#Resumo:-Importância-dos-Controladores-no-SGE)
+    - [Benefícios:](#Benefícios:)
+- [Capítulo 2 - Explicação dos Pacotes](#Capítulo-2---Explicação-dos-Pacotes)
+  - [Estrutura Geral](#Estrutura-Geral)
+- [Package aluno](#Package-aluno)
+    - [Aluno.java (Entidade)](#Aluno.java-(Entidade))
+    - [AlunoRepository.java (Repositório)](#AlunoRepository.java-(Repositório))
+    - [AlunoService.java (Serviço)](#AlunoService.java-(Serviço))
+    - [AlunoDTO.java (DTO)](#AlunoDTO.java-(DTO))
+    - [AlunoResumidoDTO.java (DTO)](#AlunoResumidoDTO.java-(DTO))
+    - [AlunoResumidoDTO2.java (DTO)](#AlunoResumidoDTO2.java-(DTO))
+    - [AlunoReduzidoDTO.java (DTO)](#AlunoReduzidoDTO.java-(DTO))
+    - [AlunoController.java (Controlador)](#AlunoController.java-(Controlador))
+      - [GET](#GET)
+      - [POST](#POST)
+      - [PUT](#PUT)
+      - [DELETE](#DELETE)
+  - [Conclusão](#Conclusão)
+- [Package comunicado](#Package-comunicado)
+    - [Comunicado.java (Entidade)](#Comunicado.java-(Entidade))
+    - [ComunicadoRepository.java (Repositório)](#ComunicadoRepository.java-(Repositório))
+    - [ComunicadoService.java (Serviço)](#ComunicadoService.java-(Serviço))
+    - [ComunicadoDTO.java (DTO)](#ComunicadoDTO.java-(DTO))
+    - [ComunicadoController.java (Controlador)](#ComunicadoController.java-(Controlador))
+    - [Rotas (Endpoints):](#Rotas-(Endpoints):)
+      - [POST](#POST)
+      - [PUT](#PUT)
+      - [DELETE](#DELETE)
+      - [GET](#GET)
+    - [Tratamento de Erros:](#Tratamento-de-Erros:)
+  - [Conclusão](#Conclusão)
+- [Package conceito](#Package-conceito)
+    - [Conceito.java (Entidade)](#Conceito.java-(Entidade))
+    - [ConceitoRepository.java (Repositório)](#ConceitoRepository.java-(Repositório))
+    - [ConceitoService.java (Serviço)](#ConceitoService.java-(Serviço))
+  - [Anotações:](#Anotações:)
+  - [Métodos CRUD:](#Métodos-CRUD:)
+  - [Cálculos de Notas e Regras de Negócio](#Cálculos-de-Notas-e-Regras-de-Negócio)
+    - [1. Cálculo das Notas de Recuperação: NOA1 e NOA2](#1.-Cálculo-das-Notas-de-Recuperação:-NOA1-e-NOA2)
+      - [Regras de Substituição:](#Regras-de-Substituição:)
+      - [Exemplo de Substituição:](#Exemplo-de-Substituição:)
+    - [2. Cálculo da Média Final](#2.-Cálculo-da-Média-Final)
+    - [3. NOA Final: Recuperação Final](#3.-NOA-Final:-Recuperação-Final)
+      - [Regras para Uso do NOA Final:](#Regras-para-Uso-do-NOA-Final:)
+      - [Exemplo de Aplicação:](#Exemplo-de-Aplicação:)
+    - [4. Critérios de Aprovação e Reprovação](#4.-Critérios-de-Aprovação-e-Reprovação)
+      - [Aprovação com NOA Final:](#Aprovação-com-NOA-Final:)
+    - [5. Implementação dos Cálculos no Sistema](#5.-Implementação-dos-Cálculos-no-Sistema)
+    - [Conceitos Descritivos:](#Conceitos-Descritivos:)
+    - [ConceitoController.java (Controlador)](#ConceitoController.java-(Controlador))
+    - [Rotas (Endpoints):](#Rotas-(Endpoints):)
+      - [GET](#GET)
+      - [POST](#POST)
+      - [PUT](#PUT)
+      - [DELETE](#DELETE)
+    - [Tratamento de Erros:](#Tratamento-de-Erros:)
+  - [Conclusão](#Conclusão)
+- [Package coordenacao](#Package-coordenacao)
+    - [Coordenacao.java (Entidade)](#Coordenacao.java-(Entidade))
+    - [Métodos Auxiliares](#Métodos-Auxiliares)
+      - [addEndereco(Endereco endereco)](#addEndereco(Endereco-endereco))
+      - [addTelefone(Telefone telefone)](#addTelefone(Telefone-telefone))
+      - [addCoordenador(Coordenador coordenador)](#addCoordenador(Coordenador-coordenador))
+      - [addTurma(Turma turma)](#addTurma(Turma-turma))
+      - [addProfessor(Professor professor)](#addProfessor(Professor-professor))
+    - [CoordenacaoRepository.java (Repositório)](#CoordenacaoRepository.java-(Repositório))
+    - [CoordenacaoService.java (Serviço)](#CoordenacaoService.java-(Serviço))
+    - [CoordenacaoDTO.java e CoordenacaoCadastroDTO.java (DTOs)](#CoordenacaoDTO.java-e-CoordenacaoCadastroDTO.java-(DTOs))
+    - [CoordenacaoController.java (Controlador)](#CoordenacaoController.java-(Controlador))
+    - [Rotas (Endpoints):](#Rotas-(Endpoints):)
+      - [GET](#GET)
+      - [POST](#POST)
+      - [PUT](#PUT)
+      - [DELETE](#DELETE)
+    - [Tratamento de Erros:](#Tratamento-de-Erros:)
+  - [Conclusão](#Conclusão)
+- [Package coordenador](#Package-coordenador)
+    - [Coordenador.java (Entidade)](#Coordenador.java-(Entidade))
+    - [CoordenadorRepository.java (Repositório)](#CoordenadorRepository.java-(Repositório))
+    - [CoordenadorService.java (Serviço)](#CoordenadorService.java-(Serviço))
+    - [CoordenadorDTO.java (DTO)](#CoordenadorDTO.java-(DTO))
+    - [CoordenadorController.java (Controlador)](#CoordenadorController.java-(Controlador))
+    - [Rotas (Endpoints):](#Rotas-(Endpoints):)
+      - [GET](#GET)
+      - [POST](#POST)
+      - [PUT](#PUT)
+      - [DELETE](#DELETE)
+  - [Conclusão](#Conclusão)
+- [Package Disciplina](#Package-Disciplina)
+  - [Entidade Disciplina.java](#Entidade-Disciplina.java)
+    - [Anotações](#Anotações)
+    - [Atributos Principais](#Atributos-Principais)
+    - [Relacionamentos](#Relacionamentos)
+    - [Regras de Negócio](#Regras-de-Negócio)
+  - [DisciplinaRepository.java (Repositório)](#DisciplinaRepository.java-(Repositório))
+    - [Métodos](#Métodos)
+    - [Regras de Negócio](#Regras-de-Negócio)
+  - [DisciplinaService.java (Serviço)](#DisciplinaService.java-(Serviço))
+    - [Métodos](#Métodos)
+    - [Regras de Negócio](#Regras-de-Negócio)
+  - [DTOs](#DTOs)
+    - [DisciplinaDTO (Data Transfer Object)](#DisciplinaDTO-(Data-Transfer-Object))
+    - [DisciplinaGetDTO](#DisciplinaGetDTO)
+    - [DisciplinaResumidaDTO](#DisciplinaResumidaDTO)
+  - [DisciplinaController.java (Controlador)](#DisciplinaController.java-(Controlador))
+    - [Rotas (Endpoints)](#Rotas-(Endpoints))
+      - [GET](#GET)
+      - [POST](#POST)
+      - [PUT](#PUT)
+      - [DELETE](#DELETE)
+  - [Tratamento de Erros](#Tratamento-de-Erros)
+  - [Conclusão](#Conclusão)
+- [Package Endereco](#Package-Endereco)
+    - [Estrutura do Package](#Estrutura-do-Package)
+  - [Entidade Endereco.java](#Entidade-Endereco.java)
+    - [Anotações](#Anotações)
+    - [Atributos Principais](#Atributos-Principais)
+    - [Relacionamentos](#Relacionamentos)
+    - [Regras de Negócio](#Regras-de-Negócio)
+    - [Métodos Importantes](#Métodos-Importantes)
+  - [EnderecoDTO.java (Data Transfer Object)](#EnderecoDTO.java-(Data-Transfer-Object))
+    - [Anotações](#Anotações)
+    - [Atributos](#Atributos)
+    - [Utilização](#Utilização)
+- [Package presencas](#Package-presencas)
+  - [Presenca.java (Entidade)](#Presenca.java-(Entidade))
+    - [Anotações:](#Anotações:)
+    - [Relacionamentos:](#Relacionamentos:)
+    - [Atributos Principais:](#Atributos-Principais:)
+    - [Regras de Negócio:](#Regras-de-Negócio:)
+  - [PresencaRepository.java (Repositório)](#PresencaRepository.java-(Repositório))
+    - [Métodos:](#Métodos:)
+    - [Regras de Negócio:](#Regras-de-Negócio:)
+  - [PresencaService.java (Serviço)](#PresencaService.java-(Serviço))
+    - [Anotações:](#Anotações:)
+    - [Métodos:](#Métodos:)
+      - [Regras de Negócio:](#Regras-de-Negócio:)
+  - [PresencaController.java (Controlador)](#PresencaController.java-(Controlador))
+    - [Anotações:](#Anotações:)
+    - [Rotas (Endpoints):](#Rotas-(Endpoints):)
+      - [Validações:](#Validações:)
+      - [Validações:](#Validações:)
+      - [Validações:](#Validações:)
+      - [Validações:](#Validações:)
+    - [Tratamento de Erros:](#Tratamento-de-Erros:)
+  - [Considerações Finais](#Considerações-Finais)
+- [Package Professor](#Package-Professor)
+    - [Este package contém as principais classes:](#Este-package-contém-as-principais-classes:)
+  - [Entidade Professor.java](#Entidade-Professor.java)
+    - [Atributos Principais](#Atributos-Principais)
+    - [Relacionamentos](#Relacionamentos)
+- [ProfessorRepository.java (Repositório)](#ProfessorRepository.java-(Repositório))
+  - [Métodos](#Métodos)
+  - [Regras de Negócio](#Regras-de-Negócio)
+  - [ProfessorService.java (Serviço)](#ProfessorService.java-(Serviço))
+    - [Métodos Principais](#Métodos-Principais)
+    - [Métodos Auxiliares](#Métodos-Auxiliares)
+  - [ProfessorController.java (Controlador)](#ProfessorController.java-(Controlador))
+    - [Endpoints Principais](#Endpoints-Principais)
+  - [Métodos Relacionados a Conceitos](#Métodos-Relacionados-a-Conceitos)
+  - [Considerações Finais](#Considerações-Finais)
+- [Package Responsável](#Package-Responsável)
+  - [Estrutura do Package](#Estrutura-do-Package)
+  - [Entidade Responsavel.java](#Entidade-Responsavel.java)
+    - [Atributos Principais](#Atributos-Principais)
+    - [Relacionamentos](#Relacionamentos)
+    - [Métodos Auxiliares](#Métodos-Auxiliares)
+    - [Exemplo de Relacionamento com Aluno](#Exemplo-de-Relacionamento-com-Aluno)
+    - [Exemplo de Relacionamento com Telefones](#Exemplo-de-Relacionamento-com-Telefones)
+  - [ResponsavelDTO.java (Data Transfer Object)](#ResponsavelDTO.java-(Data-Transfer-Object))
+    - [Atributos Principais](#Atributos-Principais)
+  - [Considerações Finais](#Considerações-Finais)
+- [Package Telefone](#Package-Telefone)
+  - [Estrutura do Package](#Estrutura-do-Package)
+  - [Entidade Telefone.java](#Entidade-Telefone.java)
+    - [Atributos Principais](#Atributos-Principais)
+    - [Validações](#Validações)
+    - [Relacionamentos](#Relacionamentos)
+    - [Entidades Relacionadas](#Entidades-Relacionadas)
+  - [Métodos Auxiliares](#Métodos-Auxiliares)
+  - [TelefoneDTO.java (Data Transfer Object)](#TelefoneDTO.java-(Data-Transfer-Object))
+    - [Atributos Principais](#Atributos-Principais)
+  - [Considerações Finais](#Considerações-Finais)
+- [Package Turma](#Package-Turma)
+  - [Entidade Turma.java](#Entidade-Turma.java)
+    - [Anotações](#Anotações)
+    - [Atributos Principais](#Atributos-Principais)
+    - [Relacionamentos](#Relacionamentos)
+    - [Regras de Negócio](#Regras-de-Negócio)
+  - [TurmaRepository.java (Repositório)](#TurmaRepository.java-(Repositório))
+    - [Métodos](#Métodos)
+    - [Regras de Negócio](#Regras-de-Negócio)
+  - [TurmaService.java (Serviço)](#TurmaService.java-(Serviço))
+    - [Métodos](#Métodos)
+    - [Regras de Negócio](#Regras-de-Negócio)
+  - [DTOs](#DTOs)
+    - [TurmaDTO (Data Transfer Object)](#TurmaDTO-(Data-Transfer-Object))
+    - [Atributos](#Atributos)
+    - [TurmaInputDTO](#TurmaInputDTO)
+    - [Atributos](#Atributos)
+    - [DisciplinaProfessorDTO](#DisciplinaProfessorDTO)
+    - [Atributos](#Atributos)
+  - [TurmaController.java (Controlador)](#TurmaController.java-(Controlador))
+    - [Rotas (Endpoints)](#Rotas-(Endpoints))
+      - [GET](#GET)
+      - [POST](#POST)
+      - [PUT](#PUT)
+      - [DELETE](#DELETE)
+    - [Tratamento de Erros](#Tratamento-de-Erros)
+  - [Conclusão](#Conclusão)
+- [Package TurmaDisciplinaProfessor](#Package-TurmaDisciplinaProfessor)
+  - [Entidade TurmaDisciplinaProfessor.java](#Entidade-TurmaDisciplinaProfessor.java)
+    - [Anotações](#Anotações)
+    - [Atributos Principais](#Atributos-Principais)
+    - [Regras de Negócio](#Regras-de-Negócio)
+  - [Classe TurmaDisciplinaProfessorId.java](#Classe-TurmaDisciplinaProfessorId.java)
+    - [Anotações](#Anotações)
+    - [Atributos Principais](#Atributos-Principais)
+    - [Regras de Negócio](#Regras-de-Negócio)
+  - [DTOs](#DTOs)
+    - [TurmaDisciplinaProfessorDTO.java](#TurmaDisciplinaProfessorDTO.java)
+      - [Atributos:](#Atributos:)
+    - [TurmaDisciplinaProfessorIdDTO.java](#TurmaDisciplinaProfessorIdDTO.java)
+      - [Atributos:](#Atributos:)
+    - [TurmaDisciplinaProfessorCompletoDTO.java](#TurmaDisciplinaProfessorCompletoDTO.java)
+      - [Atributos:](#Atributos:)
+  - [Repositório TurmaDisciplinaProfessorRepository.java](#Repositório-TurmaDisciplinaProfessorRepository.java)
+    - [Métodos](#Métodos)
+    - [Regras de Negócio](#Regras-de-Negócio)
+  - [Conclusão](#Conclusão)
+- [Package Usuario](#Package-Usuario)
+  - [Visão Geral](#Visão-Geral)
+  - [Classe Usuario.java](#Classe-Usuario.java)
+    - [Descrição](#Descrição)
+    - [Anotações](#Anotações)
+    - [Atributos Principais](#Atributos-Principais)
+    - [Validações](#Validações)
+    - [Regras de Negócio](#Regras-de-Negócio)
+  - [Conclusão](#Conclusão)
+- [Package de Configuração](#Package-de-Configuração)
+  - [Pi3MediotecApplication.java](#Pi3MediotecApplication.java)
+    - [Descrição](#Descrição)
+    - [Anotações](#Anotações)
+    - [Método Principal](#Método-Principal)
+  - [SwaggerConfig.java](#SwaggerConfig.java)
+    - [Descrição](#Descrição)
+    - [Anotações](#Anotações)
+    - [Métodos](#Métodos)
+    - [Principais Configurações](#Principais-Configurações)
+  - [WebConfig.java](#WebConfig.java)
+    - [Descrição](#Descrição)
+    - [Anotações](#Anotações)
+    - [Métodos](#Métodos)
+  - [Conclusão](#Conclusão)
+- [Capítulo 3 - Configurações da Aplicação](#Capítulo-3---Configurações-da-Aplicação)
+  - [Configurações do `application.properties`](#Configurações-do-`application.properties`)
+    - [1. Configuração Básica da Aplicação](#1.-Configuração-Básica-da-Aplicação)
+    - [2. Configurações do Banco de Dados](#2.-Configurações-do-Banco-de-Dados)
+    - [3. Configurações do Hibernate](#3.-Configurações-do-Hibernate)
+    - [4. Configurações Regionais e de Fuso Horário](#4.-Configurações-Regionais-e-de-Fuso-Horário)
+    - [5. Configuração do Swagger UI](#5.-Configuração-do-Swagger-UI)
+  - [Conclusão](#Conclusão)
+- [Configurações do pom.xml](#Configurações-do-pom.xml)
+  - [Estrutura do pom.xml](#Estrutura-do-pom.xml)
+    - [Informações do Projeto](#Informações-do-Projeto)
+    - [Propriedades](#Propriedades)
+    - [Dependências](#Dependências)
+      - [SpringDoc OpenAPI](#SpringDoc-OpenAPI)
+      - [Spring Boot Validation](#Spring-Boot-Validation)
+      - [Spring Boot Data JPA](#Spring-Boot-Data-JPA)
+      - [Spring Boot Web](#Spring-Boot-Web)
+      - [Spring Boot DevTools](#Spring-Boot-DevTools)
+      - [MySQL Connector](#MySQL-Connector)
+      - [PostgreSQL Driver](#PostgreSQL-Driver)
+      - [Lombok](#Lombok)
+      - [Spring Boot Starter Test](#Spring-Boot-Starter-Test)
+    - [Plugins](#Plugins)
+      - [Spring Boot Maven Plugin](#Spring-Boot-Maven-Plugin)
+  - [Conclusão](#Conclusão)
+- [Capítulo 4 - Documentação do Banco de Dados](#Capítulo-4---Documentação-do-Banco-de-Dados)
+  - [1. Introdução](#1.-Introdução)
+  - [2. Tabelas](#2.-Tabelas)
+    - [2.1 Tabela aluno](#2.1-Tabela-aluno)
+      - [Relacionamentos:](#Relacionamentos:)
+    - [2.2 Tabela professor](#2.2-Tabela-professor)
+      - [Relacionamentos:](#Relacionamentos:)
+    - [2.3 Tabela disciplina](#2.3-Tabela-disciplina)
+      - [Relacionamentos:](#Relacionamentos:)
+    - [2.4 Tabela turma](#2.4-Tabela-turma)
+      - [Relacionamentos:](#Relacionamentos:)
+    - [2.5 Tabela responsavel](#2.5-Tabela-responsavel)
+    - [2.6 Tabela telefone](#2.6-Tabela-telefone)
+    - [2.7 Tabela coordenacao](#2.7-Tabela-coordenacao)
+    - [2.8 Tabela turma_disciplina_professor](#2.8-Tabela-turma_disciplina_professor)
+    - [2.9 Tabela conceito](#2.9-Tabela-conceito)
+    - [2.10 Tabela presenca](#2.10-Tabela-presenca)
+    - [2.11 Tabela horario](#2.11-Tabela-horario)
+    - [2.12 Tabela comunicado](#2.12-Tabela-comunicado)
+    - [2.13 Tabela comunicado_receptor_alunos e comunicado_receptor_turmas](#2.13-Tabela-comunicado_receptor_alunos-e-comunicado_receptor_turmas)
+      - [Comunicado_Receptor_Alunos](#Comunicado_Receptor_Alunos)
+      - [Comunicado_Receptor_Turmas](#Comunicado_Receptor_Turmas)
+  - [3. Relacionamentos Principais](#3.-Relacionamentos-Principais)
+- [Capítulo 5 - Endpoints](#Capítulo-5---Endpoints)
+  - [Introdução](#Introdução)
+  - [1. Aluno](#1.-Aluno)
+    - [Exemplo de cadastro (POST - Mínimo):](#Exemplo-de-cadastro-(POST---Mínimo):)
+    - [Exemplo de cadastro (POST - Máximo):](#Exemplo-de-cadastro-(POST---Máximo):)
+    - [Exemplo de consulta (GET - Completo):](#Exemplo-de-consulta-(GET---Completo):)
+  - [2. Professor](#2.-Professor)
+    - [Exemplo de cadastro (POST - Mínimo):](#Exemplo-de-cadastro-(POST---Mínimo):)
+    - [Exemplo de cadastro (POST - Máximo):](#Exemplo-de-cadastro-(POST---Máximo):)
+    - [Exemplo de consulta (GET - Completo):](#Exemplo-de-consulta-(GET---Completo):)
+  - [3. Coordenação](#3.-Coordenação)
+    - [Exemplo de cadastro (POST - Mínimo):](#Exemplo-de-cadastro-(POST---Mínimo):)
+    - [Exemplo de cadastro (POST - Máximo):](#Exemplo-de-cadastro-(POST---Máximo):)
+    - [Exemplo de consulta (GET - Completo):](#Exemplo-de-consulta-(GET---Completo):)
+  - [4. Disciplina](#4.-Disciplina)
+    - [Exemplo de cadastro (POST - Mínimo):](#Exemplo-de-cadastro-(POST---Mínimo):)
+    - [Exemplo de cadastro (POST - Máximo):](#Exemplo-de-cadastro-(POST---Máximo):)
+    - [Exemplo de consulta (GET - Completo):](#Exemplo-de-consulta-(GET---Completo):)
+  - [5. Turma](#5.-Turma)
+    - [Exemplo de cadastro (POST - Mínimo):](#Exemplo-de-cadastro-(POST---Mínimo):)
+    - [Exemplo de cadastro (POST - Máximo):](#Exemplo-de-cadastro-(POST---Máximo):)
+    - [Exemplo de consulta (GET - Completo):](#Exemplo-de-consulta-(GET---Completo):)
+  - [6. Responsável](#6.-Responsável)
+    - [Exemplo de cadastro (POST - Mínimo):](#Exemplo-de-cadastro-(POST---Mínimo):)
+    - [Exemplo de cadastro (POST - Máximo):](#Exemplo-de-cadastro-(POST---Máximo):)
+    - [Exemplo de consulta (GET - Completo):](#Exemplo-de-consulta-(GET---Completo):)
+  - [7. Conceito](#7.-Conceito)
+    - [Exemplo de cadastro (POST - Mínimo):](#Exemplo-de-cadastro-(POST---Mínimo):)
+    - [Exemplo de cadastro (POST - Máximo):](#Exemplo-de-cadastro-(POST---Máximo):)
+    - [Exemplo de consulta (GET - Completo):](#Exemplo-de-consulta-(GET---Completo):)
+  - [8. Comunicado](#8.-Comunicado)
+    - [Exemplo de cadastro (POST - Mínimo):](#Exemplo-de-cadastro-(POST---Mínimo):)
+    - [Exemplo de cadastro (POST - Máximo):](#Exemplo-de-cadastro-(POST---Máximo):)
+    - [Exemplo de consulta (GET - Completo):](#Exemplo-de-consulta-(GET---Completo):)
+  - [9. Presenca](#9.-Presenca)
+    - [Exemplo de cadastro (POST - Mínimo):](#Exemplo-de-cadastro-(POST---Mínimo):)
+    - [Exemplo de cadastro (POST - Máximo):](#Exemplo-de-cadastro-(POST---Máximo):)
+    - [Exemplo de consulta (GET - Completo):](#Exemplo-de-consulta-(GET---Completo):)
+- [Capítulo 6 - Em Desenvolvimento (futuras melhorias)](#Capítulo-6---Em-Desenvolvimento-(futuras-melhorias))
+  - [1. Tratamento de Erros Mais Robustos](#1.-Tratamento-de-Erros-Mais-Robustos)
+  - [2. Encapsulamento da Regra de Negócio](#2.-Encapsulamento-da-Regra-de-Negócio)
+  - [3. Configuração Mais Forte das Bilateralidades](#3.-Configuração-Mais-Forte-das-Bilateralidades)
+  - [4. Implementação de Spring Security](#4.-Implementação-de-Spring-Security)
+  - [5. Auditoria e Logs de Atividade](#5.-Auditoria-e-Logs-de-Atividade)
+  - [6. Melhorias na Performance e Escalabilidade](#6.-Melhorias-na-Performance-e-Escalabilidade)
+    - [7. Testes Automatizados](#7.-Testes-Automatizados)
+    - [8. Integração de APIs](#8.-Integração-de-APIs)
+- [Capítulo 7: Instalação, Uso e Dependências](#Capítulo-7:-Instalação,-Uso-e-Dependências)
+  - [1. Instruções de Instalação](#1.-Instruções-de-Instalação)
+  - [2. Instruções de Uso](#2.-Instruções-de-Uso)
+    - [Exemplo de configuração do `application.properties`:](#Exemplo-de-configuração-do-`application.properties`:)
+- [spring.jpa.database-platform=org.hibernate.dialect.MySQL5InnoDBDialect](#spring.jpa.database-platform=org.hibernate.dialect.MySQL5InnoDBDialect)
+    - [Configurar as variáveis de ambiente](#Configurar-as-variáveis-de-ambiente)
+  - [3. Dependências do Projeto](#3.-Dependências-do-Projeto)
+
 
 
 ---
@@ -3916,6 +4408,13 @@ Essas futuras melhorias visam tornar o SGE mais robusto, seguro e escalável, ga
 
 -  Adição de testes automatizados é uma melhoria significativa, implementar testes unitários e de integração com JUnit ou Mockito garantindo que o sistema se comporta conforme esperado, reduzindo a possibilidade de erros em atualizações futuras.
 -  Criar testes para validar regras de negócio e integração entre os componentes.
+
+
+### 8. Integração de APIs
+
+- A integração com APIs externas será uma das próximas grandes etapas do sistema, permitindo que o **SGE** possa se comunicar com sistemas educacionais externos, como plataformas de ensino à distância, gerenciadores de conteúdo (LMS) e ferramentas de pagamento.
+- Essa integração ampliará o alcance do sistema, tornando-o mais versátil e permitindo que ele atenda a uma gama mais ampla de necessidades institucionais.
+- As APIs também trarão melhorias no compartilhamento de dados e funcionalidades, facilitando a automação de processos e a sincronia entre diferentes sistemas.
 
 
 ---
