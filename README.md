@@ -10,7 +10,7 @@ Eu, **Rafael Vitor de Oliveira**, fui responsável por todo o desenvolvimento do
 
 ---
 
-## Introdução
+### Introdução
 
 O **Sistema de Gerenciamento Escolar (SGE)** foi desenvolvido como parte do **Projeto Integrador III** do curso de **Análise e Desenvolvimento de Sistemas** da **Faculdade Senac Pernambuco**. Esse projeto tem como objetivo suprir as necessidades de gerenciamento do **Mediotec**, uma escola técnica de ensino médio do **Senac**, que atualmente não conta com um sistema de gestão escolar.
 
