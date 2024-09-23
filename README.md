@@ -533,12 +533,6 @@ Além disso, meus colegas também se dedicarão à **documentação completa das
     - [7. Testes Automatizados](#7.-Testes-Automatizados)
     - [8. Integração de APIs](#8.-Integração-de-APIs)
 - [Capítulo 7: Instalação, Uso e Dependências](#Capítulo-7:-Instalação,-Uso-e-Dependências)
-  - [1. Instruções de Instalação](#1.-Instruções-de-Instalação)
-  - [2. Instruções de Uso](#2.-Instruções-de-Uso)
-    - [Exemplo de configuração do `application.properties`:](#Exemplo-de-configuração-do-`application.properties`:)
-- [spring.jpa.database-platform=org.hibernate.dialect.MySQL5InnoDBDialect](#spring.jpa.database-platform=org.hibernate.dialect.MySQL5InnoDBDialect)
-    - [Configurar as variáveis de ambiente](#Configurar-as-variáveis-de-ambiente)
-  - [3. Dependências do Projeto](#3.-Dependências-do-Projeto)
 
 
 
