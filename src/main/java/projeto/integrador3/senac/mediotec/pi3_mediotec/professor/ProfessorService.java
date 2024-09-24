@@ -226,23 +226,25 @@ public class ProfessorService {
         if (professorDTO.getTurmasDisciplinas() != null && !professorDTO.getTurmasDisciplinas().isEmpty()) {
             professorDTO.getTurmasDisciplinas().forEach(turmaDisciplinaDTO -> {
                 Turma turma = turmaRepository.findById(turmaDisciplinaDTO.getTurmaId())
-                        .orElseThrow(() -> new RuntimeException("Turma com ID " + turmaDisciplinaDTO.getTurmaId() + " não encontrada"));
+                    .orElseThrow(() -> new RuntimeException("Turma com ID " + turmaDisciplinaDTO.getTurmaId() + " não encontrada"));
                 Disciplina disciplina = disciplinaRepository.findById(turmaDisciplinaDTO.getDisciplinaId())
-                        .orElseThrow(() -> new RuntimeException("Disciplina com ID " + turmaDisciplinaDTO.getDisciplinaId() + " não encontrada"));
+                    .orElseThrow(() -> new RuntimeException("Disciplina com ID " + turmaDisciplinaDTO.getDisciplinaId() + " não encontrada"));
 
                 TurmaDisciplinaProfessor tdp = TurmaDisciplinaProfessor.builder()
-                        .professor(professor)
-                        .turma(turma)
-                        .disciplina(disciplina)
-                        .id(new TurmaDisciplinaProfessorId(turma.getId(), disciplina.getId(), professor.getCpf()))
-                        .build();
+                    .professor(professor)
+                    .turma(turma)
+                    .disciplina(disciplina)
+                    .id(new TurmaDisciplinaProfessorId(turma.getId(), disciplina.getId(), professor.getCpf()))
+                    .build();
 
                 turmaDisciplinaProfessorRepository.save(tdp);
                 professor.addTurmaDisciplinaProfessor(tdp);
             });
+        } else {
+            // Log or handle the case where no turmasDisciplinas are provided
+            System.out.println("Nenhuma turma ou disciplina foi fornecida.");
         }
     }
-
     // ============================= CONVERSORES =============================
 
     /**
@@ -267,19 +269,21 @@ public class ProfessorService {
         }
 
         // Mapeia turmas e disciplinas associadas ao professor
-        Set<TurmaDisciplinaResumidaDTO> turmasDisciplinas = professor.getTurmaDisciplinaProfessores().stream()
-                .map(tdp -> TurmaDisciplinaResumidaDTO.builder()
-                        .turma(TurmaResumida2DTO.builder()
-                                .nome(tdp.getTurma().getNome())
-                                .anoLetivo(tdp.getTurma().getAnoLetivo())
-                                .anoEscolar(tdp.getTurma().getAnoEscolar())
-                                .turno(tdp.getTurma().getTurno())
-                                .build())
-                        .disciplina(DisciplinaResumida2DTO.builder()
-                                .nome(tdp.getDisciplina().getNome())
-                                .build())
-                        .build())
-                .collect(Collectors.toSet());
+        Set<TurmaDisciplinaResumidaDTO> turmasDisciplinas = professor.getTurmaDisciplinaProfessores() != null
+        	    ? professor.getTurmaDisciplinaProfessores().stream()
+        	        .map(tdp -> TurmaDisciplinaResumidaDTO.builder()
+        	            .turma(TurmaResumida2DTO.builder()
+        	                .nome(tdp.getTurma().getNome())
+        	                .anoLetivo(tdp.getTurma().getAnoLetivo())
+        	                .anoEscolar(tdp.getTurma().getAnoEscolar())
+        	                .turno(tdp.getTurma().getTurno())
+        	                .build())
+        	            .disciplina(DisciplinaResumida2DTO.builder()
+        	                .nome(tdp.getDisciplina().getNome())
+        	                .build())
+        	            .build())
+        	        .collect(Collectors.toSet())
+        	    : new HashSet<>(); // Retorna um Set vazio se for null
 
         // Mapeia endereços do professor
         Set<EnderecoDTO> enderecosDTO = professor.getEnderecos().stream()
@@ -303,14 +307,14 @@ public class ProfessorService {
 
         // Constrói e retorna o DTO completo
         return ProfessorResumidoDTO.builder()
-                .cpf(professor.getCpf())
-                .nome(professor.getNome())
-                .ultimoNome(professor.getUltimoNome())
-                .email(professor.getEmail())
-                .coordenacao(coordenacaoDTO)
-                .turmaDisciplinaProfessores(new HashSet<>())
-                .enderecos(!enderecosDTO.isEmpty() ? enderecosDTO : null)
-                .telefones(!telefonesDTO.isEmpty() ? telefonesDTO : null)
-                .build();
+        	    .cpf(professor.getCpf())
+        	    .nome(professor.getNome())
+        	    .ultimoNome(professor.getUltimoNome())
+        	    .email(professor.getEmail())
+        	    .coordenacao(coordenacaoDTO)
+        	    .turmaDisciplinaProfessores(turmasDisciplinas)  // Use as turmas mapeadas
+        	    .enderecos(!enderecosDTO.isEmpty() ? enderecosDTO : null)
+        	    .telefones(!telefonesDTO.isEmpty() ? telefonesDTO : null)
+        	    .build();
     }
 }
