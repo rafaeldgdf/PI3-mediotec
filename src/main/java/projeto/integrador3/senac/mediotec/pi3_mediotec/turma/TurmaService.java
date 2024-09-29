@@ -8,6 +8,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoResumidoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoResumidaDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.CoordenadorResumidoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.Disciplina;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaDTO;
@@ -272,17 +273,32 @@ public class TurmaService {
                 .collect(Collectors.toSet()) : Collections.emptySet();
 
         return TurmaDTO.builder()
-        	.id(turma.getId())
-            .nome(turma.getNome())
-            .anoEscolar(turma.getAnoEscolar())
-            .turno(turma.getTurno())
-            .status(turma.isStatus())
-            .coordenacao(CoordenacaoResumidaDTO.builder()
-                    .nome(turma.getCoordenacao().getNome())
-                    .build())
-            .disciplinas(disciplinasDTO)
-            .disciplinasProfessores(disciplinasProfessoresDTO)
-            .alunos(alunosDTO)
-            .build();
+        	    .id(turma.getId())
+        	    .nome(turma.getNome())
+        	    .anoLetivo(turma.getAnoLetivo())
+        	    .anoEscolar(turma.getAnoEscolar())
+        	    .turno(turma.getTurno())
+        	    .status(turma.isStatus())
+        	    .coordenacao(CoordenacaoResumidaDTO.builder()
+        	        .nome(turma.getCoordenacao().getNome())
+        	        .coordenadores(
+        	            turma.getCoordenacao().getCoordenadores()
+        	                .stream()
+        	                .map(coordenador -> CoordenadorResumidoDTO.builder()
+        	                        .nomeCoordenador(coordenador.getNome() + " " + coordenador.getUltimoNome()) // Concatenação de nome
+        	                        .email(coordenador.getEmail()) // Email do coordenador
+        	                        .build()
+        	                    )
+        	                .collect(Collectors.toList())
+        	        )
+        	        .build()
+        	    )
+        	    .disciplinas(disciplinasDTO)
+        	    .disciplinasProfessores(disciplinasProfessoresDTO)
+        	    .alunos(alunosDTO)
+        	    .build();
+
+
+
     }
 }
