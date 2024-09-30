@@ -3,6 +3,8 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.usuario;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Temporal;
@@ -56,8 +58,9 @@ public abstract class Usuario implements Serializable {
 
     // A data de nascimento do usuário é obrigatória e armazenada no formato de data
     @NotNull(message = "{usuario.data_nascimento.notnull}") // O campo data de nascimento não pode ser nulo
-    @Temporal(TemporalType.DATE) // Define que o tipo de dado será tratado como uma data
     @Column(nullable = false) // A coluna 'data_nascimento' no banco de dados não pode ser nula
+    @Temporal(TemporalType.DATE)  // Define que no banco de dados será armazenada apenas a data (sem hora)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")  // Formato brasileiro no JSON
     private Date data_nascimento;
 
     // O email do usuário é obrigatório e deve estar em um formato válido
