@@ -71,8 +71,9 @@ public class Aluno extends Usuario {
 
     // Turmas nas quais o aluno está matriculado (Many-to-Many)
     @Builder.Default
-    @ManyToMany(mappedBy = "alunos", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "alunos", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<Turma> turmas = new HashSet<>();
+
 
     // Presenças do aluno (One-to-Many)
     @JsonIgnore

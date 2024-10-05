@@ -64,23 +64,33 @@ public class DisciplinaService {
         // Salva a disciplina
         Disciplina savedDisciplina = disciplinaRepository.save(disciplina);
 
-        // Associa a disciplina a uma turma (e professor, se fornecido)
-        if (disciplinaDTO.getTurmaId() != null) {
+        // Cenário 1: Se apenas a turma for fornecida
+        if (disciplinaDTO.getTurmaId() != null && disciplinaDTO.getProfessorId() == null) {
             Turma turma = turmaRepository.findById(disciplinaDTO.getTurmaId())
                     .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
-            
-            if (disciplinaDTO.getProfessorId() != null) {
-                Professor professor = professorRepository.findById(disciplinaDTO.getProfessorId())
-                        .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
-                associarTurmaProfessor(savedDisciplina, turma, professor);
-            } else {
-                associarTurmaProfessorSemProfessor(savedDisciplina, turma);
-            }
+            associarTurmaProfessorSemProfessor(savedDisciplina, turma);
+        }
+
+        // Cenário 2: Se apenas o professor for fornecido
+        if (disciplinaDTO.getTurmaId() == null && disciplinaDTO.getProfessorId() != null) {
+            Professor professor = professorRepository.findByCpf(disciplinaDTO.getProfessorId())
+                    .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+            associarDisciplinaProfessorSemTurma(savedDisciplina, professor);
+        }
+
+        // Cenário 3: Se ambos, professor e turma, forem fornecidos
+        if (disciplinaDTO.getTurmaId() != null && disciplinaDTO.getProfessorId() != null) {
+            Turma turma = turmaRepository.findById(disciplinaDTO.getTurmaId())
+                    .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+            Professor professor = professorRepository.findByCpf(disciplinaDTO.getProfessorId())
+                    .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+            associarTurmaProfessor(savedDisciplina, turma, professor);
         }
 
         // Retorna o DTO resumido
         return convertToResumidaDto(savedDisciplina);
     }
+
 
     /**
      * Atualiza uma disciplina existente e suas associações
@@ -147,6 +157,21 @@ public class DisciplinaService {
         turmaDisciplinaProfessor.setDisciplina(disciplina);
         turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
     }
+      
+    
+    private void associarDisciplinaProfessorSemTurma(Disciplina disciplina, Professor professor) {
+        if (professor == null) {
+            throw new RuntimeException("Professor não pode ser nulo");
+        }
+
+        TurmaDisciplinaProfessor turmaDisciplinaProfessor = new TurmaDisciplinaProfessor();
+        turmaDisciplinaProfessor.setDisciplina(disciplina);
+        turmaDisciplinaProfessor.setProfessor(professor);
+
+        // Não seta a turma pois ela é null neste caso
+        turmaDisciplinaProfessorRepository.save(turmaDisciplinaProfessor);
+    }
+  
 
     /**
      * Deleta uma disciplina existente
@@ -177,7 +202,8 @@ public class DisciplinaService {
             .cargaHoraria(disciplina.getCarga_horaria())
             .build();
     }
-
+    
+    
     /**
      * Converte Disciplina para DisciplinaGetDTO
      * @param disciplina Entidade Disciplina

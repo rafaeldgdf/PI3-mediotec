@@ -21,7 +21,7 @@ public class ProfessorResumidoDTO {
     private String email;
     private CoordenacaoResumidaDTO coordenacao;
     private Set<TurmaDisciplinaResumidaDTO> turmaDisciplinaProfessores;
-    private Set<EnderecoDTO> enderecos;  // Endereços do professor
-    private Set<TelefoneDTO> telefones;  // Telefones do professor
+    private Set<EnderecoDTO> enderecos = new HashSet<>();
+    private Set<TelefoneDTO> telefones = new HashSet<>();
 }
 

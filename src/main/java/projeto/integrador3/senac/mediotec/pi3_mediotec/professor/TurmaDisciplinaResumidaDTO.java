@@ -1,5 +1,7 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.professor;
 
+import java.util.Set;
+
 import lombok.Builder;
 import lombok.Data;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaResumida2DTO;

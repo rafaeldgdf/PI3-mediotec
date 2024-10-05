@@ -52,7 +52,7 @@ public class TurmaDisciplinaProfessor {
     private Turma turma; // Associa a turma à relação Turma-Disciplina-Professor
 
     /**
-     * Relação ManyToOne com a entidade `Disciplina`, representando que uma disciplina pode fazer parte de várias turmas,
+     * Relação ManyToOne com a entidade `Disciplina`, representando que uma disciplina pode fazer part	e de várias turmas,
      * mas em cada combinação de turma-professor, ela é única.
      * 
      * Assim como no caso de `Turma`, o `@MapsId("disciplinaId")` usa a parte `disciplinaId` da chave composta para o mapeamento.

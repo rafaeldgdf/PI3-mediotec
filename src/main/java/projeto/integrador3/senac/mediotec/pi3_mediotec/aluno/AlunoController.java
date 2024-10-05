@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/alunos")
@@ -51,8 +52,8 @@ public class AlunoController {
     }
 
     // ============================= POST METHODS =============================
-
-    // Cria um novo aluno
+    
+    
     @Operation(summary = "Criar um novo aluno", description = "Cria um novo aluno com base nos dados fornecidos", tags = { "Aluno" })
     @PostMapping
     public ResponseEntity<AlunoDTO> createAluno(@RequestBody AlunoResumidoDTO2 alunoResumidoDTO) {
@@ -65,6 +66,25 @@ public class AlunoController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao criar aluno: " + e.getMessage());
         }
     }
+   
+
+//    // Cria um novo aluno
+//    @Operation(summary = "Criar um novo aluno", description = "Cria um novo aluno com base nos dados fornecidos", tags = { "Aluno" })
+//    @PostMapping
+//    public ResponseEntity<List<AlunoDTO>> createAlunos(@RequestBody List<AlunoResumidoDTO2> alunosResumidosDTO) {
+//        try {
+//            logger.info("Criando novos alunos.");
+//            List<AlunoDTO> savedAlunos = alunosResumidosDTO.stream()
+//                    .map(alunoResumidoDTO -> alunoService.saveAluno(alunoResumidoDTO))
+//                    .collect(Collectors.toList());
+//
+//            return new ResponseEntity<>(savedAlunos, HttpStatus.CREATED);
+//        } catch (RuntimeException e) {
+//            logger.error("Erro ao criar alunos: " + e.getMessage());
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao criar alunos: " + e.getMessage(), e);
+//        }
+//    }
+
 
     // ============================= PUT METHODS =============================
 

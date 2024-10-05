@@ -141,11 +141,18 @@ public class AlunoService {
      * 
      * @param idAluno ID do aluno a ser deletado.
      */
+    @Transactional
     public void deleteAluno(Long idAluno) {
         Aluno aluno = alunoRepository.findById(idAluno)
-                .orElseThrow(() -> new RuntimeException("Aluno não encontrado com o ID: " + idAluno));
+            .orElseThrow(() -> new RuntimeException("Aluno não encontrado com o ID: " + idAluno));
+
+        // Remover a associação do aluno com todas as turmas
+        aluno.getTurmas().forEach(turma -> turma.getAlunos().remove(aluno));
+        
+        // Agora que o aluno foi removido das turmas, podemos deletá-lo
         alunoRepository.delete(aluno);
     }
+
 
     // ============================= MÉTODOS AUXILIARES =============================
 
@@ -153,8 +160,8 @@ public class AlunoService {
      * Associa endereços ao aluno.
      */
     private void associateAddresses(AlunoResumidoDTO2 alunoResumidoDTO, Aluno aluno) {
-        if (alunoResumidoDTO.getEnderecos() != null) {
-            aluno.setEnderecos(alunoResumidoDTO.getEnderecos().stream()
+        if (alunoResumidoDTO.getEnderecos() != null && !alunoResumidoDTO.getEnderecos().isEmpty()) {
+            Set<Endereco> enderecos = alunoResumidoDTO.getEnderecos().stream()
                 .map(enderecoDTO -> Endereco.builder()
                     .cep(enderecoDTO.getCep())
                     .rua(enderecoDTO.getRua())
@@ -164,25 +171,29 @@ public class AlunoService {
                     .estado(enderecoDTO.getEstado())
                     .aluno(aluno)
                     .build())
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toSet());
+            aluno.setEnderecos(enderecos);
+        } else {
+            aluno.setEnderecos(null); // Não processa endereços se forem nulos ou vazios
         }
     }
-
     /**
      * Associa telefones ao aluno.
      */
     private void associatePhones(AlunoResumidoDTO2 alunoResumidoDTO, Aluno aluno) {
-        if (alunoResumidoDTO.getTelefones() != null) {
-            aluno.setTelefones(alunoResumidoDTO.getTelefones().stream()
+        if (alunoResumidoDTO.getTelefones() != null && !alunoResumidoDTO.getTelefones().isEmpty()) {
+            Set<Telefone> telefones = alunoResumidoDTO.getTelefones().stream()
                 .map(telefoneDTO -> Telefone.builder()
                     .ddd(telefoneDTO.getDdd())
                     .numero(telefoneDTO.getNumero())
                     .aluno(aluno)
                     .build())
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toSet());
+            aluno.setTelefones(telefones);
+        } else {
+            aluno.setTelefones(null); // Não processa telefones se forem nulos ou vazios
         }
     }
-
     /**
      * Associa turmas ao aluno com base nos IDs fornecidos.
      */
