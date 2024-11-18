@@ -105,6 +105,7 @@ Além disso, meus colegas também se dedicarão à **documentação completa das
 - [Capítulo 1 - Estrutura Geral dos Pacotes no Sistema SGE](#Capítulo-1---Estrutura-Geral-dos-Pacotes-no-Sistema-SGE)
   - [Estrutura dos Pacotes](#Estrutura-dos-Pacotes)
   - [Explicação da Estrutura](#Explicação-da-Estrutura)
+  - [Arquitetura MSC (Model-Service-Controller)](#Arquitetura--MSC---(Model-Service-Controller))
   - [Modularidade](#Modularidade)
 - [Entidades no Sistema SGE](#Entidades-no-Sistema-SGE)
   - [O que são Entidades?](#O-que-são-Entidades?)
@@ -641,7 +642,31 @@ A arquitetura do sistema foi desenvolvida seguindo o princípio da **separação
 - **Controladores**: Exponibilizam endpoints REST para a comunicação com o front-end e outros serviços (exemplo: `AlunoController.java`, `DisciplinaController.java`).
 - **Serviços**: Contêm a lógica de negócio, processando e validando dados antes de salvar ou consultar as informações no repositório (exemplo: `AlunoService.java`, `ConceitoService.java`).
 - **Repositórios**: Lidam com a persistência dos dados, realizando operações de CRUD (Create, Read, Update, Delete) diretamente no banco de dados (exemplo: `AlunoRepository.java`, `ProfessorRepository.java`).
-- **DTOs**: Objetos para transferência de dados entre as camadas de serviço e controle, garantindo que apenas as informações necessárias sejam expostas e transmitidas (exemplo: `AlunoDTO.java`, `ComunicadoDTO.java`).  
+- **DTOs**: Objetos para transferência de dados entre as camadas de serviço e controle, garantindo que apenas as informações necessárias sejam expostas e transmitidas (exemplo: `AlunoDTO.java`, `ComunicadoDTO.java`).
+
+## Arquitetura MSC (Model-Service-Controller)
+
+O Sistema de Gerenciamento Escolar (SGE) foi desenvolvido seguindo o padrão MSC (Model-Service-Controller) do Spring Boot, que adota uma arquitetura de três camadas. Esse modelo é uma metodologia bem estabelecida para organizar o código de aplicações em camadas bem definidas, com responsabilidades específicas.
+
+### O que é o Padrão MSC?
+A arquitetura MSC organiza o código da aplicação em três camadas principais:
+
+1. **Model (Modelo)**: 
+   Representa as entidades do sistema, ou seja, os objetos de dados que são manipulados pelo sistema. No SGE, isso é refletido nas classes que representam as entidades de dados como `Aluno.java`, `Professor.java`, `Disciplina.java`, entre outras. Essas entidades são geralmente mapeadas para tabelas no banco de dados e são usadas para persistência de dados.
+
+2. **Service (Serviço)**: 
+   A camada de serviço contém a lógica de negócio da aplicação. É onde são realizadas as operações sobre os dados, como cálculos, validações e transformações. Por exemplo, o `AlunoService.java` contém a lógica necessária para gerenciar alunos, como salvar, atualizar ou consultar informações. Essa camada interage diretamente com os modelos e executa o processamento necessário antes de passar os dados para o controlador.
+
+3. **Controller (Controlador)**: 
+   A camada de controlador é responsável pela comunicação com o usuário ou outras aplicações. Ele expõe os endpoints da API e recebe as requisições HTTP, direcionando-as para os serviços apropriados. O controlador, como o `AlunoController.java`, recebe as requisições do front-end, chama o serviço correspondente e retorna a resposta adequada ao usuário.
+
+### Benefícios da Arquitetura MSC
+Essa abordagem traz diversos benefícios para o desenvolvimento de sistemas:
+
+- **Separação de responsabilidades**: Cada camada tem uma responsabilidade bem definida, o que facilita a manutenção e a escalabilidade do sistema.
+- **Modularidade**: Como cada camada é independente, mudanças em uma camada não afetam as outras, o que torna o sistema mais flexível e robusto.
+- **Facilidade de testes**: Com as responsabilidades bem separadas, fica mais fácil realizar testes unitários para garantir que cada parte do sistema funcione corretamente.
+- **Escalabilidade**: À medida que o sistema cresce, novas funcionalidades podem ser adicionadas facilmente sem causar impacto nas camadas existente.
 
 ## Modularidade
 
