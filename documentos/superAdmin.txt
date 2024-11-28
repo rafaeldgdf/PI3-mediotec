@@ -1,0 +1,15 @@
+INSERT INTO coordenador (cpf, data_nascimento, email, genero, nome, ultimo_nome, status, id_coordenacao, role, senha)
+VALUES (
+    '70514422888',             -- Substitua pelo CPF real do coordenador
+    '1980-05-15',              -- Substitua pela data de nascimento real (YYYY-MM-DD)
+    'rafaelvd2@hotmail.com',   -- Substitua pelo email real do coordenador
+    'Masculino',               -- Substitua pelo gênero real do coordenador
+    'Rafael',                  -- Substitua pelo nome real do coordenador
+    'Oliveira',                -- Substitua pelo sobrenome real do coordenador
+    1,                         -- 1 indica que o coordenador está ativo
+    1,                         -- ID da coordenação, por exemplo, '1'
+    'COORDENADOR',             -- Papel do usuário (role)
+    '$2a$12$/Ze/6bzRnAAzl8KW4z0RbuEhSS1hHeLZ5.fp5NTD4kYnmSssY6CaG'  -- Senha criptografada com BCrypt
+);
+
+

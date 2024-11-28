@@ -6,31 +6,30 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/swagger-ui/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(false);
 
-        registry.addMapping("/v3/api-docs/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(false);
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+	    registry.addMapping("/swagger-ui/**")
+	        .allowedOrigins("*")
+	        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+	        .allowedHeaders("*")
+	        .allowCredentials(true);  // Permite credenciais (tokens JWT)
 
-        registry.addMapping("/auth/**") // Adicionando mapeamento para o endpoint de autenticação
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(false);
-        
-        registry.addMapping("/**")
-        .allowedOrigins("http://10.0.0.108:3000")  // Permite requisições do endereço do seu front-end
-        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-        .allowedHeaders("*")
-        .allowCredentials(true);  // Permite credenciais (cookies, tokens)
-    }
+	    registry.addMapping("/v3/api-docs/**")
+	        .allowedOrigins("*")
+	        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+	        .allowedHeaders("*")
+	        .allowCredentials(true);  // Permite credenciais (tokens JWT)
+	    
+	    // Permite acessos de outros caminhos, como o front-end (ajustar conforme necessário)
+	    registry.addMapping("/**")
+	        .allowedOrigins("http://10.0.0.103:3000") 
+	        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+	        .allowedHeaders("*")
+	        .allowCredentials(true);  // Permite credenciais (tokens JWT)
+	}
+
 }
+
+
 

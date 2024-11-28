@@ -4,34 +4,29 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;  // CORRIGIDO: Importação correta do @Value
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Collections;
 
-import org.springframework.stereotype.Component;
 import org.springframework.security.core.Authentication;
 
 @Component  // Anotação para registrar o filtro como um Bean
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret}")  // CORRIGIDO: Usando @Value para injetar a chave jwt.secret do application.properties
     private String jwtSecret;
 
     @Override
@@ -45,26 +40,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             try {
                 Claims claims = Jwts.parserBuilder()
-                        .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+                        .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes()))  // Usando a chave jwtSecret
                         .build()
                         .parseClaimsJws(token)
                         .getBody();
 
                 String username = claims.getSubject();
-                List<SimpleGrantedAuthority> authorities = extractAuthorities(claims); // Usar o método de extração de authorities
+                List<SimpleGrantedAuthority> authorities = extractAuthorities(claims);
 
                 Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                // Log para verificar token JWT
+                System.out.println("Token JWT autenticado com sucesso para: " + username);
 
             } catch (JwtException e) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token JWT inválido ou expirado");
             }
         }
 
-        chain.doFilter(request, response);  // Continua a cadeia de filtros
+        chain.doFilter(request, response);
     }
 
- // Método para extrair as autoridades (roles) do token JWT
+    // Método para extrair as autoridades (roles) do token JWT
     private List<SimpleGrantedAuthority> extractAuthorities(Claims claims) {
         // Pega o claim "role"
         Object roleClaim = claims.get("role");
@@ -93,6 +91,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Se não houver role ou se o tipo for inesperado, retornamos uma lista vazia
         return List.of();
     }
-
-
 }
