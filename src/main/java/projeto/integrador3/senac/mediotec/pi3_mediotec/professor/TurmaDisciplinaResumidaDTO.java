@@ -11,6 +11,6 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaResumidaDTO;
 @Data
 @Builder
 public class TurmaDisciplinaResumidaDTO {
-	private TurmaResumida2DTO turma;     // ID da turma preexistente
+	private TurmaResumidaDTO turma;     // ID da turma preexistente
 	private DisciplinaResumida2DTO disciplina;  // ID da disciplina preexistente
 }

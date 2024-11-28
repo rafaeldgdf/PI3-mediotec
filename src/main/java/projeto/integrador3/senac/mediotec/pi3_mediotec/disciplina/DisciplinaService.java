@@ -2,6 +2,8 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.Professor;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.Turma;
@@ -177,11 +179,19 @@ public class DisciplinaService {
      * Deleta uma disciplina existente
      * @param id ID da disciplina a ser deletada
      */
+    @Transactional
     public void deleteDisciplina(Long id) {
+        // Verifica se a disciplina existe, senão lança exceção
         Disciplina disciplina = disciplinaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
+                .orElseThrow(() -> new RuntimeException("Disciplina não encontrada com o ID: " + id));
+
+        // Exclui os registros relacionados na tabela intermediária
+        turmaDisciplinaProfessorRepository.deleteByDisciplina_Id(id);
+
+        // Exclui a disciplina
         disciplinaRepository.delete(disciplina);
     }
+
 
     /**
      * Converte Disciplina para DisciplinaResumidaDTO
@@ -210,24 +220,27 @@ public class DisciplinaService {
      * @return DisciplinaGetDTO com dados da disciplina
      */
     private DisciplinaGetDTO convertToDisciplinaGetDTO(Disciplina disciplina) {
+        // Busca todas as associações dessa disciplina
         List<TurmaDisciplinaProfessor> turmaDisciplinaProfessores = turmaDisciplinaProfessorRepository
             .findByDisciplinaId(disciplina.getId());
 
+        // Verifica se há associações e pega a primeira (ou nula caso não exista)
         TurmaDisciplinaProfessor turmaDisciplinaProfessor = !turmaDisciplinaProfessores.isEmpty()
             ? turmaDisciplinaProfessores.get(0)
-            : null;  // Retorna a primeira associação, se houver
+            : null;
 
-        // Retorna o DTO com os dados completos
+        // Retorna o DTO com os dados completos, agora incluindo ID da turma e ID do professor
         return DisciplinaGetDTO.builder()
-        	.id(disciplina.getId())
+            .id(disciplina.getId())
             .nome(disciplina.getNome())
             .carga_horaria(disciplina.getCarga_horaria())
-            .nomeTurma(turmaDisciplinaProfessor != null && turmaDisciplinaProfessor.getTurma() != null
-                ? turmaDisciplinaProfessor.getTurma().getNome()
-                : null)
-            .nomeProfessor(turmaDisciplinaProfessor != null && turmaDisciplinaProfessor.getProfessor() != null
-                ? turmaDisciplinaProfessor.getProfessor().getNome() + " " + turmaDisciplinaProfessor.getProfessor().getUltimoNome()
-                : null)
+            .idTurma(turmaDisciplinaProfessor != null && turmaDisciplinaProfessor.getTurma() != null
+                ? turmaDisciplinaProfessor.getTurma().getId()
+                : null) // Retorna o ID da turma
+            .idProfessor(turmaDisciplinaProfessor != null && turmaDisciplinaProfessor.getProfessor() != null
+                ? turmaDisciplinaProfessor.getProfessor().getCpf()
+                : null) // Retorna o CPF (ID) do professor
             .build();
     }
+
 }

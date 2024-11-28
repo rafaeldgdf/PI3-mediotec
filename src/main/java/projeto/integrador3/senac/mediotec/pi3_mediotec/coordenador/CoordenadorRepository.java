@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CoordenadorRepository extends JpaRepository<Coordenador, String> {
 	boolean existsByCpf(String cpf);
 	Optional<Coordenador> findByCpf(String cpf);
+	Optional<Coordenador> findByEmail(String email);
 }

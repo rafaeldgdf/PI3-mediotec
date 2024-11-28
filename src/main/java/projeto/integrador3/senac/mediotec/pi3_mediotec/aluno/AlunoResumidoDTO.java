@@ -11,6 +11,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor  // Gera o construtor necessário
 public class AlunoResumidoDTO {
-    private String nomeAluno;  // Nome do aluno
-    private String email;
+    private Long id; // ID do aluno
+    private String nomeAluno; // Nome completo
+    private String email; // Email
+    private String cpf; // CPF
+    private boolean status; // Status do aluno (ativo/inativo)
 }
+

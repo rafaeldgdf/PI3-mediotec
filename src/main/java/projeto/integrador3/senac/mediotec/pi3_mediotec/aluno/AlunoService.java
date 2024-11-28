@@ -11,6 +11,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.Endereco;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.EnderecoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.responsavel.Responsavel;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.responsavel.ResponsavelDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.security.PasswordUtils;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.Telefone;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.DisciplinaProfessorDTO;
@@ -80,6 +81,7 @@ public class AlunoService {
         aluno.setGenero(alunoResumidoDTO.getGenero());
         aluno.setCpf(alunoResumidoDTO.getCpf());
         aluno.setEmail(alunoResumidoDTO.getEmail());
+        aluno.setSenha(PasswordUtils.hashPassword(alunoResumidoDTO.getEmail())); // Senha padrão = email
         aluno.setData_nascimento(alunoResumidoDTO.getData_nascimento());
         aluno.setStatus(true);
 
@@ -109,30 +111,28 @@ public class AlunoService {
      */
     @Transactional
     public AlunoDTO updateAluno(Long idAluno, AlunoResumidoDTO2 alunoResumidoDTO) {
-        // Busca o aluno no banco de dados
+        // Busca o aluno existente
         Aluno aluno = alunoRepository.findById(idAluno)
-            .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+            .orElseThrow(() -> new RuntimeException("Aluno não encontrado com o ID: " + idAluno));
 
-        // Atualiza os dados do aluno
+        // Atualiza dados básicos
         aluno.setNome(alunoResumidoDTO.getNome());
         aluno.setUltimoNome(alunoResumidoDTO.getUltimoNome());
         aluno.setGenero(alunoResumidoDTO.getGenero());
         aluno.setCpf(alunoResumidoDTO.getCpf());
         aluno.setEmail(alunoResumidoDTO.getEmail());
         aluno.setData_nascimento(alunoResumidoDTO.getData_nascimento());
-        aluno.setStatus(true);
 
-        // Atualiza endereços, telefones e turmas
+        // Atualiza os relacionamentos
         this.associateAddresses(alunoResumidoDTO, aluno);
         this.associatePhones(alunoResumidoDTO, aluno);
         this.associateTurmas(alunoResumidoDTO, aluno);
-
-        // Atualiza responsáveis e salva o aluno atualizado
         this.associateResponsaveis(alunoResumidoDTO, aluno);
 
-        // Retorna o AlunoDTO atualizado
+        // Salva as alterações
         return convertToDto(alunoRepository.save(aluno));
     }
+
 
     // ============================= DELETE METHODS =============================
 
@@ -221,27 +221,38 @@ public class AlunoService {
             throw new RuntimeException("Pelo menos um responsável deve ser fornecido.");
         }
 
+        // Atualiza ou adiciona responsáveis
         Set<Responsavel> responsaveis = alunoResumidoDTO.getResponsaveis().stream()
             .map(responsavelDTO -> {
-                Responsavel responsavel = convertToResponsavel(responsavelDTO);
-                responsavel.setAluno(aluno); // Associa o aluno ao responsável
+                Responsavel responsavelExistente = aluno.getResponsaveis().stream()
+                    .filter(r -> r.getCpfResponsavel().equals(responsavelDTO.getCpfResponsavel()))
+                    .findFirst()
+                    .orElse(null);
 
-                // Associa telefones ao responsável
-                if (responsavelDTO.getTelefones() != null) {
-                    Set<Telefone> telefones = responsavelDTO.getTelefones().stream()
-                        .map(telefoneDTO -> Telefone.builder()
-                            .ddd(telefoneDTO.getDdd())
-                            .numero(telefoneDTO.getNumero())
-                            .responsavel(responsavel)
-                            .build())
-                        .collect(Collectors.toSet());
-                    responsavel.setTelefones(telefones);
+                if (responsavelExistente != null) {
+                    responsavelExistente.setNome(responsavelDTO.getNome());
+                    responsavelExistente.setUltimoNome(responsavelDTO.getUltimoNome());
+                    responsavelExistente.setGrauParentesco(responsavelDTO.getGrauParentesco());
+                    return responsavelExistente;
+                } else {
+                    Responsavel novoResponsavel = convertToResponsavel(responsavelDTO);
+                    novoResponsavel.setAluno(aluno);
+                    return novoResponsavel;
                 }
-                return responsavel;
             }).collect(Collectors.toSet());
 
         aluno.setResponsaveis(responsaveis);
     }
+
+    
+    @Transactional
+    public void updateStatus(Long id, boolean novoStatus) {
+        Aluno aluno = alunoRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Aluno não encontrado com o ID: " + id));
+        aluno.setStatus(novoStatus);
+        alunoRepository.save(aluno);
+    }
+
 
     // ============================= CONVERSORES =============================
 
@@ -305,39 +316,42 @@ public class AlunoService {
 
         // Mapeia as turmas associadas ao aluno, incluindo coordenação e disciplinas
         Set<TurmaResumidaDTO> turmasDTO = aluno.getTurmas() != null ? aluno.getTurmas().stream()
-            .map(turma -> {
-                CoordenacaoResumidaDTO coordenacaoDTO = null;
-                Coordenacao coordenacao = turma.getCoordenacao();
+        	    .map(turma -> {
+        	        // Inicializa o objeto CoordenacaoResumidaDTO como null
+        	        CoordenacaoResumidaDTO coordenacaoDTO = null;
+        	        Coordenacao coordenacao = turma.getCoordenacao();
 
-                // Verifica se a turma tem coordenação e coordenadores
-                List<CoordenadorResumidoDTO> coordenadoresDTO = null;
-                if (coordenacao != null && coordenacao.getCoordenadores() != null) {
-                    coordenadoresDTO = coordenacao.getCoordenadores().stream()
-                        .map(coordenador -> CoordenadorResumidoDTO.builder()
-                            .nomeCoordenador(coordenador.getNome() + " " + coordenador.getUltimoNome())
-                            .email(coordenador.getEmail())
-                            .build())
-                        .collect(Collectors.toList());
+        	        // Mapeamento da coordenação e seus coordenadores
+        	        if (coordenacao != null && coordenacao.getCoordenadores() != null && !coordenacao.getCoordenadores().isEmpty()) {
+        	            List<CoordenadorResumidoDTO> coordenadoresDTO = coordenacao.getCoordenadores().stream()
+        	                .map(coordenador -> CoordenadorResumidoDTO.builder()      	                		
+        	                    .nomeCoordenador(coordenador.getNome() + " " + coordenador.getUltimoNome())
+        	                    .email(coordenador.getEmail())
+        	                    .build())
+        	                .collect(Collectors.toList());
 
-                    coordenacaoDTO = CoordenacaoResumidaDTO.builder()
-                        .nome(coordenacao.getNome())
-                        .coordenadores(!coordenadoresDTO.isEmpty() ? coordenadoresDTO : null)
-                        .build();
-                }
+        	            coordenacaoDTO = CoordenacaoResumidaDTO.builder()
+        	            	.id(coordenacao.getId())
+        	                .nome(coordenacao.getNome())
+        	                .coordenadores(coordenadoresDTO)
+        	                .build();
+        	        }
 
                 // Mapeia as disciplinas e professores da turma
                 Set<DisciplinaProfessorDTO> disciplinaProfessorDTO = turma.getTurmaDisciplinaProfessores() != null ?
-                    turma.getTurmaDisciplinaProfessores().stream()
-                        .map(turmaDisciplinaProfessor -> DisciplinaProfessorDTO.builder()
-                            .professorId(turmaDisciplinaProfessor.getProfessor().getCpf())
-                            .nomeProfessor(turmaDisciplinaProfessor.getProfessor().getNome() + " " +
-                                           turmaDisciplinaProfessor.getProfessor().getUltimoNome())
-                            .email(turmaDisciplinaProfessor.getProfessor().getEmail())
-                            .nomesDisciplinas(Set.of(turmaDisciplinaProfessor.getDisciplina().getNome()))
-                            .build())
-                        .collect(Collectors.toSet()) : Collections.emptySet();
+                	    turma.getTurmaDisciplinaProfessores().stream()
+                	        .map(turmaDisciplinaProfessor -> DisciplinaProfessorDTO.builder()
+                	            .professorId(turmaDisciplinaProfessor.getProfessor().getCpf()) // ID do professor
+                	            .nomeProfessor(turmaDisciplinaProfessor.getProfessor().getNome() + " " +
+                	                           turmaDisciplinaProfessor.getProfessor().getUltimoNome())
+                	            .email(turmaDisciplinaProfessor.getProfessor().getEmail())
+                	            .nomesDisciplinas(Set.of(turmaDisciplinaProfessor.getDisciplina().getNome()))
+                	            .disciplinasIds(Set.of(turmaDisciplinaProfessor.getDisciplina().getId())) // IDs das disciplinas
+                	            .build())
+                	        .collect(Collectors.toSet()) : Collections.emptySet();
 
                 return TurmaResumidaDTO.builder()
+                	.id(turma.getId())
                     .nome(turma.getNome())
                     .anoLetivo(turma.getAnoLetivo())
                     .anoEscolar(turma.getAnoEscolar())

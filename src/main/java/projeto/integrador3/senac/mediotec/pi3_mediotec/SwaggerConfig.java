@@ -7,6 +7,8 @@ import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @Configuration
 public class SwaggerConfig {
@@ -24,6 +26,13 @@ public class SwaggerConfig {
                                 .email("rafaelvd2@hotmail.com")))
                 .externalDocs(new ExternalDocumentation()
                         .description("GitHub Repository")
-                        .url("https://github.com/rafaeldgdf/PI3-mediotec.git"));
+                        .url("https://github.com/rafaeldgdf/PI3-mediotec.git"))
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+                .components(new io.swagger.v3.oas.models.Components()
+                        .addSecuritySchemes("bearerAuth", new SecurityScheme()
+                                .name("bearerAuth")
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")));
     }
 }

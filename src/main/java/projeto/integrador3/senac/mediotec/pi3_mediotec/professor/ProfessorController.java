@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.conceito.ConceitoDTO;
@@ -35,9 +36,7 @@ public class ProfessorController {
     public ResponseEntity<List<ProfessorResumidoDTO>> getAllProfessores() {
         try {
             List<ProfessorResumidoDTO> professores = professorService.getAllProfessores();
-            if (professores.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum professor encontrado.");
-            }
+            // Retorna uma lista vazia sem lançar exceção se não houver professores
             return new ResponseEntity<>(professores, HttpStatus.OK);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao listar professores: " + e.getMessage(), e);
@@ -67,6 +66,7 @@ public class ProfessorController {
      * Tag: Professor
      */
     @Operation(summary = "Criar um novo professor", description = "Cria um novo professor com base nos dados fornecidos", tags = { "Professor" })
+    @PreAuthorize("hasRole('ROLE_COORDENADOR')")
     @PostMapping
     public ResponseEntity<ProfessorResumidoDTO> createProfessor(@RequestBody ProfessorDTO professorDTO) {
         try {
@@ -86,6 +86,7 @@ public class ProfessorController {
      * Tag: Professor
      */
     @Operation(summary = "Atualizar professor", description = "Atualiza um professor existente com base no CPF fornecido", tags = { "Professor" })
+    @PreAuthorize("hasRole('ROLE_COORDENADOR')")
     @PutMapping("/{cpf}")
     public ResponseEntity<ProfessorResumidoDTO> updateProfessor(@PathVariable String cpf, @RequestBody ProfessorDTO professorDTO) {
         try {

@@ -9,6 +9,6 @@ public class DisciplinaGetDTO {
 	private long id;
     private String nome;       // Nome da Disciplina
     private int carga_horaria;
-    private String nomeTurma;  // Nome da Turma
-    private String nomeProfessor;  // Nome do Professor
+    private Long idTurma;      // ID da Turma
+    private String idProfessor;  // CPF (ID) do Professor
 }

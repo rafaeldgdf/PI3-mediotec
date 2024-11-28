@@ -75,18 +75,18 @@ public class Coordenacao implements Serializable {
     private Set<Telefone> telefones = new HashSet<>();
 
     // Relação com Coordenadores - Uma Coordenação pode ter vários coordenadores
-    @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL)
     @Column(nullable = false)
     private Set<Coordenador> coordenadores;
 
     // Relação com Turmas - Uma Coordenação pode ter várias turmas
     @JsonIgnore
-    @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL)
     private Set<Turma> turmas;
 
     // Relação com Professores - Uma Coordenação pode ter vários professores
     @JsonIgnore
-    @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "coordenacao", cascade = CascadeType.ALL)
     private Set<Professor> professores;
 
     // ============================= MÉTODOS AUXILIARES =============================

@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor  // Gera o construtor necessário
 public class TurmaResumida2DTO {
+	private Long id; // ID da Turma
     private String nome;  // Nome da Turma
     private int anoLetivo;      // Ano da Turma
     private String anoEscolar;

@@ -201,20 +201,31 @@ public class ComunicadoService {
         // Processa a lista de alunos receptores
         List<AlunoResumidoDTO> alunos = comunicado.getReceptorAlunos().stream()
                 .map(alunoId -> alunoRepository.findById(alunoId)
-                        .map(aluno -> new AlunoResumidoDTO(aluno.getNome(), aluno.getEmail()))
+                        .map(aluno -> new AlunoResumidoDTO(
+                                aluno.getId(),
+                                aluno.getNome() + " " + aluno.getUltimoNome(),
+                                aluno.getEmail(),
+                                aluno.getCpf(),
+                                aluno.isStatus()
+                        ))
                         .orElseThrow(() -> new RuntimeException("Aluno não encontrado com ID: " + alunoId)))
                 .collect(Collectors.toList());
 
         // Processa a lista de turmas receptoras
         List<TurmaResumida2DTO> turmas = comunicado.getReceptorTurmas().stream()
                 .map(turmaId -> turmaRepository.findById(turmaId)
-                        .map(turma -> new TurmaResumida2DTO(turma.getNome(), turma.getAnoLetivo(), turma.getAnoEscolar(), turma.getTurno()))
+                        .map(turma -> new TurmaResumida2DTO(
+                                turma.getId(),
+                                turma.getNome(),
+                                turma.getAnoLetivo(),
+                                turma.getAnoEscolar(),
+                                turma.getTurno()
+                        ))
                         .orElseThrow(() -> new RuntimeException("Turma não encontrada com ID: " + turmaId)))
                 .collect(Collectors.toList());
 
         // Obtem o remetente do comunicado (professor ou coordenação)
         RemetenteResumidoDTO remetente = obterRemetenteResumido(comunicado);
-
         // Retorna o DTO detalhado
         return ComunicadoDetalhadoDTO.builder()
                 .id(comunicado.getId())

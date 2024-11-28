@@ -42,7 +42,7 @@ public class Endereco {
      * Deve conter entre 8 e 9 caracteres.
      */
     @NotNull(message = "{usuario.endereco.cep.notnull}")
-    @Size(min = 8, max = 9, message = "{usuario.endereco.cep.size}")
+    @Size(min = 5, max = 9, message = "{usuario.endereco.cep.size}")
     @Column(name = "cep", nullable = false)
     private String cep;
 

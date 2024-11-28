@@ -112,6 +112,33 @@ public class TurmaController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao atualizar turma com ID " + id + ": " + e.getMessage(), e);
         }
     }
+    
+    
+    // ============================= PATCH METHODS =============================
+    
+    /**
+     * Atualiza o status de uma turma específica pelo seu ID.
+     *
+     * @param id ID da turma.
+     * @param status Novo status da turma.
+     * @return ResponseEntity confirmando a atualização do status.
+     */
+    @Operation(summary = "Atualizar status da turma", description = "Atualiza o status (ativo/inativo) de uma turma pelo ID fornecido")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Status atualizado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Turma não encontrada"),
+        @ApiResponse(responseCode = "400", description = "Erro na atualização do status")
+    })
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<String> updateTurmaStatus(@PathVariable Long id, @RequestBody boolean status) {
+        try {
+            turmaService.updateStatus(id, status);
+            return ResponseEntity.ok("Status da turma atualizado com sucesso.");
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Erro ao atualizar status da turma: " + e.getMessage(), e);
+        }
+    }
+
 
     // ============================= DELETE METHODS =============================
 

@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -102,6 +103,16 @@ public class AlunoController {
         }
     }
 
+    
+    // ============================= PATCH METHODS =============================
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Void> updateStatus(@PathVariable Long id, @RequestBody Map<String, Boolean> statusPayload) {
+        boolean novoStatus = statusPayload.get("status");
+        alunoService.updateStatus(id, novoStatus);
+        return ResponseEntity.noContent().build();
+    }
+
+    
     // ============================= DELETE METHODS =============================
 
     // Deleta um aluno
