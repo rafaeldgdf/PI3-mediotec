@@ -12,6 +12,7 @@ public interface TurmaDisciplinaProfessorRepository extends JpaRepository<TurmaD
     List<TurmaDisciplinaProfessor> findById_TurmaIdAndId_DisciplinaId(Long turmaId, Long disciplinaId);
     void deleteByTurmaId(Long turmaId);
     void deleteByDisciplina_Id(Long disciplinaId);
+    void deleteByProfessorCpf(String cpf);
     
     // Verificar se existe uma turma com base no ID da turma
     boolean existsByTurma_Id(Long idTurma);
@@ -21,6 +22,8 @@ public interface TurmaDisciplinaProfessorRepository extends JpaRepository<TurmaD
     
     // Verificar se existe um professor com base no ID do professor
     boolean existsByProfessor_Cpf(String cpf);
+    
+    
 
 }
 

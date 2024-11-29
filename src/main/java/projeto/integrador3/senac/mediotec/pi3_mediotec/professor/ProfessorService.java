@@ -158,8 +158,14 @@ public class ProfessorService {
     public void deleteProfessor(String cpf) {
         Professor professor = professorRepository.findById(cpf)
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado com o CPF: " + cpf));
+        
+        // Remover as associações na tabela turma_disciplina_professor
+        turmaDisciplinaProfessorRepository.deleteByProfessorCpf(cpf);
+        
+        // Agora podemos deletar o professor
         professorRepository.delete(professor);
     }
+
 
     // ============================= GET METHODS =============================
 
