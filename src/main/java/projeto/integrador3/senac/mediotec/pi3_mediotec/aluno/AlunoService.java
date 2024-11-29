@@ -11,7 +11,6 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.Endereco;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.EnderecoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.responsavel.Responsavel;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.responsavel.ResponsavelDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.security.PasswordUtils;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.Telefone;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.DisciplinaProfessorDTO;
@@ -81,7 +80,7 @@ public class AlunoService {
         aluno.setGenero(alunoResumidoDTO.getGenero());
         aluno.setCpf(alunoResumidoDTO.getCpf());
         aluno.setEmail(alunoResumidoDTO.getEmail());
-        aluno.setSenha(PasswordUtils.hashPassword(alunoResumidoDTO.getEmail())); // Senha padrão = email
+        aluno.setSenha((alunoResumidoDTO.getEmail())); // Senha padrão = email
         aluno.setData_nascimento(alunoResumidoDTO.getData_nascimento());
         aluno.setStatus(true);
 
@@ -121,6 +120,7 @@ public class AlunoService {
         aluno.setGenero(alunoResumidoDTO.getGenero());
         aluno.setCpf(alunoResumidoDTO.getCpf());
         aluno.setEmail(alunoResumidoDTO.getEmail());
+        aluno.setSenha((alunoResumidoDTO.getSenha()));
         aluno.setData_nascimento(alunoResumidoDTO.getData_nascimento());
 
         // Atualiza os relacionamentos

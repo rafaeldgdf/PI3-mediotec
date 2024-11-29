@@ -13,7 +13,6 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaResu
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.Endereco;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.EnderecoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.EnderecoRepository;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.security.PasswordUtils;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.Telefone;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneRepository;
@@ -88,7 +87,7 @@ public class ProfessorService {
                 .genero(professorDTO.getGenero())
                 .data_nascimento(professorDTO.getData_nascimento())
                 .email(professorDTO.getEmail())
-                .senha(PasswordUtils.hashPassword(professorDTO.getEmail())) // Senha padrão = email
+                .senha((professorDTO.getEmail())) // Senha padrão = email
                 .coordenacao(coordenacao)
                 .status(true)  // Define status como true
                 .build();
@@ -129,6 +128,7 @@ public class ProfessorService {
         professor.setUltimoNome(professorDTO.getUltimoNome());
         professor.setGenero(professorDTO.getGenero());
         professor.setEmail(professorDTO.getEmail());
+        professor.setSenha((professorDTO.getSenha()));
         professor.setData_nascimento(professorDTO.getData_nascimento());
         professor.setStatus(professorDTO.isStatus());
 

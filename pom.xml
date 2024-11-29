@@ -21,11 +21,6 @@
     </properties>
 
     <dependencies>
-        <!-- Spring Security -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
 
         <!-- Springdoc OpenAPI for Swagger -->
         <dependency>
@@ -100,6 +95,7 @@
         </dependency>
 
     </dependencies>
+
 
     <build>
         <plugins>

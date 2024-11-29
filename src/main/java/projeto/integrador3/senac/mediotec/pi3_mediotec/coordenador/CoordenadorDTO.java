@@ -24,6 +24,7 @@ public class CoordenadorDTO {
     private String genero;
     private Date data_nascimento;   
     private String email;
+    private String senha;
     private boolean status;
     private Set<EnderecoDTO> enderecos;
     private Set<TelefoneDTO> telefones;

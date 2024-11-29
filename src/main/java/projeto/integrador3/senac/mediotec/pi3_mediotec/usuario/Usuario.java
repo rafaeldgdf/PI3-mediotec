@@ -72,9 +72,4 @@ public abstract class Usuario implements Serializable {
     @Column(nullable = false)
     private String senha; // Campo para senha
     
- // Papel (role) do usuário: COORDENADOR, PROFESSOR, ALUNO
-    @NotNull(message = "{usuario.role.notnull}") // O campo role não pode ser nulo
-    @Column(nullable = false)
-    private String role;
-    
 }

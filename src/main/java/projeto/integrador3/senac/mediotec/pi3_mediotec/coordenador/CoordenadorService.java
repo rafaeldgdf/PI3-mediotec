@@ -7,7 +7,6 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.Endereco;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.endereco.EnderecoDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.security.PasswordUtils;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.Telefone;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneDTO;
 
@@ -58,7 +57,7 @@ public class CoordenadorService {
         coordenador.setGenero(coordenadorDTO.getGenero());
         coordenador.setData_nascimento(coordenadorDTO.getData_nascimento());
         coordenador.setEmail(coordenadorDTO.getEmail());
-        coordenador.setSenha(PasswordUtils.hashPassword(coordenadorDTO.getEmail())); // Senha padrão = email
+        coordenador.setSenha((coordenadorDTO.getEmail())); // Senha padrão = email
         coordenador.setStatus(true); // Define o status inicial como ativo
 
         // Associa a coordenação, se o idCoordenacao estiver presente no DTO
@@ -121,6 +120,7 @@ public class CoordenadorService {
         coordenador.setGenero(coordenadorDTO.getGenero());
         coordenador.setData_nascimento(coordenadorDTO.getData_nascimento());
         coordenador.setEmail(coordenadorDTO.getEmail());
+        coordenador.setSenha((coordenadorDTO.getSenha()));
         coordenador.setStatus(coordenadorDTO.isStatus());
 
         // Atualiza a coordenação, se o idCoordenacao for passado no DTO
