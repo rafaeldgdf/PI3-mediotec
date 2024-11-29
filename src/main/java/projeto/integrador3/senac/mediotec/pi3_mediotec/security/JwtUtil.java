@@ -17,20 +17,16 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    private final int jwtExpirationMs = 86400000; // 24 horas
-
-    // Modificado para aceitar role como parâmetro
- // Gerar token JWT com a role correta
+    // Gerar token JWT com a role correta e sem expiração
     public String generateJwtToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("role", "ROLE_" + role)  // Assegura que a role está sendo configurada corretamente
-                .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .setIssuedAt(Date.from(Instant.now()))  // Data de emissão do token
+                // Removendo a expiração, tornando o token válido indefinidamente
                 .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()), SignatureAlgorithm.HS512)
                 .compact();
     }
-
 
     // Obter o nome de usuário a partir do token
     public String getUsernameFromJwtToken(String token) {
@@ -54,5 +50,4 @@ public class JwtUtil {
             return false;  // Token inválido ou expirado
         }
     }
-
 }

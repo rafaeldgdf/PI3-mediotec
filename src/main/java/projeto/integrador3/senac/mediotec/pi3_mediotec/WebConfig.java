@@ -23,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
 	    
 	    // Permite acessos de outros caminhos, como o front-end (ajustar conforme necessário)
 	    registry.addMapping("/**")
-	        .allowedOrigins("http://10.0.0.103:3000") 
+	        .allowedOrigins("http://10.0.0.116:3000") 
 	        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	        .allowedHeaders("*")
 	        .allowCredentials(true);  // Permite credenciais (tokens JWT)

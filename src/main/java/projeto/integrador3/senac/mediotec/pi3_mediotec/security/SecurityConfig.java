@@ -35,7 +35,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/auth/**").permitAll()  // Libera login
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()  // Libera acesso ao Swagger para todos
-                .requestMatchers("/coordenador/**").hasRole("COORDENADOR")
+                // Permitir que coordenador tenha acesso a todos os endpoints
+                .requestMatchers("/**").hasRole("COORDENADOR")  // Permite acesso a todos os endpoints para coordenador
                 .requestMatchers("/professor/**").hasRole("PROFESSOR")
                 .requestMatchers("/aluno/**").hasRole("ALUNO")
                 .anyRequest().authenticated()  // Requer autenticação para outras requisições
