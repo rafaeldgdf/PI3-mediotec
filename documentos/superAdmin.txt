@@ -1,15 +1,226 @@
-INSERT INTO coordenador (cpf, data_nascimento, email, genero, nome, ultimo_nome, status, id_coordenacao, role, senha)
-VALUES (
-    '70514422888',             -- Substitua pelo CPF real do coordenador
-    '1980-05-15',              -- Substitua pela data de nascimento real (YYYY-MM-DD)
-    'rafaelvd2@hotmail.com',   -- Substitua pelo email real do coordenador
-    'Masculino',               -- Substitua pelo gênero real do coordenador
-    'Rafael',                  -- Substitua pelo nome real do coordenador
-    'Oliveira',                -- Substitua pelo sobrenome real do coordenador
-    1,                         -- 1 indica que o coordenador está ativo
-    1,                         -- ID da coordenação, por exemplo, '1'
-    'COORDENADOR',             -- Papel do usuário (role)
-    '$2a$12$/Ze/6bzRnAAzl8KW4z0RbuEhSS1hHeLZ5.fp5NTD4kYnmSssY6CaG'  -- Senha criptografada com BCrypt
-);
+o script esta com a inserção errada corrigida, se baseando nisso: 
+
+Execute um grande inserta seguindo, a risca todas essas regras. Qro um povoamento completo do meu banco e não me importo q demore para criar o script, apenas faça, pode dividir em parte
+
+Eu qro uma gama de diversidade de nomes possíveis, eu qro q os dados reflitam, em tudo q der a realidade. simule dados quase q verídicos 
+
+Para nomes, use nome de artista de rock do  anos 2000
+
+Não repita nomes e não use nome gereneericos em nenhuma tabela 
+
+É um sistema de gerenciamento escolar
 
 
+Quando for fazer a inserção lembre-se sempre do Brasil 
+
+Quero 20 professores 
+
+6 turmas 
+
+200 alunos 
+
+300 responsáveis (alguns alunos c mais de 1 responsável)
+
+
+10 disciplinas para cada turma (podem ter nomes semelhantes, q disciplina só pertence a uma turma) 
+
+2 coordenações 
+
+3 coordenadores 
+
+
+Faça todas as associações possíveis 
+
+
+Responsável, coordenador, coordenação, professor e alunos são obrigados a terem endereço e telefone. Qro q alguns tenham mais de um endereço e telefone 
+
+
+Nenhum cpf e email pode ser repetido no sistema 
+
+Todas as senhas e e-mails serão igual (o mesmo email q vc criou, deve ser o mesmo dado da senha) 
+
+Não precisa colocar senha em responsável 
+
+feminino e masculino com inicias maiusculas 
+
+o nome da tumra será turma 1, turma 2, turma 3 (a generalidade só será em turma, apenas) 
+
+Como endereço e telefone, use sempre em formato brasileiro. Use endereços do Brasil e ddd do Brasil. Em estado, use a abreviação dos estados do Brasil . diversifique nos numeros e endereços  
+
+
+Table: aluno
+Columns:
+matricula_aluno bigint AI PK 
+data_nascimento date 
+email varchar(255) 
+genero varchar(255) 
+nome varchar(255) 
+senha varchar(255) 
+ultimo_nome varchar(255) 
+cpf varchar(255) 
+status bit(1) 
+coordenacao_id_coordenacao bigint   
+
+Table: aluno_turma
+Columns:
+turma_id bigint 
+aluno_id bigint  
+
+Table: comunicado
+Columns:
+id bigint AI PK 
+conteudo varchar(255) 
+data_envio datetime(6) 
+remetente_coordenacao_id bigint 
+remetente_professor_id varchar(255) 
+
+Table: comunicado_receptor_alunos
+Columns:
+comunicado_id bigint 
+aluno_id bigint 
+
+Table: comunicado_receptor_alunos
+Columns:
+comunicado_id bigint 
+aluno_id bigint  
+
+
+Table: conceito
+Columns:
+id_conceito bigint AI PK 
+aprovado bit(1) 
+conceito_final varchar(255) 
+conceito_noa1 varchar(255) 
+conceito_noa2 varchar(255) 
+conceito_noa_final varchar(255) 
+conceito_nota1 varchar(255) 
+conceito_nota2 varchar(255) 
+conceito_nota3 varchar(255) 
+conceito_nota4 varchar(255) 
+media_final float 
+noa1 float 
+noa2 float 
+noa_final float 
+nota_unidade1 float 
+nota_unidade2 float 
+nota_unidade3 float 
+nota_unidade4 float 
+id_aluno bigint 
+id_disciplina bigint 
+id_professor varchar(255) 
+id_turma bigint  
+
+Table: coordenacao
+Columns:
+id_coordenacao bigint AI PK 
+descricao varchar(255) 
+nome varchar(255) 
+
+Table: coordenador
+Columns:
+cpf varchar(255) PK 
+data_nascimento date 
+email varchar(255) 
+genero varchar(255) 
+nome varchar(255) 
+senha varchar(255) 
+ultimo_nome varchar(255) 
+status bit(1) 
+id_coordenacao bigint  
+
+Table: coordenador
+Columns:
+cpf varchar(255) PK 
+data_nascimento date 
+email varchar(255) 
+genero varchar(255) 
+nome varchar(255) 
+senha varchar(255) 
+ultimo_nome varchar(255) 
+status bit(1) 
+id_coordenacao bigint  
+
+Table: endereco
+Columns:
+id_endereco bigint AI PK 
+bairro varchar(255) 
+cep varchar(255) 
+cidade varchar(255) 
+estado varchar(255) 
+numero varchar(255) 
+rua varchar(255) 
+aluno_id bigint 
+coordenacao_id bigint 
+coordenador_id varchar(255) 
+professor_id varchar(255  
+
+Table: professor
+Columns:
+cpf varchar(255) PK 
+data_nascimento date 
+email varchar(255) 
+genero varchar(255) 
+nome varchar(255) 
+senha varchar(255) 
+ultimo_nome varchar(255) 
+status bit(1) 
+id_coordenacao bigint  
+
+Table: professor
+Columns:
+cpf varchar(255) PK 
+data_nascimento date 
+email varchar(255) 
+genero varchar(255) 
+nome varchar(255) 
+senha varchar(255) 
+ultimo_nome varchar(255) 
+status bit(1) 
+id_coordenacao bigint  
+
+Table: telefone
+Columns:
+id bigint AI PK 
+ddd varchar(255) 
+numero varchar(255) 
+aluno_id bigint 
+coordenacao_id bigint 
+coordenador_id varchar(255) 
+professor_id varchar(255) 
+responsavel_id bigint  
+
+Table: telefone
+Columns:
+id bigint AI PK 
+ddd varchar(255) 
+numero varchar(255) 
+aluno_id bigint 
+coordenacao_id bigint 
+coordenador_id varchar(255) 
+professor_id varchar(255) 
+responsavel_id bigint 
+
+Table: telefone
+Columns:
+id bigint AI PK 
+ddd varchar(255) 
+numero varchar(255) 
+aluno_id bigint 
+coordenacao_id bigint 
+coordenador_id varchar(255) 
+professor_id varchar(255) 
+responsavel_id bigint  
+
+Table: telefone
+Columns:
+id bigint AI PK 
+ddd varchar(255) 
+numero varchar(255) 
+aluno_id bigint 
+coordenacao_id bigint 
+coordenador_id varchar(255) 
+professor_id varchar(255) 
+responsavel_id bigint 
+
+
+mande o script completo, com todasas especificações, baixavel 
