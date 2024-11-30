@@ -322,20 +322,22 @@ public class AlunoService {
         	        Coordenacao coordenacao = turma.getCoordenacao();
 
         	        // Mapeamento da coordenação e seus coordenadores
+        	     // Mapeamento da coordenação e seus coordenadores
         	        if (coordenacao != null && coordenacao.getCoordenadores() != null && !coordenacao.getCoordenadores().isEmpty()) {
-        	            List<CoordenadorResumidoDTO> coordenadoresDTO = coordenacao.getCoordenadores().stream()
-        	                .map(coordenador -> CoordenadorResumidoDTO.builder()      	                		
+        	            Set<CoordenadorResumidoDTO> coordenadoresDTO = coordenacao.getCoordenadores().stream()
+        	                .map(coordenador -> CoordenadorResumidoDTO.builder()
         	                    .nomeCoordenador(coordenador.getNome() + " " + coordenador.getUltimoNome())
         	                    .email(coordenador.getEmail())
         	                    .build())
-        	                .collect(Collectors.toList());
+        	                .collect(Collectors.toSet());  // Alterando para Set
 
         	            coordenacaoDTO = CoordenacaoResumidaDTO.builder()
-        	            	.id(coordenacao.getId())
+        	                .id(coordenacao.getId())
         	                .nome(coordenacao.getNome())
-        	                .coordenadores(coordenadoresDTO)
+        	                .coordenadores(coordenadoresDTO)  // Aqui você passa o Set, que é o tipo esperado
         	                .build();
         	        }
+
 
                 // Mapeia as disciplinas e professores da turma
                 Set<DisciplinaProfessorDTO> disciplinaProfessorDTO = turma.getTurmaDisciplinaProfessores() != null ?

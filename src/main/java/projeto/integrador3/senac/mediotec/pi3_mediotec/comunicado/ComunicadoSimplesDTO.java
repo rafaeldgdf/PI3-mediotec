@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @Builder
 public class ComunicadoSimplesDTO {
     private Long id;
+    private String titulo;
     private String conteudo;
     private LocalDateTime dataEnvio;
 }

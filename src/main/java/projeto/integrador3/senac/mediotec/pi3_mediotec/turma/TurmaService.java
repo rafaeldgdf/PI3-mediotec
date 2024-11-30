@@ -8,6 +8,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoResumidoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoResumidaDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoResumidaDTO2;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.CoordenadorResumidoDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.Disciplina;
@@ -315,8 +316,8 @@ public class TurmaService {
 
 
         // Mapeia os dados da coordenação para CoordenacaoResumidaDTO
-        CoordenacaoResumidaDTO coordenacaoDTO = turma.getCoordenacao() != null ?
-            CoordenacaoResumidaDTO.builder()
+        CoordenacaoResumidaDTO2 coordenacaoDTO = turma.getCoordenacao() != null ?
+            CoordenacaoResumidaDTO2.builder()
                 .id(turma.getCoordenacao().getId()) // ID da coordenação
                 .nome(turma.getCoordenacao().getNome()) // Nome da coordenação
                 .coordenadores(turma.getCoordenacao().getCoordenadores().stream()

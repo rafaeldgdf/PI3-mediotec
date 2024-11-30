@@ -8,5 +8,10 @@ import lombok.Data;
 public class CoordenadorResumidoDTO {
     private String nomeCoordenador;
     private String email;
-    
+
+    // Construtor público explicitamente
+    public CoordenadorResumidoDTO(String nomeCoordenador, String email) {
+        this.nomeCoordenador = nomeCoordenador;
+        this.email = email;
+    }
 }

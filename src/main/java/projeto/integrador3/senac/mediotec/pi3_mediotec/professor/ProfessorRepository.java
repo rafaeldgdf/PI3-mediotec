@@ -10,4 +10,5 @@ public interface ProfessorRepository extends JpaRepository<Professor, String> {
 	boolean existsByCpf(String cpf);
 	Optional<Professor> findByCpf(String cpf); 
 	Optional<Professor> findByEmail(String email);
+	
 }
