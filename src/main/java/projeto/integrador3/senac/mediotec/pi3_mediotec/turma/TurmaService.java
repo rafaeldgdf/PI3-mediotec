@@ -3,8 +3,16 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.turma;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
+import java.io.IOException;
+
+
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.Aluno;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoResumidoDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.arquivo.Arquivo;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoResumidaDTO;
@@ -339,8 +347,101 @@ public class TurmaService {
             .coordenacao(coordenacaoDTO) // DTO da coordenação
             .disciplinas(disciplinasDTO) // Disciplinas associadas
             .disciplinasProfessores(disciplinasProfessoresDTO) // Professores e disciplinas
+            .horarioArquivoNome(turma.getArquivoHorario() != null ? turma.getArquivoHorario().getNome() : null) // Mapeia o nome do arquivo
             .alunos(alunosDTO) // Alunos associados
             .build();
     }
+    
+ // --------------------- HORARIO --------------------------- //
+
+    @Transactional
+    public TurmaDTO salvarHorario(Long turmaId, MultipartFile arquivo) {
+        if (arquivo == null || arquivo.isEmpty()) {
+            throw new IllegalArgumentException("Arquivo não pode estar vazio.");
+        }
+
+        try {
+            // Busca a turma pelo ID
+            Turma turma = turmaRepository.findById(turmaId)
+                .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+
+            // Constrói o objeto Arquivo
+            Arquivo novoArquivo = Arquivo.builder()
+                .nome(arquivo.getOriginalFilename())
+                .tipo(arquivo.getContentType())
+                .dados(arquivo.getBytes()) // Processa os bytes do arquivo
+                .build();
+
+            // Associa o arquivo à turma
+            turma.setArquivoHorario(novoArquivo);
+            turmaRepository.save(turma);
+
+            // Retorna a turma atualizada em DTO
+            return convertToDto(turma);
+
+        } catch (IOException e) {
+            // Trata IOException e converte para RuntimeException
+            throw new IllegalStateException("Erro ao processar o arquivo enviado", e);
+        }
+    }
+
+
+
+
+
+    // Método para obter o arquivo de horário
+    public Arquivo obterHorario(Long turmaId) {
+        Turma turma = turmaRepository.findById(turmaId)
+                .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+
+        return turma.getArquivoHorario(); // Retorna o arquivo relacionado à turma
+    }
+    
+    
+    
+    @Transactional
+    public void deletarHorario(Long turmaId) {
+        // Busca a turma pelo ID
+        Turma turma = turmaRepository.findById(turmaId)
+                .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+
+        // Verifica se a turma possui um arquivo de horário associado
+        if (turma.getArquivoHorario() == null) {
+            throw new RuntimeException("Nenhum arquivo de horário encontrado para a turma ID " + turmaId);
+        }
+
+        // Remove a referência ao arquivo de horário
+        turma.setArquivoHorario(null);
+
+        // Salva a alteração no banco de dados
+        turmaRepository.save(turma);
+    }
+    
+ // --------------------- turmas de professores e alunos --------------------------- //
+    
+    public List<TurmaResumida2DTO> getTurmasByProfessor(String cpf) {
+        return turmaRepository.findTurmasByProfessorCpf(cpf).stream()
+                .map(turma -> TurmaResumida2DTO.builder()
+                        .id(turma.getId())
+                        .nome(turma.getNome())
+                        .anoLetivo(turma.getAnoLetivo())
+                        .anoEscolar(turma.getAnoEscolar())
+                        .turno(turma.getTurno())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public List<TurmaResumida2DTO> getTurmasByAluno(Long alunoId) {
+        return turmaRepository.findTurmasByAlunoId(alunoId).stream()
+                .map(turma -> TurmaResumida2DTO.builder()
+                        .id(turma.getId())
+                        .nome(turma.getNome())
+                        .anoLetivo(turma.getAnoLetivo())
+                        .anoEscolar(turma.getAnoEscolar())
+                        .turno(turma.getTurno())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 
 }

@@ -8,6 +8,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.Professor;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.Turma;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaResumidaDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessor;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorId;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorRepository;
@@ -242,5 +243,32 @@ public class DisciplinaService {
                 : null) // Retorna o CPF (ID) do professor
             .build();
     }
+    
+   //-------------- DISCIPLINA POR PROFESSOR ------------------ // 
+    
+    public List<DisciplinaResumidaDTO> getDisciplinasByProfessor(String professorCpf) {
+        // Busca todas as associações de disciplinas pelo CPF do professor
+        List<TurmaDisciplinaProfessor> turmaDisciplinaProfessores = turmaDisciplinaProfessorRepository
+                .findByProfessorCpf(professorCpf);
+
+        // Mapeia as associações para uma lista de DTOs resumidos de disciplinas
+        return turmaDisciplinaProfessores.stream()
+            .map(tdp -> DisciplinaResumidaDTO.builder()
+                .nome(tdp.getDisciplina().getNome()) // Nome da disciplina
+                .cargaHoraria(tdp.getDisciplina().getCarga_horaria()) // Carga horária
+                .idDisciplina(tdp.getDisciplina().getId()) // ID da disciplina
+                .idTurma(tdp.getTurma().getId()) // ID da turma
+                .idProfessor(tdp.getProfessor().getCpf()) // CPF do professor
+                .turma(TurmaResumidaDTO.builder()
+                    .id(tdp.getTurma().getId()) // ID da turma
+                    .nome(tdp.getTurma().getNome()) // Nome da turma
+                    .anoEscolar(tdp.getTurma().getAnoEscolar()) // Ano escolar
+                    .build())
+                .build())
+            .distinct() // Remove duplicatas
+            .collect(Collectors.toList());
+    }
+
+
 
 }

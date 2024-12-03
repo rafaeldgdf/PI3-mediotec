@@ -13,4 +13,3 @@ public class TurmaDisciplinaProfessorDTO {
     private Long disciplinaId;
     private String professorId;
 }
-

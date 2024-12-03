@@ -4,12 +4,19 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
+
+import projeto.integrador3.senac.mediotec.pi3_mediotec.arquivo.Arquivo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -162,4 +169,75 @@ public class TurmaController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Turma com ID " + id + " não encontrada.", e);
         }
     }
+    
+               // --------------------- HORARIO --------------------------- //
+    // Endpoint para upload do arquivo de horário
+    @PostMapping(value = "/turmas/{id}/horario", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadHorario(
+            @PathVariable Long id,
+            @RequestParam("arquivo") MultipartFile arquivo) {
+        if (arquivo.isEmpty()) {
+            return ResponseEntity.badRequest().body("Arquivo não enviado.");
+        }
+        // Processar o arquivo
+        return ResponseEntity.ok("Arquivo enviado com sucesso para a turma ID " + id);
+    }
+
+
+
+
+    // Endpoint para download do arquivo de horário
+    @GetMapping("/{id}/horario")
+    public ResponseEntity<byte[]> baixarHorario(@PathVariable Long id) {
+        Arquivo horario = turmaService.obterHorario(id);
+
+        if (horario == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        }
+
+        return ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.parseMediaType(horario.getTipo())) // Corrigido o import de MediaType
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, 
+                        "attachment; filename=\"" + horario.getNome() + "\"")
+                .body(horario.getDados());
+    }
+
+    
+    
+ // Endpoint para deletar o arquivo de horário
+    @DeleteMapping("/{id}/horario")
+    public ResponseEntity<String> deletarHorario(@PathVariable Long id) {
+        try {
+            turmaService.deletarHorario(id); // Chama o método no serviço para realizar a exclusão
+            return ResponseEntity.ok("Arquivo de horário deletado com sucesso para a turma ID " + id);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Erro ao deletar o arquivo de horário: " + e.getMessage(), e);
+        }
+    }
+
+    // --------------------- turmas de professores e alunos --------------------------- //
+    @GetMapping("/professores/{cpf}/turmas")
+    public ResponseEntity<List<TurmaResumida2DTO>> getTurmasByProfessor(@PathVariable String cpf) {
+        try {
+            List<TurmaResumida2DTO> turmas = turmaService.getTurmasByProfessor(cpf);
+            return ResponseEntity.ok(turmas);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar turmas do professor", e);
+        }
+    }
+
+    @GetMapping("/alunos/{id}/turmas")
+    public ResponseEntity<List<TurmaResumida2DTO>> getTurmasByAluno(@PathVariable Long id) {
+        try {
+            List<TurmaResumida2DTO> turmas = turmaService.getTurmasByAluno(id);
+            return ResponseEntity.ok(turmas);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar turmas do aluno", e);
+        }
+    }
+
+    
+    
+    
 }

@@ -28,4 +28,6 @@ public class TurmaDTO {
     private Set<DisciplinaResumida2DTO> disciplinas; 
     private Set<DisciplinaProfessorDTO> disciplinasProfessores;
     private Set<AlunoResumidoDTO> alunos;
+    
+    private String horarioArquivoNome;
 }

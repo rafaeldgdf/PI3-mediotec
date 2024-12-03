@@ -126,4 +126,31 @@ public class DisciplinaController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao deletar disciplina com o ID: " + id, e);
         }
     }
+    
+  //-------------- DISCIPLINA POR PROFESSOR ------------------ // 
+    
+    @Operation(summary = "Listar disciplinas lecionadas por um professor", description = "Retorna todas as disciplinas associadas a um professor específico pelo CPF")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de disciplinas retornada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Professor não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar disciplinas")
+    })
+    @GetMapping("/professores/{cpf}/disciplinas")
+    public ResponseEntity<List<DisciplinaResumidaDTO>> getDisciplinasByProfessor(@PathVariable String cpf) {
+        try {
+            // Chama o serviço para buscar as disciplinas do professor
+            List<DisciplinaResumidaDTO> disciplinas = disciplinaService.getDisciplinasByProfessor(cpf);
+
+            if (disciplinas.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhuma disciplina encontrada para o professor com CPF: " + cpf);
+            }
+
+            return ResponseEntity.ok(disciplinas);
+        } catch (ResponseStatusException e) {
+            throw e; // Lança exceções de status já tratadas
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar disciplinas do professor com CPF: " + cpf, e);
+        }
+    }
+
 }
