@@ -18,6 +18,8 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorId;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorRepository;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -195,4 +197,87 @@ public class PresencaService {
                 .presenca(presencaInputDTO.getPresenca())
                 .build();
     }
+    
+    
+    /**
+     * Obtem o histórico de presenças agrupado por data.
+     *
+     * @param idTurma      ID da turma.
+     * @param idDisciplina ID da disciplina.
+     * @return Lista de histórico de presenças por data.
+     */
+    public List<HistoricoDTO> obterHistorico(Long idTurma, Long idDisciplina) {
+        // Busca todas as presenças
+        List<Presenca> presencas = presencaRepository.findByTurmaAndDisciplina(idTurma, idDisciplina);
+
+        // Formata a data como String
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        // Agrupa as presenças por data
+        return presencas.stream()
+            .collect(Collectors.groupingBy(Presenca::getData)) // Agrupa por data
+            .entrySet().stream()
+            .map(entry -> {
+                // Converte a data para String formatada
+                String dataFormatada = sdf.format(entry.getKey());
+
+                // Mapeia as presenças para o DTO de alunos
+                List<AlunoPresencaDTO> alunos = entry.getValue().stream()
+                		.map(p -> new AlunoPresencaDTO(
+                			    p.getId_presenca(), // Deve ser incluído no DTO
+                			    p.getAluno().getId(),
+                			    p.getAluno().getNome() + " " + p.getAluno().getUltimoNome(),
+                			    p.getPresenca()
+                			))
+
+                    .collect(Collectors.toList());
+
+                // Retorna diretamente o HistoricoDTO
+                return new HistoricoDTO(dataFormatada, alunos);
+            })
+            .collect(Collectors.toList());
+    }
+
+
+    
+    /**
+     * Atualizar uma presença existente.
+     *
+     * @param idPresenca ID da presença a ser atualizada.
+     * @param idAluno ID do aluno associado à presença.
+     * @param idTurma ID da turma associada à presença.
+     * @param idDisciplina ID da disciplina associada à presença.
+     * @param idProfessor ID do professor associado à presença.
+     * @param presencaInputDTO Objeto com os dados atualizados da presença.
+     * @return PresencaDTO com os dados atualizados.
+     */
+    @Transactional
+    public PresencaDTO atualizarPresenca(Long idPresenca, Long idAluno, Long idTurma, Long idDisciplina, String idProfessor, PresencaInputDTO presencaInputDTO) {
+        // Busca o aluno, turma, disciplina e professor para validação
+        Aluno aluno = buscarAlunoPorId(idAluno);
+        TurmaDisciplinaProfessor turmaDisciplinaProfessor = buscarTurmaDisciplinaProfessor(idTurma, idDisciplina, idProfessor);
+
+        // Busca a presença existente
+        Presenca presenca = presencaRepository.findById(idPresenca)
+                .orElseThrow(() -> new RuntimeException("Presença não encontrada"));
+
+        // Valida se a presença pertence ao aluno e ao contexto esperado
+        if (!presenca.getAluno().equals(aluno) || !presenca.getTurmaDisciplinaProfessor().equals(turmaDisciplinaProfessor)) {
+            throw new RuntimeException("Presença não corresponde ao aluno, turma, disciplina ou professor informado");
+        }
+
+        // Atualiza os dados da presença com os valores recebidos
+        presenca.setPresenca(presencaInputDTO.getPresenca());
+        presenca.setData(presencaInputDTO.getData());
+
+        // Salva a presença atualizada no repositório
+        Presenca presencaAtualizada = presencaRepository.save(presenca);
+
+        // Converte e retorna o DTO atualizado
+        return convertToDTO(presencaAtualizada);
+    }
+
+    
+    
+
 }
