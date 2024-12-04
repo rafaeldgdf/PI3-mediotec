@@ -877,37 +877,3 @@ INSERT INTO turma_disciplina_professor (id_turma, id_disciplina, id_professor) V
 
 
 
-INSERT INTO comunicado (id, titulo, conteudo, data_envio, remetente_coordenador_id, remetente_professor_id) VALUES
--- Comunicados de Coordenadores
-(1, 'Aviso Importante', 'Reunião de pais marcada para o dia 10/12 às 18h.', '2024-12-01 10:30:00', '12345678901', NULL), -- Morrissey Smith
-(2, 'Atenção Alunos', 'Entrega de boletins será feita no dia 15/12.', '2024-12-02 09:00:00', '23456789012', NULL), -- Eddie Vedder
-(3, 'Horário Alterado', 'Horário das provas finais foi atualizado no sistema.', '2024-12-03 14:15:00', '34567890123', NULL), -- Thom Yorke
-
--- Comunicados de Professores
-(4, 'Aula Extra', 'Teremos aula extra de Matemática na próxima sexta às 14h.', '2024-12-04 08:00:00', NULL, '45678901234'), -- Liam Gallagher
-(5, 'Trabalho de Física', 'Entregar o trabalho sobre cinemática até 08/12.', '2024-12-05 11:30:00', NULL, '56789012345'), -- Noel Gallagher
-(6, 'Correção de Provas', 'As provas de Química serão corrigidas até 10/12.', '2024-12-05 13:45:00', NULL, '67890123456'), -- Brandon Flowers
-(7, 'Resultado da Avaliação', 'Notas da avaliação de Biologia disponíveis no portal.', '2024-12-06 15:20:00', NULL, '78901234567'), -- Alex Turner
-(8, 'Recuperação de Geografia', 'A recuperação será no dia 20/12 às 10h.', '2024-12-06 16:10:00', NULL, '89012345678'), -- Matt Bellamy
-(9, 'Atividade de Robótica', 'Entregar o projeto de robótica até 15/12.', '2024-12-07 10:00:00', NULL, '90123456789'), -- Chris Martin
-(10, 'Preparação para o ENEM', 'Material extra disponível para estudo de Português.', '2024-12-08 18:45:00', NULL, '01234567890'); -- Robert Smith
-
--- ============================
--- ASSOCIAÇÕES DE COMUNICADOS COM ALUNOS
--- ============================
-INSERT INTO comunicado_receptor_alunos (comunicado_id, aluno_id) VALUES
-(1, 1), -- Aviso Importante enviado para Johnny Marr
-(1, 2), -- Aviso Importante enviado para Morrissey Smith
-(2, 3), -- Atenção Alunos enviado para Noel Gallagher
-(3, 4), -- Horário Alterado enviado para Liam Gallagher
-(4, 5), -- Aula Extra enviado para Thom Yorke
-(5, 6), -- Trabalho de Física enviado para Chris Martin
-(6, 7); -- Correção de Provas enviado para Eddie Vedder
-
--- ============================
--- ASSOCIAÇÕES DE COMUNICADOS COM TURMAS
--- ============================
-INSERT INTO comunicado_receptor_turmas (comunicado_id, turma_id) VALUES
-(7, 1), -- Resultado da Avaliação enviado para Turma 1
-(8, 2), -- Recuperação de Geografia enviado para Turma 2
-(9, 3); -- Atividade de Robótica enviado para Turma 3
