@@ -173,4 +173,12 @@ public class PresencaController {
     }
     
     
+    @GetMapping("/alunos/{idAluno}/disciplinas-faltas")
+    public ResponseEntity<List<DisciplinaFaltasDTO>> getDisciplinasEFaltasPorAluno(@PathVariable Long idAluno) {
+        List<DisciplinaFaltasDTO> faltasPorDisciplina = presencaService.getFaltasPorDisciplina(idAluno);
+        return ResponseEntity.ok(faltasPorDisciplina);
+    }
+
+    
+    
 }

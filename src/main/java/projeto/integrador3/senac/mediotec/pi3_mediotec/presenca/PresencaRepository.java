@@ -22,5 +22,9 @@ public interface PresencaRepository extends JpaRepository<Presenca, Long> {
     	       "p.turmaDisciplinaProfessor.id.disciplinaId = :idDisciplina")
     	List<Presenca> findByTurmaAndDisciplina(@Param("idTurma") Long idTurma,
     	                                        @Param("idDisciplina") Long idDisciplina);
+    
+    
+    
+    
 
 }

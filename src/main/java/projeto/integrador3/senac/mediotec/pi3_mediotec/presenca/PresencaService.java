@@ -21,6 +21,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -182,6 +183,7 @@ public class PresencaService {
                         .turno(presenca.getTurmaDisciplinaProfessor().getTurma().getTurno())
                         .build())
                 .disciplina(DisciplinaResumida2DTO.builder()
+                        .id(presenca.getTurmaDisciplinaProfessor().getDisciplina().getId()) // ID corrigido
                         .nome(presenca.getTurmaDisciplinaProfessor().getDisciplina().getNome())
                         .build())
                 .professor(ProfessorResumido3DTO.builder()
@@ -190,6 +192,7 @@ public class PresencaService {
                         .build())
                 .build();
     }
+
 
     private Presenca convertToEntity(PresencaInputDTO presencaInputDTO) {
         return Presenca.builder()
@@ -277,6 +280,46 @@ public class PresencaService {
         return convertToDTO(presencaAtualizada);
     }
 
+    
+    
+    
+    
+    public List<DisciplinaFaltasDTO> getFaltasPorDisciplina(Long idAluno) {
+        Aluno aluno = alunoRepository.findById(idAluno)
+            .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+
+        // Pegar todas as presenças relacionadas ao aluno
+        List<Presenca> presencas = presencaRepository.findByAluno(aluno);
+
+        // Agrupar por disciplina e mês
+        Map<Disciplina, Map<String, Long>> faltasPorDisciplina = presencas.stream()
+            .filter(p -> !p.getPresenca()) // Contar apenas faltas
+            .collect(Collectors.groupingBy(
+                p -> p.getTurmaDisciplinaProfessor().getDisciplina(),
+                Collectors.groupingBy(
+                    p -> new SimpleDateFormat("MMM").format(p.getData()), // Agrupa por mês
+                    Collectors.counting() // Soma as faltas
+                )
+            ));
+
+        // Converter para DTO
+        return faltasPorDisciplina.entrySet().stream()
+            .map(entry -> {
+                Disciplina disciplina = entry.getKey();
+                Map<String, Long> faltasPorMes = entry.getValue();
+
+                return DisciplinaFaltasDTO.builder()
+                    .idDisciplina(disciplina.getId())
+                    .nomeDisciplina(disciplina.getNome())
+                    .faltasPorMes(faltasPorMes)
+                    .build();
+            })
+            .collect(Collectors.toList());
+    }
+
+    
+    
+    
     
     
 
