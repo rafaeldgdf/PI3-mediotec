@@ -9,4 +9,7 @@ public class TurmaDisciplinaProfessorCompletoDTO {
     private String nomeTurma;
     private String nomeDisciplina;
     private String nomeProfessor;
+    private Long idTurma; // Adicione caso necessário
+    private Long idDisciplina; // Adicione caso necessário
+    private String idProfessor; // Adicione caso necessário
 }

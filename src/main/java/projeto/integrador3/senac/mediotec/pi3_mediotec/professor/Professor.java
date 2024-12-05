@@ -50,21 +50,24 @@ public class Professor extends Usuario {
 
     // ============================= RELATIONSHIPS =============================
 
-    // Coordenacao associada ao professor (Many-to-One)
+    // Coordenação associada ao professor (Many-to-One)
+    @JsonIgnore // Ignorar para evitar loops
     @ManyToOne
     @JoinColumn(name = "id_coordenacao")
     private Coordenacao coordenacao;
 
     // Endereços associados ao professor (One-to-Many)
+    @JsonIgnore // Ignorar para evitar loops ou sobrecarga na serialização
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Endereco> enderecos = new HashSet<>();
 
     // Telefones associados ao professor (One-to-Many)
+    @JsonIgnore // Ignorar para evitar loops ou sobrecarga na serialização
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Telefone> telefones = new HashSet<>();
 
     // Relação com TurmaDisciplinaProfessor (One-to-Many)
-    @JsonIgnore
+    @JsonIgnore // Ignorar para evitar loops
     @OneToMany(mappedBy = "professor")
     private Set<TurmaDisciplinaProfessor> turmaDisciplinaProfessores = new HashSet<>();
 
@@ -102,5 +105,4 @@ public class Professor extends Usuario {
         tdp.setProfessor(this);
         this.turmaDisciplinaProfessores.add(tdp);
     }
-
 }

@@ -1,25 +1,26 @@
 package projeto.integrador3.senac.mediotec.pi3_mediotec.comunicado;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoRepository;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoResumidoDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoRepository;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoResumidaDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.CoordenadorResumidoDTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.Professor;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorRepository;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorResumido3DTO;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaRepository;
-import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaResumida2DTO;
-
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.AlunoRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.Coordenador;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.CoordenadorRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.Professor;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorRepository;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.TurmaRepository;
+
+import projeto.integrador3.senac.mediotec.pi3_mediotec.comunicado.AlunoResumidoComTurmaDTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.comunicado.ComunicadoCompletoDTO;
+
 @Service
 public class ComunicadoService {
-
-    // ============================= INJEÇÕES DE DEPENDÊNCIA =============================
 
     @Autowired
     private ComunicadoRepository comunicadoRepository;
@@ -35,220 +36,177 @@ public class ComunicadoService {
 
     @Autowired
     private CoordenacaoRepository coordenacaoRepository;
+    
+    @Autowired
+    private CoordenadorRepository coordenadorRepository;
 
-    // ============================= CRIAÇÃO DE COMUNICADO =============================
+    // ============================== CRIAR COMUNICADO ==============================
 
-    // Cria um comunicado enviado por um coordenador
-    public ComunicadoSimplesDTO criarComunicadoPorCoordenador(Long coordenacaoId, String coordenadorId, ComunicadoDTO comunicadoDTO) {
-        validarCoordenador(coordenacaoId, coordenadorId);
+    public ComunicadoCompletoDTO criarComunicadoPorCoordenador(String coordenadorCpf, ComunicadoDTO comunicadoDTO) {
+        // Buscar o coordenador pelo CPF
+        Coordenador coordenador = coordenadorRepository.findByCpf(coordenadorCpf)
+                .orElseThrow(() -> new RuntimeException("Coordenador não encontrado"));
+
+        // Construir o comunicado
         Comunicado comunicado = Comunicado.builder()
+                .titulo(comunicadoDTO.getTitulo())
                 .conteudo(comunicadoDTO.getConteudo())
-                .dataEnvio(comunicadoDTO.getDataEnvio())
-                .remetenteCoordenacao(coordenacaoRepository.findById(coordenacaoId)
-                        .orElseThrow(() -> new RuntimeException("Coordenação não encontrada")))
+                .dataEnvio(LocalDateTime.now())
+                .remetenteCoordenador(coordenador)
                 .receptorAlunos(comunicadoDTO.getAlunoIds())
                 .receptorTurmas(comunicadoDTO.getTurmaIds())
                 .build();
-        return convertToSimplesDTO(comunicadoRepository.save(comunicado));
+
+        // Salvar o comunicado
+        comunicadoRepository.save(comunicado);
+
+        // Converter e retornar o DTO completo
+        return converterParaDTOCompleto(comunicado);
     }
 
-    // Cria um comunicado enviado por um professor
-    public ComunicadoSimplesDTO criarComunicadoPorProfessor(String professorId, ComunicadoDTO comunicadoDTO) {
-        Professor professor = professorRepository.findById(professorId)
+
+
+    public ComunicadoCompletoDTO criarComunicadoPorProfessor(String professorCpf, ComunicadoDTO comunicadoDTO) {
+        Professor professor = professorRepository.findByCpf(professorCpf)
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+
         Comunicado comunicado = Comunicado.builder()
+                .titulo(comunicadoDTO.getTitulo())
                 .conteudo(comunicadoDTO.getConteudo())
-                .dataEnvio(comunicadoDTO.getDataEnvio())
+                .dataEnvio(LocalDateTime.now())
                 .remetenteProfessor(professor)
                 .receptorAlunos(comunicadoDTO.getAlunoIds())
                 .receptorTurmas(comunicadoDTO.getTurmaIds())
                 .build();
-        return convertToSimplesDTO(comunicadoRepository.save(comunicado));
+
+        comunicadoRepository.save(comunicado);
+
+        return converterParaDTOCompleto(comunicado);
     }
 
-    // Cria um comunicado enviado para todos os alunos e turmas
-    public ComunicadoSimplesDTO criarComunicadoParaTodos(Long coordenacaoId, String coordenadorId, ComunicadoDTO comunicadoDTO) {
-        validarCoordenador(coordenacaoId, coordenadorId);
-        List<Long> todosAlunos = alunoRepository.findAllIds();
-        List<Long> todasTurmas = turmaRepository.findAllIds();
-        comunicadoDTO.setAlunoIds(todosAlunos);
-        comunicadoDTO.setTurmaIds(todasTurmas);
-        return criarComunicadoPorCoordenador(coordenacaoId, coordenadorId, comunicadoDTO);
+    // ============================== LISTAR COMUNICADOS ==============================
+
+    public List<ComunicadoCompletoDTO> listarComunicadosPorCoordenador(String coordenadorCpf) {
+        List<Comunicado> comunicados = comunicadoRepository.findByRemetenteCoordenador_Cpf(coordenadorCpf);
+        return comunicados.stream().map(this::converterParaDTOCompleto).collect(Collectors.toList());
     }
 
-    // ============================= ATUALIZAÇÃO DE COMUNICADO =============================
 
-    // Atualiza um comunicado enviado por um coordenador
-    public ComunicadoSimplesDTO atualizarComunicadoPorCoordenador(Long coordenacaoId, String coordenadorId, Long comunicadoId, ComunicadoDTO comunicadoDTO) {
-        validarCoordenador(coordenacaoId, coordenadorId);
-        Comunicado comunicado = buscarComunicadoPorId(comunicadoId);
-        atualizarDadosComunicado(comunicado, comunicadoDTO);
-        return convertToSimplesDTO(comunicadoRepository.save(comunicado));
+    public List<ComunicadoCompletoDTO> listarComunicadosPorProfessor(String professorCpf) {
+        List<Comunicado> comunicados = comunicadoRepository.findByRemetenteProfessor_Cpf(professorCpf);
+        return comunicados.stream().map(this::converterParaDTOCompleto).collect(Collectors.toList());
     }
 
-    // Atualiza um comunicado enviado por um professor
-    public ComunicadoSimplesDTO atualizarComunicadoPorProfessor(String professorId, Long comunicadoId, ComunicadoDTO comunicadoDTO) {
-        Comunicado comunicado = buscarComunicadoPorId(comunicadoId);
-        atualizarDadosComunicado(comunicado, comunicadoDTO);
-        return convertToSimplesDTO(comunicadoRepository.save(comunicado));
-    }
+    public List<ComunicadoCompletoDTO> listarComunicadosPorAluno(String identificador) {
+        List<Comunicado> comunicados;
 
-    // ============================= DELEÇÃO DE COMUNICADO =============================
-
-    // Deleta um comunicado enviado por um coordenador
-    public void deletarComunicadoPorCoordenador(Long coordenacaoId, String coordenadorId, Long comunicadoId) {
-        validarCoordenador(coordenacaoId, coordenadorId);
-        comunicadoRepository.deleteById(comunicadoId);
-    }
-
-    // Deleta um comunicado enviado por um professor
-    public void deletarComunicadoPorProfessor(String professorId, Long comunicadoId) {
-        comunicadoRepository.deleteById(comunicadoId);
-    }
-
-    // ============================= LISTAGEM DE COMUNICADO =============================
-
-    // Lista comunicados enviados por um coordenador
-    public List<ComunicadoDetalhadoDTO> listarComunicadosPorCoordenador(Long coordenadorId) {
-        return comunicadoRepository.findByRemetenteCoordenacao_Id(coordenadorId)
-                .stream()
-                .map(this::convertToDetalhadoDTO)
-                .collect(Collectors.toList());
-    }
-
-    // Lista comunicados enviados por um professor
-    public List<ComunicadoDetalhadoDTO> listarComunicadosPorProfessor(String professorId) {
-        return comunicadoRepository.findByRemetenteProfessor_Cpf(professorId)
-                .stream()
-                .map(this::convertToDetalhadoDTO)
-                .collect(Collectors.toList());
-    }
-
-    // Lista todos os comunicados
-    public List<ComunicadoDetalhadoDTO> listarTodos() {
-        return comunicadoRepository.findAll()
-                .stream()
-                .map(this::convertToDetalhadoDTO)
-                .collect(Collectors.toList());
-    }
-
-    // Lista comunicados específicos para um aluno
-    public List<ComunicadoDetalhadoDTO> listarComunicadosPorAluno(Long alunoId) {
-        return comunicadoRepository.findByReceptorAlunosContaining(alunoId)
-                .stream()
-                .map(this::convertToDetalhadoDTO)
-                .collect(Collectors.toList());
-    }
-
-    // Lista comunicados enviados para alunos
-    public List<ComunicadoDetalhadoDTO> listarComunicadosParaAlunos() {
-        return comunicadoRepository.findAll().stream()
-                .filter(comunicado -> !comunicado.getReceptorAlunos().isEmpty())
-                .map(this::convertToDetalhadoDTO)
-                .collect(Collectors.toList());
-    }
-
-    // Lista comunicados específicos para uma turma
-    public List<ComunicadoDetalhadoDTO> listarComunicadosPorTurma(Long turmaId) {
-        return comunicadoRepository.findByReceptorTurmasContaining(turmaId)
-                .stream()
-                .map(this::convertToDetalhadoDTO)
-                .collect(Collectors.toList());
-    }
-
-    // Lista comunicados enviados para turmas
-    public List<ComunicadoDetalhadoDTO> listarComunicadosParaTurmas() {
-        return comunicadoRepository.findAll().stream()
-                .filter(comunicado -> !comunicado.getReceptorTurmas().isEmpty())
-                .map(this::convertToDetalhadoDTO)
-                .collect(Collectors.toList());
-    }
-
-    // ============================= MÉTODOS AUXILIARES =============================
-
-    // Valida se o coordenador está vinculado à coordenação especificada
-    private void validarCoordenador(Long coordenacaoId, String coordenadorId) {
-        if (!coordenacaoRepository.existsByIdAndCoordenadores_Cpf(coordenacaoId, coordenadorId)) {
-            throw new RuntimeException("Coordenador não vinculado à coordenação");
+        if (identificador.matches("\\d+")) {
+            // Identificador é um número (ID do aluno)
+            Long alunoId = Long.parseLong(identificador);
+            comunicados = comunicadoRepository.findByReceptorAlunosId(alunoId);
+        } else if (identificador.matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")) {
+            // Identificador é um CPF
+            comunicados = comunicadoRepository.findByReceptorAlunosCpf(identificador);
+        } else {
+            // Identificador é um email
+            comunicados = comunicadoRepository.findByReceptorAlunosEmail(identificador);
         }
+
+        // Converter os comunicados encontrados para DTOs completos
+        return comunicados.stream().map(this::converterParaDTOCompleto).collect(Collectors.toList());
     }
 
-    // Busca um comunicado por ID
-    private Comunicado buscarComunicadoPorId(Long comunicadoId) {
-        return comunicadoRepository.findById(comunicadoId)
-            .orElseThrow(() -> new RuntimeException("Comunicado não encontrado com ID: " + comunicadoId));
+
+    public List<ComunicadoCompletoDTO> listarComunicadosPorTurma(Long turmaId) {
+        List<Comunicado> comunicados = comunicadoRepository.findByReceptorTurmasContaining(turmaId);
+        return comunicados.stream().map(this::converterParaDTOCompleto).collect(Collectors.toList());
     }
 
-    // Atualiza os dados de um comunicado
-    private void atualizarDadosComunicado(Comunicado comunicado, ComunicadoDTO comunicadoDTO) {
+    // ============================== ATUALIZAR COMUNICADO ==============================
+
+    public ComunicadoCompletoDTO atualizarComunicado(Long comunicadoId, ComunicadoDTO comunicadoDTO) {
+        Comunicado comunicado = comunicadoRepository.findById(comunicadoId)
+                .orElseThrow(() -> new RuntimeException("Comunicado não encontrado"));
+
+        comunicado.setTitulo(comunicadoDTO.getTitulo());
         comunicado.setConteudo(comunicadoDTO.getConteudo());
-        comunicado.setDataEnvio(comunicadoDTO.getDataEnvio());
         comunicado.setReceptorAlunos(comunicadoDTO.getAlunoIds());
         comunicado.setReceptorTurmas(comunicadoDTO.getTurmaIds());
+        comunicado.setDataEnvio(LocalDateTime.now());
+
+        comunicadoRepository.save(comunicado);
+
+        return converterParaDTOCompleto(comunicado);
     }
 
-    // Converte para DTO simples
-    private ComunicadoSimplesDTO convertToSimplesDTO(Comunicado comunicado) {
-        return ComunicadoSimplesDTO.builder()
-                .id(comunicado.getId())
-                .conteudo(comunicado.getConteudo())
-                .dataEnvio(comunicado.getDataEnvio())
-                .build();
+    // ============================== DELETAR COMUNICADO ==============================
+
+    public void deletarComunicado(Long comunicadoId) {
+        Comunicado comunicado = comunicadoRepository.findById(comunicadoId)
+                .orElseThrow(() -> new RuntimeException("Comunicado não encontrado"));
+
+        comunicadoRepository.delete(comunicado);
     }
 
-    // Converte para DTO detalhado
-    private ComunicadoDetalhadoDTO convertToDetalhadoDTO(Comunicado comunicado) {
-        // Processa a lista de alunos receptores
-        List<AlunoResumidoDTO> alunos = comunicado.getReceptorAlunos().stream()
+    // ============================== MÉTODOS AUXILIARES ==============================
+    private ComunicadoCompletoDTO converterParaDTOCompleto(Comunicado comunicado) {
+        // Mapeia os alunos e suas turmas
+        List<AlunoResumidoComTurmaDTO> alunos = comunicado.getReceptorAlunos().stream()
                 .map(alunoId -> alunoRepository.findById(alunoId)
-                        .map(aluno -> new AlunoResumidoDTO(aluno.getNome(), aluno.getEmail()))
-                        .orElseThrow(() -> new RuntimeException("Aluno não encontrado com ID: " + alunoId)))
-                .collect(Collectors.toList());
+                        .map(aluno -> {
+                            // Obtém a primeira turma do aluno, caso exista
+                            TurmaResumida2DTO turmaResumida = aluno.getTurmas().stream()
+                                    .findFirst()
+                                    .map(turma -> new TurmaResumida2DTO(
+                                            turma.getId(),
+                                            turma.getNome(),
+                                            turma.getAnoEscolar(),
+                                            turma.getTurno()))
+                                    .orElse(null);
 
-        // Processa a lista de turmas receptoras
+                            // Retorna o DTO do aluno resumido com a turma associada
+                            return new AlunoResumidoComTurmaDTO(
+                                    aluno.getId(),
+                                    aluno.getNome(),
+                                    aluno.getUltimoNome(),
+                                    turmaResumida);
+                        })
+                        .orElseThrow(() -> new RuntimeException("Aluno com ID " + alunoId + " não encontrado")))
+                .toList();
+
+        // Mapeia as turmas diretamente do comunicado
         List<TurmaResumida2DTO> turmas = comunicado.getReceptorTurmas().stream()
+                .filter(turmaId -> turmaId != null && turmaId > 0) // Filtra IDs inválidos
                 .map(turmaId -> turmaRepository.findById(turmaId)
-                        .map(turma -> new TurmaResumida2DTO(turma.getNome(), turma.getAnoLetivo(), turma.getAnoEscolar(), turma.getTurno()))
-                        .orElseThrow(() -> new RuntimeException("Turma não encontrada com ID: " + turmaId)))
-                .collect(Collectors.toList());
+                        .map(turma -> new TurmaResumida2DTO(
+                                turma.getId(),
+                                turma.getNome(),
+                                turma.getAnoEscolar(),
+                                turma.getTurno()))
+                        .orElseThrow(() -> new RuntimeException("Turma com ID " + turmaId + " não encontrada")))
+                .toList();
 
-        // Obtem o remetente do comunicado (professor ou coordenação)
-        RemetenteResumidoDTO remetente = obterRemetenteResumido(comunicado);
+        // Define o remetente com base no tipo (Professor ou Coordenador)
+        String remetente = comunicado.getRemetenteProfessor() != null
+                ? "Prof. " + comunicado.getRemetenteProfessor().getNome() + " " + comunicado.getRemetenteProfessor().getUltimoNome()
+                : "Coord. " + comunicado.getRemetenteCoordenador().getNome()+ " " + comunicado.getRemetenteCoordenador().getUltimoNome();
 
-        // Retorna o DTO detalhado
-        return ComunicadoDetalhadoDTO.builder()
-                .id(comunicado.getId())
-                .conteudo(comunicado.getConteudo())
-                .dataEnvio(comunicado.getDataEnvio())
-                .remetenteProfessor(remetente.getProfessor())  // Se remetente for professor
-                .remetenteCoordenacao(remetente.getCoordenacao())  // Se remetente for coordenação
-                .alunos(alunos)
-                .turmas(turmas)
-                .build();
+        // Retorna o DTO completo do comunicado
+        return new ComunicadoCompletoDTO(
+                comunicado.getId(),
+                comunicado.getTitulo(),
+                comunicado.getConteudo(),
+                comunicado.getDataEnvio(),
+                remetente,
+                alunos,
+                turmas
+        );
     }
 
-    // Obtém o remetente do comunicado (pode ser professor ou coordenação)
-    private RemetenteResumidoDTO obterRemetenteResumido(Comunicado comunicado) {
-        if (comunicado.getRemetenteProfessor() != null) {
-            return RemetenteResumidoDTO.builder()
-                    .professor(ProfessorResumido3DTO.builder()
-                            .nomeProfessor(comunicado.getRemetenteProfessor().getNome())
-                            .email(comunicado.getRemetenteProfessor().getEmail())
-                            .build())
-                    .build();
-        } else if (comunicado.getRemetenteCoordenacao() != null) {
-            return RemetenteResumidoDTO.builder()
-                    .coordenacao(CoordenacaoResumidaDTO.builder()
-                            .nome(comunicado.getRemetenteCoordenacao().getNome())
-                            .coordenadores(comunicado.getRemetenteCoordenacao().getCoordenadores().stream()
-                                    .map(coordenador -> CoordenadorResumidoDTO.builder()
-                                            .nomeCoordenador(coordenador.getNome())
-                                            .email(coordenador.getEmail())
-                                            .build())
-                                    .collect(Collectors.toList()))
-                            .build())
-                    .build();
-        }
-        throw new RuntimeException("Remetente não encontrado.");
-    }
+
+
+
+
+
+
 }

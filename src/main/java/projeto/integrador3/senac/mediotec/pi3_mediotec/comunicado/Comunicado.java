@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.Professor;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.Coordenador;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +26,9 @@ public class Comunicado {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = true)
+    private String titulo;
+    
     // Conteúdo do comunicado
     @Column(nullable = false)
     private String conteudo;
@@ -42,8 +46,8 @@ public class Comunicado {
 
     // Relacionamento com a Coordenação que enviou o comunicado (opcional)
     @ManyToOne
-    @JoinColumn(name = "remetente_coordenacao_id")
-    private Coordenacao remetenteCoordenacao;
+    @JoinColumn(name = "remetente_Coordenador_id")
+    private Coordenador remetenteCoordenador;
 
     // ============================= DESTINATÁRIOS =============================
 

@@ -58,16 +58,26 @@ public class PresencaController {
     @Operation(summary = "Atualizar uma presença existente", description = "Atualiza uma presença existente de um aluno")
     @PutMapping("/{id}/aluno/{idAluno}/turma/{idTurma}/disciplina/{idDisciplina}/professor/{idProfessor}")
     public ResponseEntity<PresencaDTO> atualizarPresenca(
-            @PathVariable Long id, 
-            @PathVariable Long idAluno, 
-            @PathVariable Long idTurma, 
-            @PathVariable Long idDisciplina, 
-            @PathVariable String idProfessor, 
+            @PathVariable Long id,
+            @PathVariable Long idAluno,
+            @PathVariable Long idTurma,
+            @PathVariable Long idDisciplina,
+            @PathVariable String idProfessor,
             @RequestBody PresencaInputDTO presencaInputDTO) {
-        
-        PresencaDTO presencaAtualizada = presencaService.salvarPresenca(idAluno, idTurma, idDisciplina, idProfessor, presencaInputDTO);
+
+        // Logando os valores recebidos para debug
+        System.out.println("ID da Presença: " + id);
+        System.out.println("ID do Aluno: " + idAluno);
+        System.out.println("ID da Turma: " + idTurma);
+        System.out.println("ID da Disciplina: " + idDisciplina);
+        System.out.println("ID do Professor: " + idProfessor);
+        System.out.println("Dados da Presença: " + presencaInputDTO);
+
+        PresencaDTO presencaAtualizada = presencaService.atualizarPresenca(id, idAluno, idTurma, idDisciplina, idProfessor, presencaInputDTO);
         return ResponseEntity.ok(presencaAtualizada);
     }
+
+
 
     /**
      * Buscar presença por ID.
@@ -145,4 +155,30 @@ public class PresencaController {
         presencaService.deletarPresenca(idAluno, id);
         return ResponseEntity.noContent().build();
     }
+    
+    /**
+     * Endpoint para obter o histórico de presenças agrupado por data.
+     * 
+     * @param idTurma      ID da turma
+     * @param idDisciplina ID da disciplina
+     * @return Histórico de presenças agrupado por data
+     */
+    @GetMapping("/historico/turma/{idTurma}/disciplina/{idDisciplina}")
+    public ResponseEntity<List<HistoricoDTO>> obterHistorico(
+            @PathVariable Long idTurma,
+            @PathVariable Long idDisciplina
+    ) {
+        List<HistoricoDTO> historico = presencaService.obterHistorico(idTurma, idDisciplina);
+        return ResponseEntity.ok(historico);
+    }
+    
+    
+    @GetMapping("/alunos/{idAluno}/disciplinas-faltas")
+    public ResponseEntity<List<DisciplinaFaltasDTO>> getDisciplinasEFaltasPorAluno(@PathVariable Long idAluno) {
+        List<DisciplinaFaltasDTO> faltasPorDisciplina = presencaService.getFaltasPorDisciplina(idAluno);
+        return ResponseEntity.ok(faltasPorDisciplina);
+    }
+
+    
+    
 }

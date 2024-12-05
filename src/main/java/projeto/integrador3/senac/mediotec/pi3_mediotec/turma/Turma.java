@@ -20,6 +20,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -29,6 +30,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.aluno.Aluno;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.arquivo.Arquivo;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessor;
 
@@ -73,7 +75,7 @@ public class Turma implements Serializable {
     // Relacionamento ManyToMany com Aluno
     @JsonIgnore
     @Builder.Default
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JoinTable(
         name = "aluno_turma",
         joinColumns = @JoinColumn(name = "turma_id"),
@@ -90,6 +92,12 @@ public class Turma implements Serializable {
     @Builder.Default
     @OneToMany(mappedBy = "turma", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<TurmaDisciplinaProfessor> turmaDisciplinaProfessores = new HashSet<>();
+    
+    
+    // Relacionamento com o arquivo de horário
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "arquivo_horario_id", referencedColumnName = "id")
+    private Arquivo arquivoHorario;
 
     // ============================= AUXILIARY METHODS =============================
 

@@ -69,4 +69,7 @@ public abstract class Usuario implements Serializable {
     @Column(nullable = false, unique = true) // A coluna 'email' no banco de dados também não pode ser nula
     private String email;
     
+    @Column(nullable = false)
+    private String senha; // Campo para senha
+    
 }

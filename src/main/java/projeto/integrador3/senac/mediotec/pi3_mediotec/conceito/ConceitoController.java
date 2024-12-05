@@ -173,4 +173,23 @@ public class ConceitoController {
             return ResponseEntity.notFound().build();
         }
     }
+    
+    @Operation(summary = "buscar conceito de um aluno", description = "busca conceito de aluno, da turma e disciplina")
+    @GetMapping("/conceitos/{idProfessor}/aluno/{idAluno}/disciplina/{idDisciplina}/turma/{idTurma}")
+    public ResponseEntity<ConceitoDTO> buscarConceito(
+            @PathVariable String idProfessor,
+            @PathVariable Long idAluno,
+            @PathVariable Long idDisciplina,
+            @PathVariable Long idTurma) {
+
+        Optional<ConceitoDTO> conceito = conceitoService.buscarConceito(idProfessor, idAluno, idDisciplina, idTurma);
+
+        return conceito.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(null)); // Alternativamente, pode-se incluir uma mensagem informativa.
+    }
+
+    
+    
+
 }

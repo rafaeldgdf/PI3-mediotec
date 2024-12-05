@@ -11,4 +11,5 @@ public class DisciplinaProfessorDTO {
     private String nomeProfessor;
     private String email; 
     private Set<String> nomesDisciplinas;
+    private Set<Long> disciplinasIds; // IDs das Disciplinas associadas
 }

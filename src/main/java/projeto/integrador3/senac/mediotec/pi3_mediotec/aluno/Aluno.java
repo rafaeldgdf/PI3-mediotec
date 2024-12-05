@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,7 +17,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +31,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.Telefone;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.Turma;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.usuario.Usuario;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @SuperBuilder
 @Getter
@@ -60,32 +61,36 @@ public class Aluno extends Usuario {
     // ============================= RELATIONSHIPS =============================
 
     // Endereços associados ao aluno (One-to-Many)
+    @JsonIgnore // Ignorar endereços para evitar loop ou dados excessivos na serialização
     @Builder.Default
     @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Endereco> enderecos = new HashSet<>();
 
     // Telefones associados ao aluno (One-to-Many)
+    @JsonIgnore // Ignorar telefones para evitar loop ou dados excessivos na serialização
     @Builder.Default
     @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Telefone> telefones = new HashSet<>();
 
     // Turmas nas quais o aluno está matriculado (Many-to-Many)
+    @JsonIgnore // Ignorar turmas para evitar loop
     @Builder.Default
     @ManyToMany(mappedBy = "alunos", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<Turma> turmas = new HashSet<>();
 
-
     // Presenças do aluno (One-to-Many)
-    @JsonIgnore
+    @JsonIgnore // Ignorar presenças para evitar loop ou carga excessiva de dados
     @Builder.Default
     @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Presenca> presencas = new HashSet<>();
 
     // Coordenação relacionada ao aluno (Many-to-One)
+    @JsonIgnore // Ignorar coordenação para evitar loop
     @ManyToOne
     private Coordenacao coordenacao;
 
     // Responsáveis pelo aluno (One-to-Many)
+    @JsonIgnore // Ignorar responsáveis para evitar loop
     @Builder.Default
     @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Responsavel> responsaveis = new HashSet<>();

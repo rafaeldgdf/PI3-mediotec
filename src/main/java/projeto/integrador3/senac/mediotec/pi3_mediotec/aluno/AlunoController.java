@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -102,6 +103,16 @@ public class AlunoController {
         }
     }
 
+    
+    // ============================= PATCH METHODS =============================
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Void> updateStatus(@PathVariable Long id, @RequestBody Map<String, Boolean> statusPayload) {
+        boolean novoStatus = statusPayload.get("status");
+        alunoService.updateStatus(id, novoStatus);
+        return ResponseEntity.noContent().build();
+    }
+
+    
     // ============================= DELETE METHODS =============================
 
     // Deleta um aluno
@@ -109,12 +120,13 @@ public class AlunoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAluno(@PathVariable Long id) {
         try {
-            logger.info("Deletando aluno com ID: {}", id);
+            logger.info("Tentando deletar aluno com ID: {}", id);
             alunoService.deleteAluno(id);
+            logger.info("Aluno com ID {} deletado com sucesso.", id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (RuntimeException e) {
             logger.error("Erro ao deletar aluno com ID {}: {}", id, e.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Erro ao deletar aluno com ID " + id + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 

@@ -35,9 +35,7 @@ public class ProfessorController {
     public ResponseEntity<List<ProfessorResumidoDTO>> getAllProfessores() {
         try {
             List<ProfessorResumidoDTO> professores = professorService.getAllProfessores();
-            if (professores.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum professor encontrado.");
-            }
+            // Retorna uma lista vazia sem lançar exceção se não houver professores
             return new ResponseEntity<>(professores, HttpStatus.OK);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao listar professores: " + e.getMessage(), e);

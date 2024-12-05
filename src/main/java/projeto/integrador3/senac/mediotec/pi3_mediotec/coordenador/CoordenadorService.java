@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
 @Service
 public class CoordenadorService {
 
@@ -56,6 +57,7 @@ public class CoordenadorService {
         coordenador.setGenero(coordenadorDTO.getGenero());
         coordenador.setData_nascimento(coordenadorDTO.getData_nascimento());
         coordenador.setEmail(coordenadorDTO.getEmail());
+        coordenador.setSenha((coordenadorDTO.getEmail())); // Senha padrão = email
         coordenador.setStatus(true); // Define o status inicial como ativo
 
         // Associa a coordenação, se o idCoordenacao estiver presente no DTO
@@ -118,6 +120,7 @@ public class CoordenadorService {
         coordenador.setGenero(coordenadorDTO.getGenero());
         coordenador.setData_nascimento(coordenadorDTO.getData_nascimento());
         coordenador.setEmail(coordenadorDTO.getEmail());
+        coordenador.setSenha((coordenadorDTO.getSenha()));
         coordenador.setStatus(coordenadorDTO.isStatus());
 
         // Atualiza a coordenação, se o idCoordenacao for passado no DTO

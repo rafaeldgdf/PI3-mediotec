@@ -4,12 +4,19 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
+
+import projeto.integrador3.senac.mediotec.pi3_mediotec.arquivo.Arquivo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -112,6 +119,33 @@ public class TurmaController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao atualizar turma com ID " + id + ": " + e.getMessage(), e);
         }
     }
+    
+    
+    // ============================= PATCH METHODS =============================
+    
+    /**
+     * Atualiza o status de uma turma específica pelo seu ID.
+     *
+     * @param id ID da turma.
+     * @param status Novo status da turma.
+     * @return ResponseEntity confirmando a atualização do status.
+     */
+    @Operation(summary = "Atualizar status da turma", description = "Atualiza o status (ativo/inativo) de uma turma pelo ID fornecido")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Status atualizado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Turma não encontrada"),
+        @ApiResponse(responseCode = "400", description = "Erro na atualização do status")
+    })
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<String> updateTurmaStatus(@PathVariable Long id, @RequestBody boolean status) {
+        try {
+            turmaService.updateStatus(id, status);
+            return ResponseEntity.ok("Status da turma atualizado com sucesso.");
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Erro ao atualizar status da turma: " + e.getMessage(), e);
+        }
+    }
+
 
     // ============================= DELETE METHODS =============================
 
@@ -132,7 +166,89 @@ public class TurmaController {
             turmaService.deleteTurma(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Turma com ID " + id + " não encontrada.", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao excluir turma: " + e.getMessage(), e);
         }
     }
+
+               // --------------------- HORARIO --------------------------- //
+    // Endpoint para upload do arquivo de horário
+    @PostMapping(value = "/turmas/{id}/horario", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadHorario(
+            @PathVariable Long id,
+            @RequestParam("arquivo") MultipartFile arquivo) {
+        if (arquivo.isEmpty()) {
+            return ResponseEntity.badRequest().body("Arquivo não enviado.");
+        }
+        try {
+            turmaService.salvarHorario(id, arquivo);
+            return ResponseEntity.ok("Arquivo enviado com sucesso para a turma ID " + id);
+        } catch (Exception e) {
+            e.printStackTrace(); // Log detalhado para depuração
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar arquivo: " + e.getMessage());
+        }
+    }
+
+
+
+
+
+
+    // Endpoint para download do arquivo de horário
+    @GetMapping("/{id}/horario")
+    public ResponseEntity<byte[]> baixarHorario(@PathVariable Long id) {
+        Arquivo horario = turmaService.obterHorario(id);
+
+        if (horario == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(horario.getTipo()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, 
+                        "attachment; filename=\"" + horario.getNome() + "\"")
+                .body(horario.getDados());
+    }
+
+
+    
+    
+ // Endpoint para deletar o arquivo de horário
+    @DeleteMapping("/{id}/horario")
+    public ResponseEntity<String> deletarHorario(@PathVariable Long id) {
+        try {
+            turmaService.deletarHorario(id); // Chama o método no serviço para realizar a exclusão
+            return ResponseEntity.ok("Arquivo de horário deletado com sucesso para a turma ID " + id);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Erro ao deletar o arquivo de horário: " + e.getMessage(), e);
+        }
+    }
+
+    // --------------------- turmas de professores e alunos --------------------------- //
+    @GetMapping("/professores/{cpf}/turmas")
+    public ResponseEntity<List<TurmaResumida2DTO>> getTurmasByProfessor(@PathVariable String cpf) {
+        try {
+            List<TurmaResumida2DTO> turmas = turmaService.getTurmasByProfessor(cpf);
+            return ResponseEntity.ok(turmas);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar turmas do professor", e);
+        }
+    }
+
+    @GetMapping("/alunos/{id}/turmas")
+    public ResponseEntity<List<TurmaResumida2DTO>> getTurmasByAluno(@PathVariable Long id) {
+        try {
+            List<TurmaResumida2DTO> turmas = turmaService.getTurmasByAluno(id);
+            return ResponseEntity.ok(turmas);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar turmas do aluno", e);
+        }
+    }
+    
+    
+
+
+
+    
+    
+    
 }

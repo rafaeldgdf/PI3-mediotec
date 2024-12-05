@@ -3,6 +3,8 @@ package projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -62,6 +64,7 @@ public class Coordenador extends Usuario {
 
     // Relação Many-to-One com Coordenacao
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "id_coordenacao") // Chave estrangeira para a tabela coordenacao
     private Coordenacao coordenacao;
 

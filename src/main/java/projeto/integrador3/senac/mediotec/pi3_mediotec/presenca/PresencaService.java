@@ -18,7 +18,10 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorId;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turmaDisciplinaProfessor.TurmaDisciplinaProfessorRepository;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -180,6 +183,7 @@ public class PresencaService {
                         .turno(presenca.getTurmaDisciplinaProfessor().getTurma().getTurno())
                         .build())
                 .disciplina(DisciplinaResumida2DTO.builder()
+                        .id(presenca.getTurmaDisciplinaProfessor().getDisciplina().getId()) // ID corrigido
                         .nome(presenca.getTurmaDisciplinaProfessor().getDisciplina().getNome())
                         .build())
                 .professor(ProfessorResumido3DTO.builder()
@@ -189,10 +193,134 @@ public class PresencaService {
                 .build();
     }
 
+
     private Presenca convertToEntity(PresencaInputDTO presencaInputDTO) {
         return Presenca.builder()
                 .data(presencaInputDTO.getData())
                 .presenca(presencaInputDTO.getPresenca())
                 .build();
     }
+    
+    
+    /**
+     * Obtem o histórico de presenças agrupado por data.
+     *
+     * @param idTurma      ID da turma.
+     * @param idDisciplina ID da disciplina.
+     * @return Lista de histórico de presenças por data.
+     */
+    public List<HistoricoDTO> obterHistorico(Long idTurma, Long idDisciplina) {
+        // Busca todas as presenças
+        List<Presenca> presencas = presencaRepository.findByTurmaAndDisciplina(idTurma, idDisciplina);
+
+        // Formata a data como String
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        // Agrupa as presenças por data
+        return presencas.stream()
+            .collect(Collectors.groupingBy(Presenca::getData)) // Agrupa por data
+            .entrySet().stream()
+            .map(entry -> {
+                // Converte a data para String formatada
+                String dataFormatada = sdf.format(entry.getKey());
+
+                // Mapeia as presenças para o DTO de alunos
+                List<AlunoPresencaDTO> alunos = entry.getValue().stream()
+                		.map(p -> new AlunoPresencaDTO(
+                			    p.getId_presenca(), // Deve ser incluído no DTO
+                			    p.getAluno().getId(),
+                			    p.getAluno().getNome() + " " + p.getAluno().getUltimoNome(),
+                			    p.getPresenca()
+                			))
+
+                    .collect(Collectors.toList());
+
+                // Retorna diretamente o HistoricoDTO
+                return new HistoricoDTO(dataFormatada, alunos);
+            })
+            .collect(Collectors.toList());
+    }
+
+
+    
+    /**
+     * Atualizar uma presença existente.
+     *
+     * @param idPresenca ID da presença a ser atualizada.
+     * @param idAluno ID do aluno associado à presença.
+     * @param idTurma ID da turma associada à presença.
+     * @param idDisciplina ID da disciplina associada à presença.
+     * @param idProfessor ID do professor associado à presença.
+     * @param presencaInputDTO Objeto com os dados atualizados da presença.
+     * @return PresencaDTO com os dados atualizados.
+     */
+    @Transactional
+    public PresencaDTO atualizarPresenca(Long idPresenca, Long idAluno, Long idTurma, Long idDisciplina, String idProfessor, PresencaInputDTO presencaInputDTO) {
+        // Busca o aluno, turma, disciplina e professor para validação
+        Aluno aluno = buscarAlunoPorId(idAluno);
+        TurmaDisciplinaProfessor turmaDisciplinaProfessor = buscarTurmaDisciplinaProfessor(idTurma, idDisciplina, idProfessor);
+
+        // Busca a presença existente
+        Presenca presenca = presencaRepository.findById(idPresenca)
+                .orElseThrow(() -> new RuntimeException("Presença não encontrada"));
+
+        // Valida se a presença pertence ao aluno e ao contexto esperado
+        if (!presenca.getAluno().equals(aluno) || !presenca.getTurmaDisciplinaProfessor().equals(turmaDisciplinaProfessor)) {
+            throw new RuntimeException("Presença não corresponde ao aluno, turma, disciplina ou professor informado");
+        }
+
+        // Atualiza os dados da presença com os valores recebidos
+        presenca.setPresenca(presencaInputDTO.getPresenca());
+        presenca.setData(presencaInputDTO.getData());
+
+        // Salva a presença atualizada no repositório
+        Presenca presencaAtualizada = presencaRepository.save(presenca);
+
+        // Converte e retorna o DTO atualizado
+        return convertToDTO(presencaAtualizada);
+    }
+
+    
+    
+    
+    
+    public List<DisciplinaFaltasDTO> getFaltasPorDisciplina(Long idAluno) {
+        Aluno aluno = alunoRepository.findById(idAluno)
+            .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+
+        // Pegar todas as presenças relacionadas ao aluno
+        List<Presenca> presencas = presencaRepository.findByAluno(aluno);
+
+        // Agrupar por disciplina e mês
+        Map<Disciplina, Map<String, Long>> faltasPorDisciplina = presencas.stream()
+            .filter(p -> !p.getPresenca()) // Contar apenas faltas
+            .collect(Collectors.groupingBy(
+                p -> p.getTurmaDisciplinaProfessor().getDisciplina(),
+                Collectors.groupingBy(
+                    p -> new SimpleDateFormat("MMM").format(p.getData()), // Agrupa por mês
+                    Collectors.counting() // Soma as faltas
+                )
+            ));
+
+        // Converter para DTO
+        return faltasPorDisciplina.entrySet().stream()
+            .map(entry -> {
+                Disciplina disciplina = entry.getKey();
+                Map<String, Long> faltasPorMes = entry.getValue();
+
+                return DisciplinaFaltasDTO.builder()
+                    .idDisciplina(disciplina.getId())
+                    .nomeDisciplina(disciplina.getNome())
+                    .faltasPorMes(faltasPorMes)
+                    .build();
+            })
+            .collect(Collectors.toList());
+    }
+
+    
+    
+    
+    
+    
+
 }

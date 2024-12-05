@@ -367,8 +367,74 @@ public class ConceitoService {
         return TurmaDisciplinaProfessorCompletoDTO.builder()
                 .nomeTurma(turmaDisciplinaProfessor.getTurma().getNome())
                 .nomeDisciplina(turmaDisciplinaProfessor.getDisciplina().getNome())
-                .nomeProfessor(turmaDisciplinaProfessor.getProfessor().getNome())
+                .nomeProfessor(turmaDisciplinaProfessor.getProfessor().getNome() + " " + turmaDisciplinaProfessor.getProfessor().getUltimoNome())
                 .build();
     }
+    
+    public Optional<ConceitoDTO> buscarConceito(String cpfProfessor, Long idAluno, Long idDisciplina, Long idTurma) {
+        return conceitoRepository
+                .findByAluno_IdAndTurmaDisciplinaProfessor_Turma_IdAndTurmaDisciplinaProfessor_Disciplina_IdAndTurmaDisciplinaProfessor_Professor_Cpf(
+                        idAluno, idTurma, idDisciplina, cpfProfessor)
+                .map(this::toDTO);
+    }
+
+    
+    private ConceitoDTO toDTO(Conceito conceito) {
+        return ConceitoDTO.builder()
+            .id(conceito.getId_conceito()) // Confirme se é getId ou outro método
+            
+            // Aluno
+            .aluno(AlunoResumidoDTO.builder()
+                .id(conceito.getAluno().getId())
+                .nomeAluno(conceito.getAluno().getNome() + " " + conceito.getAluno().getUltimoNome())
+                .email(conceito.getAluno().getEmail())
+                .cpf(conceito.getAluno().getCpf())
+                .status(conceito.getAluno().isStatus())
+                .build())
+
+           
+         // Turma, Disciplina e Professor
+            .turmaDisciplinaProfessor(TurmaDisciplinaProfessorCompletoDTO.builder()
+                .idTurma(conceito.getTurmaDisciplinaProfessor().getTurma().getId()) // Confirmação de associação correta
+                .nomeTurma(conceito.getTurmaDisciplinaProfessor().getTurma().getNome()) // Nome da turma
+                .idDisciplina(conceito.getTurmaDisciplinaProfessor().getDisciplina().getId()) // ID da disciplina
+                .nomeDisciplina(conceito.getTurmaDisciplinaProfessor().getDisciplina().getNome()) // Nome da disciplina
+                .idProfessor(conceito.getTurmaDisciplinaProfessor().getProfessor().getCpf()) // CPF do professor
+                .nomeProfessor(
+                	    conceito.getTurmaDisciplinaProfessor().getProfessor().getNome() + " " +
+                	    conceito.getTurmaDisciplinaProfessor().getProfessor().getUltimoNome()
+                	)  	
+                .build())
+
+
+            // Notas
+            .notaUnidade1(conceito.getNotaUnidade1())
+            .notaUnidade2(conceito.getNotaUnidade2())
+            .notaUnidade3(conceito.getNotaUnidade3())
+            .notaUnidade4(conceito.getNotaUnidade4())
+
+            // NOA
+            .noa1(conceito.getNoa1())
+            .noa2(conceito.getNoa2())
+            .noaFinal(conceito.getNoaFinal())
+
+            // Média e conceitos
+            .mediaFinal(conceito.getMediaFinal())
+            .conceitoNota1(conceito.getConceitoNota1())
+            .conceitoNota2(conceito.getConceitoNota2())
+            .conceitoNota3(conceito.getConceitoNota3())
+            .conceitoNota4(conceito.getConceitoNota4())
+            .conceitoNoa1(conceito.getConceitoNoa1())
+            .conceitoNoa2(conceito.getConceitoNoa2())
+            .conceitoNoaFinal(conceito.getConceitoNoaFinal())
+            .conceitoFinal(conceito.getConceitoFinal())
+            
+            // Aprovação
+            .aprovado(conceito.getAprovado())
+            .build();
+    }
+
+
+
 
 }

@@ -23,6 +23,7 @@ public class AlunoResumidoDTO2 {
     private Date data_nascimento;
     private String cpf;
     private String email;
+    private String senha;
     private Long coordenacaoId; 
     private Set<Long> turmasIds; // Apenas IDs das turmas
     private Set<EnderecoDTO> enderecos;

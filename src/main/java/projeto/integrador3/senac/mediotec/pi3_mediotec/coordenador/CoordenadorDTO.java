@@ -8,6 +8,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.telefone.TelefoneDTO;
 import java.util.Date;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.persistence.Column;
@@ -21,8 +22,9 @@ public class CoordenadorDTO {
     private String nome;
     private String ultimoNome;
     private String genero;
-    private Date data_nascimento;
+    private Date data_nascimento;   
     private String email;
+    private String senha;
     private boolean status;
     private Set<EnderecoDTO> enderecos;
     private Set<TelefoneDTO> telefones;

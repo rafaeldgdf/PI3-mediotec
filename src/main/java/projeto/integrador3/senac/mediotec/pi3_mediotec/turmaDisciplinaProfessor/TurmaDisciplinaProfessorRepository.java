@@ -8,10 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TurmaDisciplinaProfessorRepository extends JpaRepository<TurmaDisciplinaProfessor, TurmaDisciplinaProfessorId> {
     List<TurmaDisciplinaProfessor> findByTurmaId(Long turmaId);
     List<TurmaDisciplinaProfessor> findByDisciplinaId(Long disciplinaId);
-    List<TurmaDisciplinaProfessor> findById_ProfessorId(String professorId);
+    List<TurmaDisciplinaProfessor> findByProfessorCpf(String cpf);
     List<TurmaDisciplinaProfessor> findById_TurmaIdAndId_DisciplinaId(Long turmaId, Long disciplinaId);
     void deleteByTurmaId(Long turmaId);
     void deleteByDisciplina_Id(Long disciplinaId);
+    void deleteByProfessorCpf(String cpf);
     
     // Verificar se existe uma turma com base no ID da turma
     boolean existsByTurma_Id(Long idTurma);
@@ -20,10 +21,9 @@ public interface TurmaDisciplinaProfessorRepository extends JpaRepository<TurmaD
     boolean existsByDisciplina_Id(Long idDisciplina);
     
     // Verificar se existe um professor com base no ID do professor
-    boolean existsByProfessor_Cpf(String cpf);
+    boolean existsByProfessor_Cpf(String cpf);  
+    
+    
+    
 
 }
-
-
-
-
