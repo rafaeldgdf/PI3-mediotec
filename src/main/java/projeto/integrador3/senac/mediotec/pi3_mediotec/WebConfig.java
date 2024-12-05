@@ -10,7 +10,8 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
 				.allowedOrigins("http://127.0.0.1:5500", "http://localhost:3000", "https://sgemediotec.netlify.app",
-						"http://10.0.0.108:3000", "http://10.0.0.108:8080", "http://10.0.0.108:8081", "http://10.0.2.2:8080", "http://172.26.33.180:3030")
+						"http://10.0.0.108:3000", "http://10.0.0.108:8080", "http://10.0.0.108:8081", 
+						"http://10.0.2.2:8080", "http://172.26.33.180:3000", "http://10.0.0.108:3000")
 				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS").allowedHeaders("*").allowCredentials(true);
 	}
 }

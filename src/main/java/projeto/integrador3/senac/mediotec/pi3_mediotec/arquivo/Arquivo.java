@@ -20,5 +20,6 @@ public class Arquivo {
     private String tipo;
 
     @Lob
+    @Column(columnDefinition = "LONGBLOB")
     private byte[] dados; // Conteúdo do arquivo em bytes
 }

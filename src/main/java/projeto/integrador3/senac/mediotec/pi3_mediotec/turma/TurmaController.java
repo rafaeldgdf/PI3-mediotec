@@ -166,10 +166,10 @@ public class TurmaController {
             turmaService.deleteTurma(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Turma com ID " + id + " não encontrada.", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao excluir turma: " + e.getMessage(), e);
         }
     }
-    
+
                // --------------------- HORARIO --------------------------- //
     // Endpoint para upload do arquivo de horário
     @PostMapping(value = "/turmas/{id}/horario", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -179,8 +179,13 @@ public class TurmaController {
         if (arquivo.isEmpty()) {
             return ResponseEntity.badRequest().body("Arquivo não enviado.");
         }
-        // Processar o arquivo
-        return ResponseEntity.ok("Arquivo enviado com sucesso para a turma ID " + id);
+        try {
+            turmaService.salvarHorario(id, arquivo);
+            return ResponseEntity.ok("Arquivo enviado com sucesso para a turma ID " + id);
+        } catch (Exception e) {
+            e.printStackTrace(); // Log detalhado para depuração
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar arquivo: " + e.getMessage());
+        }
     }
 
 
@@ -192,16 +197,16 @@ public class TurmaController {
         Arquivo horario = turmaService.obterHorario(id);
 
         if (horario == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
         return ResponseEntity.ok()
-                .contentType(org.springframework.http.MediaType.parseMediaType(horario.getTipo())) // Corrigido o import de MediaType
-                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, 
+                .contentType(MediaType.parseMediaType(horario.getTipo()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, 
                         "attachment; filename=\"" + horario.getNome() + "\"")
                 .body(horario.getDados());
     }
+
 
     
     
@@ -236,6 +241,10 @@ public class TurmaController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar turmas do aluno", e);
         }
     }
+    
+    
+
+
 
     
     

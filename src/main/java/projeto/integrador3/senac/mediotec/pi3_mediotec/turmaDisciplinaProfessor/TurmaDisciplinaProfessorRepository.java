@@ -21,7 +21,8 @@ public interface TurmaDisciplinaProfessorRepository extends JpaRepository<TurmaD
     boolean existsByDisciplina_Id(Long idDisciplina);
     
     // Verificar se existe um professor com base no ID do professor
-    boolean existsByProfessor_Cpf(String cpf);
+    boolean existsByProfessor_Cpf(String cpf);  
+    
     
     
 

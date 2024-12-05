@@ -23,6 +23,7 @@ import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.Disciplina;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.disciplina.DisciplinaResumida2DTO;
+import projeto.integrador3.senac.mediotec.pi3_mediotec.presenca.PresencaRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.Professor;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.professor.ProfessorRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.turma.Turma;
@@ -57,7 +58,11 @@ public class TurmaService {
 
     @Autowired
     private TurmaDisciplinaProfessorRepository turmaDisciplinaProfessorRepository;
+    
+    @Autowired
+    private PresencaRepository presencaRepository;
 
+    
     // ============================= CREATE METHODS =============================
 
     /**
@@ -175,20 +180,57 @@ public class TurmaService {
      */
     @Transactional
     public void deleteTurma(Long id) {
-        // Busca a turma para verificar se ela existe
-        Turma turma = turmaRepository.findById(id)
+        try {
+            System.out.println("Iniciando exclusão da turma com ID " + id);
+
+            // Verifique se a turma existe
+            Turma turma = turmaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+            System.out.println("Turma encontrada: " + turma.getNome());
 
-        // Remove associações de alunos na tabela aluno_turma
-        turma.getAlunos().forEach(aluno -> aluno.getTurmas().remove(turma));
-        turma.getAlunos().clear();
+            // Obtenha as associações de turma-disciplina-professor
+            List<TurmaDisciplinaProfessor> associacoes = turmaDisciplinaProfessorRepository.findByTurmaId(id);
+            System.out.println("Associações encontradas: " + associacoes.size());
 
-        // Remove associações de Turma-Disciplina-Professor
-        turmaDisciplinaProfessorRepository.deleteByTurmaId(turma.getId());
+            // Exclua presenças associadas (se existirem)
+            List<Long> turmaDisciplinaProfessorIds = associacoes.stream()
+                .map(tdp -> tdp.getId().getTurmaId())
+                .distinct()
+                .collect(Collectors.toList());
 
-        // Exclui a turma após remover as dependências
-        turmaRepository.delete(turma);
+            if (!turmaDisciplinaProfessorIds.isEmpty()) {
+                presencaRepository.deleteByTurmaDisciplinaProfessorIds(turmaDisciplinaProfessorIds);
+                System.out.println("Presenças removidas.");
+            }
+
+            // Exclua as associações de Turma-Disciplina-Professor
+            turmaDisciplinaProfessorRepository.deleteByTurmaId(id);
+            System.out.println("Associações de Turma-Disciplina-Professor removidas.");
+
+            // Limpe os alunos associados à turma
+            if (turma.getAlunos() != null) {
+                turma.getAlunos().forEach(aluno -> aluno.getTurmas().remove(turma));
+                turma.getAlunos().clear();
+                System.out.println("Alunos desvinculados.");
+            }
+
+            // Remova o arquivo de horário, se existir
+            turma.setArquivoHorario(null);
+            System.out.println("Arquivo de horário removido.");
+
+            // Exclua a própria turma
+            turmaRepository.delete(turma);
+            System.out.println("Turma excluída com sucesso.");
+        } catch (Exception e) {
+            System.err.println("Erro ao excluir turma: " + e.getMessage());
+            throw new RuntimeException("Erro ao excluir turma: " + e.getMessage(), e);
+        }
     }
+
+
+
+
+
 
 
     // ============================= GET METHODS =============================
@@ -361,26 +403,29 @@ public class TurmaService {
         }
 
         try {
-            // Busca a turma pelo ID
+            // Buscar a turma pelo ID
             Turma turma = turmaRepository.findById(turmaId)
-                .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+                    .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
 
-            // Constrói o objeto Arquivo
+            // Criar o objeto Arquivo
             Arquivo novoArquivo = Arquivo.builder()
-                .nome(arquivo.getOriginalFilename())
-                .tipo(arquivo.getContentType())
-                .dados(arquivo.getBytes()) // Processa os bytes do arquivo
-                .build();
+                    .nome(arquivo.getOriginalFilename())
+                    .tipo(arquivo.getContentType())
+                    .dados(arquivo.getBytes()) // Salvar os dados do arquivo em bytes
+                    .build();
 
-            // Associa o arquivo à turma
+            // Associar o arquivo à turma
             turma.setArquivoHorario(novoArquivo);
+
+            // Salvar a turma no banco (com o arquivo associado)
             turmaRepository.save(turma);
 
-            // Retorna a turma atualizada em DTO
+            // Confirme que a transação foi concluída
+            System.out.println("Arquivo salvo para a turma ID " + turmaId);
+
             return convertToDto(turma);
 
         } catch (IOException e) {
-            // Trata IOException e converte para RuntimeException
             throw new IllegalStateException("Erro ao processar o arquivo enviado", e);
         }
     }
@@ -390,13 +435,38 @@ public class TurmaService {
 
 
     // Método para obter o arquivo de horário
+    @Transactional(readOnly = true)
     public Arquivo obterHorario(Long turmaId) {
-        Turma turma = turmaRepository.findById(turmaId)
-                .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+        try {
+            // Log do ID recebido
+            System.out.println("[DEBUG] Recebido ID da turma para baixar horário: " + turmaId);
 
-        return turma.getArquivoHorario(); // Retorna o arquivo relacionado à turma
+            Turma turma = turmaRepository.findById(turmaId)
+                    .orElseThrow(() -> {
+                        System.err.println("[DEBUG] Turma com ID " + turmaId + " não encontrada no banco de dados.");
+                        return new RuntimeException("Turma com ID " + turmaId + " não encontrada.");
+                    });
+
+            System.out.println("[DEBUG] Turma encontrada: " + turma.getNome());
+
+            Arquivo horario = turma.getArquivoHorario();
+
+            // Log se o arquivo não estiver associado
+            if (horario == null) {
+                System.err.println("[DEBUG] Nenhum arquivo de horário associado à turma com ID: " + turmaId);
+                throw new RuntimeException("Nenhum arquivo de horário associado.");
+            }
+
+            System.out.println("[DEBUG] Arquivo de horário encontrado: " + horario.getNome());
+            return horario;
+
+        } catch (Exception e) {
+            System.err.println("[ERROR] Erro ao obter horário para a turma ID " + turmaId + ": " + e.getMessage());
+            e.printStackTrace(); // Adiciona stacktrace completo para facilitar a depuração
+            throw e;
+        }
     }
-    
+
     
     
     @Transactional
@@ -416,6 +486,12 @@ public class TurmaService {
         // Salva a alteração no banco de dados
         turmaRepository.save(turma);
     }
+    
+    
+    
+    
+    
+    
     
  // --------------------- turmas de professores e alunos --------------------------- //
     

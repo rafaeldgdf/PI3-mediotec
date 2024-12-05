@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.MapsId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +30,7 @@ public class TurmaDisciplinaProfessorId implements Serializable {
      * Ele é mapeado diretamente para a coluna `id_turma` da tabela `turma_disciplina_professor`.
      */
     @Column(name = "id_turma")
+    @MapsId("turmaId")
     private Long turmaId; // Chave primária associada à entidade `Turma`
 
     /**
@@ -36,6 +38,7 @@ public class TurmaDisciplinaProfessorId implements Serializable {
      * Ele é mapeado diretamente para a coluna `id_disciplina` da tabela `turma_disciplina_professor`.
      */
     @Column(name = "id_disciplina")
+    @MapsId("disciplinaId")
     private Long disciplinaId; // Chave primária associada à entidade `Disciplina`
 
     /**
@@ -43,6 +46,7 @@ public class TurmaDisciplinaProfessorId implements Serializable {
      * Ele é mapeado diretamente para a coluna `id_professor` da tabela `turma_disciplina_professor`.
      */
     @Column(name = "id_professor")
+    @MapsId("professorId")
     private String professorId; // Chave primária associada à entidade `Professor`
 
     // ============================= MÉTODOS AUXILIARES =============================

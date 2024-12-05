@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import projeto.integrador3.senac.mediotec.pi3_mediotec.conceito.ConceitoRepository;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.Coordenacao;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenacao.CoordenacaoResumidaDTO;
 import projeto.integrador3.senac.mediotec.pi3_mediotec.coordenador.CoordenadorResumidoDTO;
@@ -32,6 +33,9 @@ public class AlunoService {
 
     @Autowired
     private TurmaRepository turmaRepository;
+    
+    @Autowired
+    private ConceitoRepository conceitoRepository;
 
     // ============================= GET METHODS =============================
 
@@ -143,13 +147,22 @@ public class AlunoService {
      */
     @Transactional
     public void deleteAluno(Long idAluno) {
+        // Busca o aluno pelo ID
         Aluno aluno = alunoRepository.findById(idAluno)
             .orElseThrow(() -> new RuntimeException("Aluno não encontrado com o ID: " + idAluno));
 
-        // Remover a associação do aluno com todas as turmas
-        aluno.getTurmas().forEach(turma -> turma.getAlunos().remove(aluno));
-        
-        // Agora que o aluno foi removido das turmas, podemos deletá-lo
+        // Remove a associação do aluno com as turmas
+        if (aluno.getTurmas() != null) {
+            aluno.getTurmas().forEach(turma -> {
+                turma.getAlunos().remove(aluno); // Remove o aluno da turma
+            });
+            aluno.setTurmas(null); // Remove a referência às turmas no aluno
+        }
+
+        // Remove os registros na tabela `conceito` relacionados ao aluno
+        conceitoRepository.deleteByAlunoId(aluno.getId());
+
+        // Finalmente, deleta o aluno
         alunoRepository.delete(aluno);
     }
 

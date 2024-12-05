@@ -120,12 +120,13 @@ public class AlunoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAluno(@PathVariable Long id) {
         try {
-            logger.info("Deletando aluno com ID: {}", id);
+            logger.info("Tentando deletar aluno com ID: {}", id);
             alunoService.deleteAluno(id);
+            logger.info("Aluno com ID {} deletado com sucesso.", id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (RuntimeException e) {
             logger.error("Erro ao deletar aluno com ID {}: {}", id, e.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Erro ao deletar aluno com ID " + id + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 

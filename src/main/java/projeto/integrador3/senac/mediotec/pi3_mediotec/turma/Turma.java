@@ -75,7 +75,7 @@ public class Turma implements Serializable {
     // Relacionamento ManyToMany com Aluno
     @JsonIgnore
     @Builder.Default
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JoinTable(
         name = "aluno_turma",
         joinColumns = @JoinColumn(name = "turma_id"),
